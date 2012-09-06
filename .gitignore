@@ -10,3 +10,8 @@
 *.lai
 *.la
 *.a
+
+/src/drive/build-mytoolchain/
+/src/drive/build-sys-linux-x86_64/
+/src/drive/build-sys-linux-i686/
+.qi
