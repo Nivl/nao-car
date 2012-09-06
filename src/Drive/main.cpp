@@ -1,11 +1,11 @@
 //
-// main.cpp for  in /home/olivie_a//naoqi-sdk-1.12.5-linux64/examples/kart
+// main.cpp for  in /home/olivie_a//naoqi-sdk-1.12.5-linux64/examples/drive
 // 
 // Made by samuel olivier
 // Login   <olivie_a@epitech.net>
 // 
 // Started on  Wed Sep  5 23:56:24 2012 samuel olivier
-// Last update Thu Sep  6 00:12:37 2012 samuel olivier
+// Last update Thu Sep  6 19:29:21 2012 samuel olivier
 //
 
 #include <iostream>
@@ -16,7 +16,7 @@
 #include <alcommon/albroker.h>
 #include <alcommon/albrokermanager.h>
 
-#include "Kart.hh"
+#include "Drive.hh"
 
 #ifdef _WIN32
 # define ALCALL __declspec(dllexport)
@@ -30,7 +30,7 @@ extern "C"
   {
     AL::ALBrokerManager::setInstance(broker->fBrokerManager.lock());
     AL::ALBrokerManager::getInstance()->addBroker(broker);
-    AL::ALModule::createModule<Kart>(broker, "Kart");
+    AL::ALModule::createModule<Drive>(broker, "Drive");
     return 0;
   }
 
@@ -40,7 +40,7 @@ extern "C"
   }
 }
 
-#ifdef KART_IS_REMOTE
+#ifdef DRIVE_IS_REMOTE
 int	main(int ac, char **av)
 {
   int pport = 9559;
@@ -120,7 +120,7 @@ int	main(int ac, char **av)
     }
   AL::ALBrokerManager::setInstance(broker->fBrokerManager.lock());
   AL::ALBrokerManager::getInstance()->addBroker(broker);
-  AL::ALModule::createModule<Kart>(broker, "Kart");
+  AL::ALModule::createModule<Drive>(broker, "Drive");
   return 0;
 }
 #endif
