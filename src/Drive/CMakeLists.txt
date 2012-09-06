@@ -1,4 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
+cmake_policy(SET CMP0015 NEW)
+
 project(Drive)
 
 find_package(qibuild)
@@ -20,3 +22,7 @@ else()
 endif()
 
 qi_use_lib(Drive ALCOMMON BOOST)
+link_directories(libPose)
+find_library(POSE_DIR Pose libPose)
+include_directories(libPose)
+target_link_libraries(Drive ${POSE_DIR})

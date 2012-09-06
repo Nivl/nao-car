@@ -9,7 +9,9 @@ option(POSE_IS_REMOTE
 
 set(_srcs
     Pose.cpp
-    Pose.hpp)
+    Pose.hpp
+    PoseManager.cpp
+    PoseManager.hpp)
 
 # Create the Pose library
 qi_create_lib(Pose SHARED ${_srcs})

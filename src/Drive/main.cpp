@@ -5,7 +5,7 @@
 // Login   <olivie_a@epitech.net>
 // 
 // Started on  Wed Sep  5 23:56:24 2012 samuel olivier
-// Last update Thu Sep  6 21:36:51 2012 samuel olivier
+// Last update Fri Sep  7 00:49:35 2012 samuel olivier
 //
 
 #include <iostream>
@@ -41,7 +41,7 @@ extern "C"
   }
 }
 
-#ifdef POSE_IS_REMOTE
+#ifdef DRIVE_IS_REMOTE
 
 int main(int argc, char *argv[])
 {
