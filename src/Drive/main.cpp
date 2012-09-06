@@ -41,7 +41,7 @@ extern "C"
   }
 }
 
-#ifdef DRIVE_IS_REMOTE
+#ifdef POSE_IS_REMOTE
 
 int main(int argc, char *argv[])
 {
