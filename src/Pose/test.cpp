@@ -1,22 +1,16 @@
-/*
- * Copyright (c) 2012 Aldebaran Robotics. All rights reserved.
- * Use of this source code is governed by a BSD-style license that can be
- * found in the COPYING file.
- */
-#include <iostream>
+//
+// test.cpp
+//
 
+#include "Pose.hpp"
 
-int main()
+int main(int ac, char**av)
 {
-  int answer = 40;
-  answer += 2;
-  if (answer != 42)
-  {
-    std::cerr << "We are all going to die!" << std::endl;
-    return 2;
-  }
+  // PoseManager manager(brooker);
 
-  std::cout << "And the answer is: " << answer << std::endl;
-  std::cout << "Ok." << std::endl;
-  return 0;
+  // Pose pose = manager.getRobotPose();
+  // Pose stand("stand.pose");
+
+  // manager.takePose(stand); 
+  return (0);
 }
