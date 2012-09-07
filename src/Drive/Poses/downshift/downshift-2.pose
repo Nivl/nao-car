@@ -1,6 +1,4 @@
 downshift/downshift-2
-HeadPitch;-0.33445406
-HeadYaw;-0.0567998886
 LAnklePitch;-0.0291879177
 LAnkleRoll;-0.0122299194
 LElbowRoll;-1.29312003
@@ -13,8 +11,6 @@ LKneePitch;1.012398
 LShoulderPitch;1.30692601
 LShoulderRoll;-0.253151894
 LWristYaw;-1.41745806
-RAnklePitch;-0.0643861294
-RAnkleRoll;-0.342040062
 RElbowRoll;0.366667986
 RElbowYaw;1.62906611
 RHand;0

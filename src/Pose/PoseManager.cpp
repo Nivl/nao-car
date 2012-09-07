@@ -24,7 +24,6 @@ PoseManager::~PoseManager()
 
 void	PoseManager::takePose(Pose const& pose, float duration)
 {
-  std::cout << pose.getName() << std::endl;
   std::map<std::string, float> const&	map = pose.getAngles();
   std::vector<std::string>		names;
   std::vector<float>			angles;

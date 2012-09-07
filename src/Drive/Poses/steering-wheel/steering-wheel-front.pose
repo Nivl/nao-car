@@ -1,6 +1,4 @@
 tmp
-HeadPitch;-0.256219864
-HeadYaw;0.0168321133
 LAnklePitch;-0.0291879177
 LAnkleRoll;-0.0122299194
 LElbowRoll;-1.10443807
@@ -13,8 +11,6 @@ LKneePitch;1.02620411
 LShoulderPitch;1.01853418
 LShoulderRoll;-0.314159274
 LWristYaw;-1.21036816
-RAnklePitch;-0.0260360241
-RAnkleRoll;-0.343574047
 RElbowRoll;1.26252413
 RElbowYaw;1.71957207
 RHand;0

@@ -1,6 +1,4 @@
 steering-wheel-right
-HeadPitch;-0.219403982
-HeadYaw;0.0168321133
 LAnklePitch;-0.0291879177
 LAnkleRoll;-0.0106959343
 LElbowRoll;-0.470896006
@@ -13,8 +11,6 @@ LKneePitch;1.04307795
 LShoulderPitch;0.602820158
 LShoulderRoll;-0.227073908
 LWristYaw;-1.21497011
-RAnklePitch;-0.0567159653
-RAnkleRoll;-0.343574047
 RElbowRoll;1.54461634
 RElbowYaw;1.50634611
 RHand;0
