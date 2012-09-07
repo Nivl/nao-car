@@ -11,7 +11,7 @@
 
 #include <alproxies/altexttospeechproxy.h>
 
-#include "Pose.hpp"
+#include "PoseManager.hpp"
 
 int main(int ac, char**av)
 {
@@ -32,11 +32,11 @@ int main(int ac, char**av)
 			       0);
 
 
-  //PoseManager manager(brooker);
+  PoseManager manager(broker);
 
-  // Pose pose = manager.getRobotPose();
-  // Pose stand("stand.pose");
+  Pose pose = manager.getRobotPose();
+  Pose stand("stand.pose");
 
-  // manager.takePose(stand); 
+  manager.takePose(stand, 2);
   return (0);
 }
