@@ -8,6 +8,7 @@
 #include <alerror/alerror.h>
 #include <alcommon/albroker.h>
 #include <alcommon/albrokermanager.h>
+#include <unistd.h>
 
 #include <alproxies/altexttospeechproxy.h>
 
@@ -38,9 +39,9 @@ int main(int ac, char**av)
   Pose stand("stand.pose");
 
   manager.takePose(stand, 2);
-  Pose pose;
-  pose.setAngle("Arm", 20);
-  pose.saveToFile("arm.pose");
+  Pose pose1;
+  pose1.setAngle("Arm", 20);
+  pose1.saveToFile("arm.pose");
   // manager.takePose(stand); 
   return (0);
 }
