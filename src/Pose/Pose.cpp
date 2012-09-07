@@ -49,10 +49,21 @@ void		Pose::setAngle(const std::string& angle, float value)
 
 void		Pose::setAngles(const std::map<std::string, float>& angles)
 {
-  
+  for(const std::pair<std::string, float>& angle : angles)
+    _angles[angle.first] = angle.second;
 }
+
+#include <fstream>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+
 
 bool		Pose::saveToFile(const std::string& filename)
 {
+  std::ofstream ofs(filename);
+
+  //boost::archive::text_oarchive oa(ofs);
+
+  //oa << _angles;
   return (true);
 }

@@ -37,6 +37,9 @@ int main(int ac, char**av)
   // Pose pose = manager.getRobotPose();
   // Pose stand("stand.pose");
 
+  Pose pose;
+  pose.setAngle("Arm", 20);
+  pose.saveToFile("arm.pose");
   // manager.takePose(stand); 
   return (0);
 }

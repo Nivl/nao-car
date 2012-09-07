@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.8)
 project(Pose)
 
+set (CMAKE_CXX_FLAGS "-std=c++0x -W -Wall")
+
 find_package(qibuild)
 
 option(POSE_IS_REMOTE
