@@ -1,7 +1,12 @@
 //
-// test.cpp
+// save_pose.cpp for  in /home/olivie_a//rendu/nao/nao-car/src/Pose
+// 
+// Made by samuel olivier
+// Login   <olivie_a@epitech.net>
+// 
+// Started on  Fri Sep  7 13:54:38 2012 samuel olivier
+// Last update Fri Sep  7 14:04:26 2012 samuel olivier
 //
-
 
 #include <iostream>
 #include <boost/shared_ptr.hpp>
@@ -32,16 +37,9 @@ int main(int ac, char**av)
 			       av[1],
 			       9559,
 			       0);
-
   PoseManager manager(broker);
   AL::ALMotionProxy	motion(broker);
-  // motion.setStiffnesses("Body", 1);
-  // for (int i =0; i < 10; ++i)
-  //   {
-  //     manager.takePose(Pose::loadFromFile("test.pose"), 0.2);
-  //     manager.takePose(Pose::loadFromFile("test1.pose"), 0.2);
-  //   }
-  // return (0);
+
   motion.setStiffnesses("Body", 0);
   std::cout << "Prepare your pose and press enter" << std::endl;
   getchar();

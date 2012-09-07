@@ -23,3 +23,17 @@ qi_use_lib(Pose ALCOMMON BOOST)
 qi_create_bin(Test test.cpp)
 qi_use_lib(Test ALCOMMON BOOST)
 target_link_libraries(Test Pose)
+
+# Create the save_pose binary
+qi_create_bin(save_pose save_pose.cpp)
+qi_use_lib(save_pose ALCOMMON BOOST)
+target_link_libraries(save_pose Pose)
+
+# Create the take_pose binary
+qi_create_bin(take_pose take_pose.cpp)
+qi_use_lib(take_pose ALCOMMON BOOST)
+target_link_libraries(take_pose Pose)
+
+# Create the set_stiffnesses binary
+qi_create_bin(set_stiffnesses set_stiffnesses.cpp)
+qi_use_lib(set_stiffnesses ALCOMMON BOOST)
