@@ -48,10 +48,6 @@ int main(int ac, char**av)
   pose2.saveToFile("arm.pose");
 
   manager.takePose(stand, 2);
-  Pose pose1;
-  pose1.setAngle("Arm", 20);
-  pose1.saveToFile("arm.pose");
-
   // manager.takePose(stand); 
   return (0);
 }
