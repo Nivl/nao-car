@@ -7,6 +7,7 @@
 
 # include <string>
 # include <map>
+# include <ostream>
 
 class Pose
 {
@@ -21,6 +22,8 @@ public:
   void		setName(const std::string& name);
 
   float		getAngle(const std::string& angle);
+  const std::map<std::string, float>&
+		getAngles() const;
   void		setAngle(const std::string& angle, float value);
   void		setAngles(const std::map<std::string, float>& angles);
 
@@ -30,5 +33,7 @@ private:
   std::string			_name;
   std::map<std::string, float>	_angles;
 };
+
+std::ostream& operator<<(std::ostream& os, const Pose& pose);
 
 #endif

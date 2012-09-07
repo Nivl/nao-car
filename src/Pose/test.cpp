@@ -22,14 +22,14 @@ int main(int ac, char**av)
     }
 
   // Create a brooker to connect to the robot
-  boost::shared_ptr<AL::ALBroker> broker =
+  /*boost::shared_ptr<AL::ALBroker> broker =
     AL::ALBroker::createBroker(
 			       "broker",
 			       "0.0.0.0",
 			       0,
 			       av[1],
 			       9559,
-			       0);
+			       0);*/
 
 
   //PoseManager manager(brooker);
@@ -37,8 +37,13 @@ int main(int ac, char**av)
   // Pose pose = manager.getRobotPose();
   // Pose stand("stand.pose");
 
-  Pose pose;
+  Pose poseInFile = Pose::loadFromFile("arm.pose");
+  std::cout << poseInFile << std::endl;
+
+  Pose pose("Nao");
   pose.setAngle("Arm", 20);
+  pose.setAngle("Foot", 20.456);
+  pose.setAngle("Head", 5.4321);
   pose.saveToFile("arm.pose");
   // manager.takePose(stand); 
   return (0);
