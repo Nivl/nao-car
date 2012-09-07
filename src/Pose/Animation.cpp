@@ -25,11 +25,11 @@ Animation	Animation::loadFromFile(const std::string& filename)
 	{
 	  animation._files.push_back({line.substr(0, line.find(";")),
 		float(atof(line.substr(line.find(";") + 1).c_str()))});
-	  poseFile = line.substr(0, line.find(";"));
-	  int pos = filename.rfind("/");
-	  if (pos != std::npos)
+	  std::string	poseFile = line.substr(0, line.find(";"));
+	  unsigned long int pos = filename.rfind("/");
+	  if (pos != std::string::npos)
 	    poseFile = filename.substr(0, pos + 1) + poseFile;
-	  animation._poses.push_back({Pose::loadFromFile(line.substr(0, line.find(";"))),
+	  animation._poses.push_back({Pose::loadFromFile(poseFile),
 		float(atof(line.substr(line.find(";") + 1).c_str()))});
 	}
     }

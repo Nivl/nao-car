@@ -5,7 +5,7 @@
 // Login   <olivie_a@epitech.net>
 // 
 // Started on  Thu Sep  6 23:58:43 2012 samuel olivier
-// Last update Fri Sep  7 12:43:10 2012 samuel olivier
+// Last update Fri Sep  7 18:07:13 2012 samuel olivier
 //
 
 #include <alcommon/albroker.h>
@@ -24,6 +24,7 @@ PoseManager::~PoseManager()
 
 void	PoseManager::takePose(Pose const& pose, float duration)
 {
+  std::cout << pose.getName() << std::endl;
   std::map<std::string, float> const&	map = pose.getAngles();
   std::vector<std::string>		names;
   std::vector<float>			angles;

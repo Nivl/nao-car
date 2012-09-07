@@ -22,9 +22,9 @@ qi_create_lib(Pose SHARED ${_srcs})
 qi_use_lib(Pose ALCOMMON BOOST)
 
 # Create the test binary
-qi_create_bin(Test test.cpp)
-qi_use_lib(Test ALCOMMON BOOST)
-target_link_libraries(Test Pose)
+qi_create_bin(test test.cpp)
+qi_use_lib(test ALCOMMON BOOST)
+target_link_libraries(test Pose)
 
 # Create the save_pose binary
 qi_create_bin(save_pose save_pose.cpp)
@@ -36,10 +36,13 @@ qi_create_bin(take_pose take_pose.cpp)
 qi_use_lib(take_pose ALCOMMON BOOST)
 target_link_libraries(take_pose Pose)
 
-qi_create_bin(CreateAnimation createAnimation.cpp)
-qi_use_lib(CreateAnimation ALCOMMON BOOST)
-target_link_libraries(CreateAnimation Pose)
-
+qi_create_bin(createAnimation createAnimation.cpp)
+target_link_libraries(createAnimation Pose)
 
 qi_create_bin(set_stiffnesses set_stiffnesses.cpp)
 qi_use_lib(set_stiffnesses ALCOMMON BOOST)
+
+# Create the launchAnimation binary
+qi_create_bin(launchAnimation launchAnimation.cpp)
+qi_use_lib(launchAnimation ALCOMMON BOOST)
+target_link_libraries(launchAnimation Pose)
