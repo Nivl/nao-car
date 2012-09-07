@@ -29,7 +29,6 @@ Animation	Animation::loadFromFile(const std::string& filename)
 	  int pos = filename.rfind("/");
 	  if (pos != std::npos)
 	    poseFile = filename.substr(0, pos + 1) + poseFile;
-	  std::cout << poseFile << std::endl;
 	  animation._poses.push_back({Pose::loadFromFile(line.substr(0, line.find(";"))),
 		float(atof(line.substr(line.find(";") + 1).c_str()))});
 	}
