@@ -38,5 +38,9 @@ int main(int ac, char**av)
   Pose stand("stand.pose");
 
   manager.takePose(stand, 2);
+  Pose pose;
+  pose.setAngle("Arm", 20);
+  pose.saveToFile("arm.pose");
+  // manager.takePose(stand); 
   return (0);
 }
