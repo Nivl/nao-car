@@ -5,7 +5,7 @@
 // Login   <olivie_a@epitech.net>
 // 
 // Started on  Thu Sep  6 23:58:43 2012 samuel olivier
-// Last update Fri Sep  7 11:45:29 2012 samuel olivier
+// Last update Fri Sep  7 12:43:10 2012 samuel olivier
 //
 
 #include <alcommon/albroker.h>
@@ -24,6 +24,19 @@ PoseManager::~PoseManager()
 
 void	PoseManager::takePose(Pose const& pose, float duration)
 {
+  std::map<std::string, float> const&	map = pose.getAngles();
+  std::vector<std::string>		names;
+  std::vector<float>			angles;
+  AL::ALMotionProxy			motion(_broker);
+
+  for (std::map<std::string, float>::const_iterator it = map.begin();
+       it != map.end(); ++it)
+    {
+      names.push_back(it->first);
+      angles.push_back(it->second);
+    }
+  motion.setStiffnesses("Body", 1);
+  motion.angleInterpolation(names, angles, duration, true);
 }
 
 Pose	PoseManager::getRobotPose()
