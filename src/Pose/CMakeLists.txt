@@ -36,6 +36,10 @@ qi_create_bin(take_pose take_pose.cpp)
 qi_use_lib(take_pose ALCOMMON BOOST)
 target_link_libraries(take_pose Pose)
 
-# Create the set_stiffnesses binary
+qi_create_bin(CreateAnimation createAnimation.cpp)
+qi_use_lib(CreateAnimation ALCOMMON BOOST)
+target_link_libraries(CreateAnimation Pose)
+
+
 qi_create_bin(set_stiffnesses set_stiffnesses.cpp)
 qi_use_lib(set_stiffnesses ALCOMMON BOOST)
