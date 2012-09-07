@@ -13,7 +13,9 @@ set(_srcs
     Pose.cpp
     Pose.hpp
     PoseManager.cpp
-    PoseManager.hpp)
+    PoseManager.hpp
+    Animation.hpp
+    Animation.cpp)
 
 # Create the Pose library
 qi_create_lib(Pose SHARED ${_srcs})
