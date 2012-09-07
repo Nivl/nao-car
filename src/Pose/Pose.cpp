@@ -96,11 +96,13 @@ bool		Pose::saveToFile(const std::string& filename)
   return (true);
 }
 
+#include <iomanip>
+
 std::ostream& operator<<(std::ostream& os, const Pose& pose)
 {
   const std::map<std::string, float>& angles = pose.getAngles();
   os << pose.getName() << ":";
   for (const std::pair<std::string, float>& angle : angles)
-    os << std::endl << angle.first << "\t--> " << angle.second;
+    os << std::endl << std::left << std::setw(15) << angle.first << "--> " << angle.second;
   return (os);
 }
