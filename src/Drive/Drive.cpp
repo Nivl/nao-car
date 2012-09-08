@@ -5,14 +5,13 @@
 // Login   <olivie_a@epitech.net>
 // 
 // Started on  Wed Sep  5 23:47:17 2012 samuel olivier
-// Last update Fri Sep  7 00:49:06 2012 samuel olivier
+// Last update Sat Sep  8 17:29:01 2012 samuel olivier
 //
 
 #include <iostream>
 #include <alcommon/albroker.h>
 #include <alproxies/almotionproxy.h>
 #include <alproxies/altexttospeechproxy.h>
-#include <qi/log.hpp>
 
 #include "Drive.hh"
 
