@@ -3,6 +3,9 @@ cmake_policy(SET CMP0015 NEW)
 
 project(Drive)
 
+set (CMAKE_CXX_FLAGS "-std=c++0x -W -Wall -Wno-ignored-qualifiers")
+
+find_package(Qt4 REQUIRED)
 find_package(qibuild)
 
 option(DRIVE_IS_REMOTE
@@ -26,3 +29,13 @@ link_directories(libPose)
 find_library(POSE_DIR Pose libPose)
 include_directories(libPose)
 target_link_libraries(Drive ${POSE_DIR})
+
+set(QtAppSrcs qtMain.cpp Window.cpp)
+set(QtAppHeaders Window.hpp)
+qt4_wrap_cpp(QtAppHeadersMoc ${QtAppHeaders})
+qi_create_bin(QtApp ${QtAppSrcs} ${QtAppHeadersMoc})
+qi_use_lib(QtApp ALCOMMON BOOST)
+add_definitions(${QT_DEFINITIONS})
+include(${QT_USE_FILE})
+include_directories(libPose)
+target_link_libraries(QtApp ${QT_LIBRARIES} ${POSE_DIR})

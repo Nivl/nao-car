@@ -33,6 +33,7 @@ public:
   void		animate(PoseManager& poseManager);
 
   const std::list<std::pair<std::string, float>>& getFiles() const;
+  const std::list<std::pair<Pose, float>>& getPoses() const;
 
 private:
   std::string					_name;

@@ -44,7 +44,7 @@ Animation::Animation(const std::string& name) :
 }
 
 Animation::Animation(const Animation& other) :
-  _name(other._name), _files(other._files)
+  _name(other._name), _files(other._files), _poses(other._poses)
 {
 
 }
@@ -94,9 +94,14 @@ bool		Animation::saveToFile(const std::string& filename)
   return (true);
 }
 
-const std::list<std::pair<std::string, float>>& Animation::getFiles() const
+const std::list<std::pair<std::string, float>>&	Animation::getFiles() const
 {
   return (_files);
+}
+
+const std::list<std::pair<Pose, float>>&	Animation::getPoses() const
+{
+  return (_poses);
 }
 
 #include <iomanip>
