@@ -5,7 +5,7 @@
 // Login   <olivie_a@epitech.net>
 // 
 // Started on  Fri Sep  7 20:00:32 2012 samuel olivier
-// Last update Sat Sep  8 15:43:48 2012 samuel olivier
+// Last update Mon Sep 10 16:39:49 2012 gael jochaud-du-plessix
 //
 
 #include <iostream>
@@ -13,7 +13,9 @@
 
 Window::Window(boost::shared_ptr<AL::ALBroker> broker) :
   QWidget(NULL), _poseManager(broker), _steeringWheelIsTaken(false),
-  _gasPedalIsPushed(false), _steeringWheelDirection(Front), _speed(Up)
+  _gasPedalIsPushed(false), _steeringWheelDirection(Front), _speed(Up),
+  _camera(broker), _cameraId("cameraId"), _cameraTimer(new QTimer(this)),
+  _cameraLabel(new QLabel()), _cameraImage(), _cameraPixmap()
 {
   _animations["DownShift"] =
     Animation::loadFromFile("Poses/downshift.anim");
@@ -35,6 +37,37 @@ Window::Window(boost::shared_ptr<AL::ALBroker> broker) :
     Animation::loadFromFile("Poses/turn-right.anim");
   launch("ReleaseSteeringWheel");
   launch("UpShift");
+
+  // _cameraId = _camera.subscribe(_cameraId, AL::kQQVGA, AL::kRGBColorSpace, 30);
+  // connect(_cameraTimer, SIGNAL(timeout()), this, SLOT(updateCamera()));
+  // _cameraTimer->setInterval(30);
+  // _cameraTimer->start();
+
+  // QVBoxLayout* layout = new QVBoxLayout(this);
+  // layout->addWidget(_cameraLabel);
+  // this->setLayout(layout);
+}
+
+Window::~Window()
+{
+  _camera.unsubscribe(_cameraId);
+}
+
+void Window::updateCamera()
+{
+  AL::ALValue result;
+
+  result = _camera.getImageRemote(_cameraId);
+  const unsigned char* imageData = static_cast<const unsigned char*>(result[6].GetBinary());
+
+  if (imageData != NULL)
+    {
+      _cameraImage = QImage(imageData, 160, 120, QImage::Format_RGB888);
+      _cameraPixmap = QPixmap::fromImage(_cameraImage);
+      _cameraLabel->setPixmap(_cameraPixmap);
+    }
+
+  _camera.releaseImage(_cameraId);
 }
 
 void	Window::keyPressEvent(QKeyEvent *event)
