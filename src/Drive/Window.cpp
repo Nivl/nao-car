@@ -5,7 +5,7 @@
 // Login   <olivie_a@epitech.net>
 // 
 // Started on  Fri Sep  7 20:00:32 2012 samuel olivier
-// Last update Sat Sep  8 15:43:48 2012 samuel olivier
+// Last update Mon Sep 10 16:04:35 2012 samuel olivier
 //
 
 #include <iostream>
@@ -44,10 +44,7 @@ void	Window::keyPressEvent(QKeyEvent *event)
   if (event->key() == Qt::Key_Up)
     {
       if (_gasPedalIsPushed == true)
-  	{
-  	  std::cout << "NEVER?" << std::endl;
-  	  return ;
-  	}
+	return ;
       if (_speed == Down)
   	{
   	  if (_steeringWheelIsTaken == true)
@@ -131,6 +128,12 @@ void	Window::keyPressEvent(QKeyEvent *event)
 	  launch("TurnRight");
 	  _steeringWheelDirection = Right;
 	}
+    }
+  else if (event->key() == Qt::Key_Space)
+    {
+      launch(_steeringWheelIsTaken == true ? "ReleaseSteeringWheel" :
+	     "TakeSteeringWheel");
+      _steeringWheelIsTaken = !_steeringWheelIsTaken;
     }
 }
 
