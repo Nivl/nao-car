@@ -3,6 +3,12 @@ cmake_policy(SET CMP0015 NEW)
 
 project(Drive)
 
+set(GCC46_PATH "/usr/bin/g++-4.6")
+
+if (EXISTS ${GCC46_PATH})
+   set (CMAKE_CXX_COMPILER ${GCC46_PATH})
+endif()
+
 set (CMAKE_CXX_FLAGS "-std=c++0x -W -Wall -Wno-ignored-qualifiers")
 
 find_package(Qt4 REQUIRED)

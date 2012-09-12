@@ -1,6 +1,12 @@
 cmake_minimum_required(VERSION 2.8)
 project(Pose)
 
+set(GCC46_PATH "/usr/bin/g++-4.6")
+
+if (EXISTS ${GCC46_PATH})
+   set (CMAKE_CXX_COMPILER ${GCC46_PATH})
+endif()
+
 set (CMAKE_CXX_FLAGS "-std=c++0x -W -Wall -Wno-ignored-qualifiers")
 
 find_package(qibuild)
