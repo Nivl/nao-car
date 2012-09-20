@@ -1,0 +1,30 @@
+\contentsline {chapter}{\numberline {1}Contexte}{2}
+\contentsline {section}{\numberline {1.1}Bilan de la technologie}{2}
+\contentsline {subsection}{\numberline {1.1.1}La robotique aujourd'hui}{2}
+\contentsline {subsubsection}{Asimo}{2}
+\contentsline {subsubsection}{Google Car}{3}
+\contentsline {subsection}{\numberline {1.1.2}NAO}{4}
+\contentsline {subsection}{\numberline {1.1.3}Kinect}{5}
+\contentsline {section}{\numberline {1.2}Un projet \IeC {\'e}tudiant}{5}
+\contentsline {subsection}{\numberline {1.2.1}Epitech}{5}
+\contentsline {subsection}{\numberline {1.2.2}PFA}{6}
+\contentsline {section}{\numberline {1.3}Une vision d'avenir}{6}
+\contentsline {chapter}{\numberline {2}D\IeC {\'e}finition des objectifs}{7}
+\contentsline {section}{\numberline {2.1}Les objectifs techniques}{7}
+\contentsline {subsection}{\numberline {2.1.1}Contr\IeC {\^o}le et d\IeC {\'e}placement du robot}{7}
+\contentsline {subsection}{\numberline {2.1.2}Intelligence artificielle: conduite autonome}{7}
+\contentsline {paragraph}{Conduite et reconnaissance de formes}{7}
+\contentsline {paragraph}{Vers une conduite en totale autonomie}{8}
+\contentsline {paragraph}{Plannification et mod\IeC {\'e}lisation}{8}
+\contentsline {subsection}{\numberline {2.1.3}Mat\IeC {\'e}riel}{8}
+\contentsline {section}{\numberline {2.2}Communication autour du projet}{8}
+\contentsline {subsection}{\numberline {2.2.1}\IeC {\'E}v\IeC {\`e}nements}{8}
+\contentsline {subsubsection}{Foire exposition de Montpellier}{8}
+\contentsline {subsubsection}{Montpellier In Game}{8}
+\contentsline {paragraph}{Salon de l'\IeC {\'e}tudiant de Montpellier}{9}
+\contentsline {subsection}{\numberline {2.2.2}Partenariat}{9}
+\contentsline {subsection}{\numberline {2.2.3}Vid\IeC {\'e}o de promotion}{9}
+\contentsline {subsection}{\numberline {2.2.4}Ouverture \IeC {\`a} la communaut\IeC {\'e}}{9}
+\contentsline {chapter}{\numberline {3}Planning}{10}
+\contentsline {section}{\numberline {3.1}Deadlines}{10}
+\contentsline {section}{\numberline {3.2}Planning g\IeC {\'e}n\IeC {\'e}ral}{10}
