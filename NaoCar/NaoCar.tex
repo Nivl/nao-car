@@ -52,6 +52,7 @@
 %%% END Article customizations
 
 %%% The "real" document content comes below...
+\setcounter{tocdepth}{3}
 
 \title{NaoCar}
 \author{Samuel Olivier\and
@@ -144,10 +145,22 @@ Loick Michard}
 \end{itemize}
 			Le robot doit pouvoir être contrôlé de manière très simple, via une interface proposant simplement les quatres actions avancer, reculer, tourner à gauche et tourner à droite.\\
 			Ce contrôle devra pouvoir être effectué depuis un ordinateur et/ou un appareil mobile (smartphone/tablette) connecté sur le même réseau que le robot.
+		\newpage
 		\subsection{Intelligence artificielle: conduite autonome}
-			\paragraph{Conduite et reconnaissance de formes}
-			\paragraph{Vers une conduite en totale autonomie}
-			\paragraph{Plannification et modélisation}
+			\subsubsection{Conduite et reconnaissance de formes}
+				Dans un premier temps, nao doit etre capable:
+				\begin{itemize}
+				\item De pouvoir conduire en suivant une ligne de couleur ou une piste spéciale
+				\item De reconnaitre des formes simples pour permettre de s'arrêter au feu rouge par exemple
+				\item De détecter les obstacles, s'arrêter, voire les contourner grâce au Kinect
+				\end{itemize}
+			\subsubsection{Vers une conduite en totale autonomie}
+				Dans un second temps, Nao doit pouvoir conduire dans un espace connu en totale autonomie.
+				Il doit pouvoir suivre un itinéraire donné, éviter les obstacles, et se repérer dans un environnement en 3 dimensions.\\
+				Il devra utiliser des techniques de localisation pour palier au problème du déterminisme de ses actions, comme les filtres particulaires.
+			\subsubsection{Plannification et modélisation}
+				Enfin, Nao pourra évoluer dans un monde inconnu. Il devra être capable de parcourir un tout nouvel environnement en dressant une carte en 2 ou 3 dimensions de celui-ci. Il devra pour cela utiliser des techniques de cartographie et de localisation simultanées (SLAM).\\
+				Grâce à cela, Nao sera en mesure de modeliser et de parcourir l'ensemble d'un environement totalement inconnu et non déerministe.
 		\subsection{Matériel}
 			Dans un premier temps, le véhicule utilisé sera une voiture pour enfant légèrement modifiée afin de pouvoir être pilotée par Nao. La voiture retenue se déplace à une vitesse de 3 km/h et dispose d'un faible angle de braquage. Cette première solution permettra de concevoir les solutions logicielles de pilotage et de conduite autonome afin de réaliser un premier prototype.\\
 			Dans une seconde partie, l'objectif est de réaliser un véhicule spécialement dédié au Nao, lui permettant de se déplacer plus vite et disposant d'un meilleur angle de braquage.
@@ -169,7 +182,7 @@ Loick Michard}
 				\label{fig:Montpellier In Game}
 				\end{figure}
                                 Le MIG est "un rendez-vous original pour l’industrie du jeu vidéo proposant à la fois des rencontres professionnelles de haut niveau et un grand salon populaire". Cet évènement se placent donc dans les dates clés de notre projet en matière de promotion et de communication afin de pouvoir avoir des contacts avec les professionnels intéressés.
-			\paragraph{Salon de l'étudiant de Montpellier}
+			\subsubsection{Salon de l'étudiant de Montpellier}
 		\subsection{Partenariat}
 		\subsection{Vidéo de promotion}
 		\subsection{Ouverture à la communauté}
