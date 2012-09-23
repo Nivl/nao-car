@@ -23,7 +23,7 @@
 \contentsline {subsubsection}{Montpellier In Game}{9}
 \contentsline {subsubsection}{Salon de l'\IeC {\'e}tudiant de Montpellier}{9}
 \contentsline {subsection}{\numberline {2.2.2}Partenariat}{9}
-\contentsline {subsection}{\numberline {2.2.3}Vid\IeC {\'e}o de promotion}{9}
+\contentsline {subsection}{\numberline {2.2.3}Vid\IeC {\'e}os de promotion}{9}
 \contentsline {subsection}{\numberline {2.2.4}Ouverture \IeC {\`a} la communaut\IeC {\'e}}{9}
 \contentsline {chapter}{\numberline {3}Planning}{10}
 \contentsline {section}{\numberline {3.1}Deadlines}{10}
