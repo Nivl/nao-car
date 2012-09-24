@@ -16,3 +16,6 @@
 /src/*/build-sys-linux-i686/
 /src/Drive/libPose
 .qi
+
+Thumbs.db
+*.synctex.gz
