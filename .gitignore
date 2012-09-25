@@ -17,5 +17,10 @@
 /src/Drive/libPose
 .qi
 
+# Latex
 Thumbs.db
 *.synctex.gz
+*.aux
+*.dvi
+*.log
+*.toc
