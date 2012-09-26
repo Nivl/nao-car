@@ -49,7 +49,7 @@ Window::Window(boost::shared_ptr<AL::ALBroker> broker) :
 
 Window::~Window()
 {
-  _camera.unsubscribe(_cameraId);
+  //_camera.unsubscribe(_cameraId);
 }
 
 void Window::updateCamera()
@@ -83,7 +83,10 @@ void	Window::keyPressEvent(QKeyEvent *event)
   	    {
   	      if (_steeringWheelDirection != Front)
   		{		
-  		  launch("TurnFront");
+		  const std::list<std::pair<Pose, float>>& poses = _animations["TurnFront"].getPoses();
+		  
+		  _poseManager.setPose(poses.front().first, 0.5);
+  		  //launch("TurnFront");
   		  _steeringWheelDirection = Front;
   		}
   	      launch("ReleaseSteeringWheel");
@@ -99,7 +102,9 @@ void	Window::keyPressEvent(QKeyEvent *event)
   	}
       if (_gasPedalIsPushed == false)
   	{
-  	  launch("PushGasPedal");
+	  const std::list<std::pair<Pose, float>>& poses = _animations["PushGasPedal"].getPoses();
+	  _poseManager.setPose(poses.front().first, 0.5);
+  	  //launch("PushGasPedal");
   	  _gasPedalIsPushed = true;
   	}
     }
@@ -113,7 +118,9 @@ void	Window::keyPressEvent(QKeyEvent *event)
   	    {
   	      if (_steeringWheelDirection != Front)
   		{		
-  		  launch("TurnFront");
+		  const std::list<std::pair<Pose, float>>& poses = _animations["TurnFront"].getPoses();		  
+		  _poseManager.setPose(poses.front().first, 0.5);
+  		  //launch("TurnFront");
   		  _steeringWheelDirection = Front;
   		}
   	      launch("ReleaseSteeringWheel");
@@ -129,7 +136,9 @@ void	Window::keyPressEvent(QKeyEvent *event)
   	}
       if (_gasPedalIsPushed == false)
   	{
-  	  launch("PushGasPedal");
+	  const std::list<std::pair<Pose, float>>& poses = _animations["PushGasPedal"].getPoses();
+	  _poseManager.setPose(poses.front().first, 0.5);
+  	  //launch("PushGasPedal");
   	  _gasPedalIsPushed = true;
   	}
     }
@@ -143,7 +152,10 @@ void	Window::keyPressEvent(QKeyEvent *event)
   	}
       if (_steeringWheelDirection != Left)
 	{
-	  launch("TurnLeft");
+	  const std::list<std::pair<Pose, float>>& poses = _animations["TurnLeft"].getPoses();
+
+	  _poseManager.setPose(poses.front().first, 0.5);
+	  //launch("TurnLeft");
 	  _steeringWheelDirection = Left;
 	}
     }
@@ -157,7 +169,10 @@ void	Window::keyPressEvent(QKeyEvent *event)
   	}
       if (_steeringWheelDirection != Right)
 	{
-	  launch("TurnRight");
+	  const std::list<std::pair<Pose, float>>& poses = _animations["TurnRight"].getPoses();
+
+	  _poseManager.setPose(poses.front().first, 0.5);
+	  //launch("TurnRight");
 	  _steeringWheelDirection = Right;
 	}
     }
@@ -177,7 +192,9 @@ void	Window::keyReleaseEvent(QKeyEvent *event)
     {
       if (_speed == Up && _gasPedalIsPushed == true)
   	{
-  	  launch("ReleaseGasPedal");
+	  const std::list<std::pair<Pose, float>>& poses = _animations["ReleaseGasPedal"].getPoses();
+	  _poseManager.setPose(poses.front().first, 0.5);
+  	  //launch("ReleaseGasPedal");
   	  _gasPedalIsPushed = false;
   	}
     }
@@ -185,7 +202,9 @@ void	Window::keyReleaseEvent(QKeyEvent *event)
     {
       if (_speed == Down && _gasPedalIsPushed == true)
   	{
-  	  launch("ReleaseGasPedal");
+	  const std::list<std::pair<Pose, float>>& poses = _animations["ReleaseGasPedal"].getPoses();
+	  _poseManager.setPose(poses.front().first, 0.5);
+  	  //launch("ReleaseGasPedal");
   	  _gasPedalIsPushed = false;
   	}
     }
@@ -193,7 +212,9 @@ void	Window::keyReleaseEvent(QKeyEvent *event)
     {
       if (_steeringWheelIsTaken == true && _steeringWheelDirection == Left)
 	{
-	  launch("TurnFront");
+	  //launch("TurnFront");
+	  const std::list<std::pair<Pose, float>>& poses = _animations["TurnFront"].getPoses();
+	  _poseManager.setPose(poses.front().first, 0.5);
 	  _steeringWheelDirection = Front;
 	}
     }
@@ -201,7 +222,9 @@ void	Window::keyReleaseEvent(QKeyEvent *event)
     {
       if (_steeringWheelIsTaken == true && _steeringWheelDirection == Right)
 	{
-	  launch("TurnFront");
+	  //launch("TurnFront");
+	  const std::list<std::pair<Pose, float>>& poses = _animations["TurnFront"].getPoses();
+	  _poseManager.setPose(poses.front().first, 0.5);
 	  _steeringWheelDirection = Front;
 	}
     }
