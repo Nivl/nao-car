@@ -69,57 +69,26 @@ Loick Michard}
 
 \chapter{Contexte}
 	\section{Bilan de la technologie}
-		\subsection{La robotique aujourd'hui}
-			Depuis quelques années, la recherche en matière de robotique a tendance à évoluer en direction des robots humanoïdes.
-			En effet, les chercheurs visent à construire des robots effectuant toutes les actions qu'un humain est capable de réaliser.
-			Notamment marcher sur deux jambes, attraper des objets, parler, communiquer ou même conduire...\\
-			La recherche en robotique a pour objectif final d'assister l'humain dans les taches quotidiennes, voire de le remplacer.
-			\subsubsection{Asimo}
-				\begin{figure}[htb]
-				\centering
-				\includegraphics[width=0.8\textwidth]{asimo-history.jpg}
-				\caption{Histoire de l'Asimo}
-				\label{fig:asimo}
-				\end{figure}
-				\newpage
-				L'Asimo représente la pointe de la robotique en matière d'humanoide.
-				Il est capable de courir jusqu'à 9 km/h tout en changeant sa trajectoire, monter et descendre les escaliers, détecter les mouvements des objets, garder son équilibre...
-			\subsubsection{Google Car}
-				\begin{figure}[htb]
-				\centering
-				\includegraphics[width=0.8\textwidth]{google-car.jpeg}
-				\caption{Google Car}
-				\label{fig:google-car}
-				\end{figure}
-				La Google car est une des dernières innovation de Google en terme de recherche et de développement.
-				Elle intègre une intelligence artificielle capable de conduir en autonomie dans des conditions très variés, de s'intégrer dans le trafic, de prévoir les actions des autres usagers... Elle a déjà été autorisé à conduire en autonomie dans plusieurs états Américains et parcourue plusieurs milliers de kilometres.
-		\newpage
-		\subsection{NAO}
+		Depuis quelques années, la recherche en matière de robotique a tendance à évoluer en direction des robots humanoïdes.
+		En effet, les chercheurs visent à construire des robots effectuant toutes les actions qu'un humain est capable de réaliser.
+		Notamment marcher sur deux jambes, attraper des objets, parler, communiquer ou même conduire...\\
+		La recherche en robotique a pour objectif final d'assister l'humain dans les taches quotidiennes, voire de le remplacer.\\\\
+		\begin{figure}[htb]
+			\centering
+			\includegraphics[scale=1]{google-car.jpeg}
+			\caption{Google self driving car}
+			\label{fig:google-car}
+		\end{figure}
+	\newpage
+	\section{Un projet étudiant}
+		\subsection{Description du projet}
 			\begin{figure}[htb]
 			\centering
 			\includegraphics[scale=0.2]{nao2.jpg}
 			\caption{NAO}
 			\label{fig:nao}
 			\end{figure}
-			Nao est un robot humanoïde concu par la société Aldebaran pour etre entièrement programmable. Il dispose de 25 degrès de liberté, 1 accéléromètre, 2 gyromètres, et 2 caméras HD. Depuis le 15 août 2007, NAO remplace le chien robot Aibo de Sony comme plateforme standard de la RoboCup.
-		\newpage
-		\subsection{Kinect}
-				\begin{figure}[htb]
-				\centering
-				\includegraphics[width=0.8\textwidth]{kinect.jpg}
-				\caption{Kinect}
-				\label{fig:kinect}
-				\end{figure}
-				Kinect est une technologie développée par Microsoft permettant de controler un jeux vidéo sans utiliser de manette. Il est équipé d'une caméra et d'un capteur laser balayant l'environnement pour construire une image en profondeur de celui-ci. Gràce à ces deux capteurs, Kinect permet de connaitre la position dans l'espace des objects ainsi que détecter les mouvements des utilisateurs.
-	\section{Un projet étudiant}
-		\subsection{Epitech}
-			\begin{figure}[htb]
-			\centering
-			\includegraphics[width=0.8\textwidth]{epitech.png}
-			\caption{Epitech}
-			\label{fig:epitech}
-			\end{figure}
-			Epitech est une école d’informatique en 5 ans après le bac. Son modèle pédagogique novateur fournit aux étudiants trois qualités fondamentales : l’adaptabilité, l’auto-progression et le sens du projet.
+		Le projet NaoCar s'inspire de projets de conduite autonome, comme la google self-driving car. La différence majeure par rapport aux projets existant est le fait que la voiture soit pilotée par un robot humanoide: Nao. Celui-ci place l'intéraction homme-machine au centre du projet. Grâce à ces nombreux capteurs et servomoteurs, il devra être capable de piloter une voiture miniature adaptée avec une autonomie maximale.
 		\subsection{PFA}
 			Notre projet s'inscrit dans le cadre de la 3ème année à Epitech. Il se déroule pendant un an, incluant plannification, organisation, recherche de partenaires et développement du projet.\\
 			
@@ -144,22 +113,30 @@ Loick Michard}
 \item Appuyer sur la pédale d'accélération
 \end{itemize}
 			Le robot doit pouvoir être contrôlé de manière très simple, via une interface proposant simplement les quatres actions avancer, reculer, tourner à gauche et tourner à droite.\\
-			Ce contrôle devra pouvoir être effectué depuis un ordinateur et/ou un appareil mobile (smartphone/tablette) connecté sur le même réseau que le robot.
+			Ce contrôle devra pouvoir être effectué depuis un ordinateur et/ou un appareil mobile (smartphone/tablette) connecté sur le même réseau que le robot. On pourra aussi visualisé ce que voit Nao via cette même interface.
 		\newpage
 		\subsection{Intelligence artificielle: conduite autonome}
 			\subsubsection{Conduite et reconnaissance de formes}
 				Dans un premier temps, nao doit etre capable:
 				\begin{itemize}
-				\item De pouvoir conduire en suivant une ligne de couleur ou une piste spéciale
+				\item De pouvoir conduire en suivant une ligne de couleur ou une piste différenciable
 				\item De reconnaitre des formes simples pour permettre de s'arrêter au feu rouge par exemple
 				\item De détecter les obstacles, s'arrêter, voire les contourner grâce au Kinect
-				\end{itemize}\
+				\end{itemize}
 			\subsubsection{Vers une conduite en totale autonomie}
-				Dans un second temps, Nao doit pouvoir conduire dans un espace connu en totale autonomie.
-				Il doit pouvoir suivre un itinéraire donné, éviter les obstacles, et se repérer dans un environnement en 3 dimensions.\\
-				Il devra utiliser des techniques de localisation pour palier au problème du déterminisme de ses actions, comme les filtres particulaires.
+				Dans un second temps, Nao doit pouvoir:
+				\begin{itemize}
+			  	\item Conduire dans un espace connu en totale autonomie.
+				\item Suivre un itinéraire donné
+				\item Éviter les obstacles
+				\item Se repérer dans un environnement en 3 dimensions.
+				\end{itemize}
 			\subsubsection{Plannification et modélisation}
-				Enfin, Nao pourra évoluer dans un monde inconnu. Il devra être capable de parcourir un tout nouvel environnement en dressant une carte en 2 ou 3 dimensions de celui-ci. Il devra pour cela utiliser des techniques de cartographie et de localisation simultanées (SLAM).\\
+				Enfin, Nao pourra évoluer dans un monde inconnu. Il devra être capable:
+				\begin{itemize}
+				\item De parcourir un tout nouvel environnement
+				\item De Dresser une carte en 2 ou 3 dimensions de celui-ci.
+				\end{itemize}
 				Grâce à cela, Nao sera en mesure de modeliser et de parcourir l'ensemble d'un environement totalement inconnu et non déerministe.
 		\subsection{Matériel}
 			Dans un premier temps, le véhicule utilisé sera une voiture pour enfant légèrement modifiée afin de pouvoir être pilotée par Nao. La voiture retenue se déplace à une vitesse de 3 km/h et dispose d'un faible angle de braquage. Cette première solution permettra de concevoir les solutions logicielles de pilotage et de conduite autonome afin de réaliser un premier prototype.\\
@@ -173,7 +150,8 @@ Loick Michard}
 				\caption{Foire Expo Montpellier}
 				\label{fig:Foire Expo Montpellier}
 				\end{figure}
-				La foire expositons internationale de Montpellier est un évènement de choix pour présenter le projet NaoCar au public pour la première fois. Installée au Parc des Expositions de Montpellier, elle dispose d'un espace d'exposition de 88 000 m\textsuperscript{2}, réunissant 1000 exposants durant 11 journées.
+				La foire expositons internationale de Montpellier est un évènement de choix pour présenter le projet NaoCar au public pour la première fois. Installée au Parc des Expositions de Montpellier, elle dispose d'un espace d'exposition de 88 000 m\textsuperscript{2}, réunissant 1000 exposants durant 11 journées.\\
+				Cet évènement constitu la première démonstration publique du projet. Il permettra de tester la réaction à un public non-initié face aux différentes démontrations.
 			\subsubsection{Montpellier In Game}
 				\begin{figure}[htb]
 				\centering
@@ -181,7 +159,9 @@ Loick Michard}
 				\caption{Montpellier In Game}
 				\label{fig:Montpellier In Game}
 				\end{figure}
-	                        Le MIG est "un rendez-vous original pour l’industrie du jeu vidéo proposant à la fois des rencontres professionnelles de haut niveau et un grand salon populaire". Cet évènement se place donc dans les dates clés de notre projet en matière de promotion et de communication afin de pouvoir avoir des contacts avec les professionnels intéressés.
+	                        Le MIG est "un rendez-vous original pour l’industrie du jeu vidéo proposant à la fois des rencontres professionnelles de haut niveau et un grand salon populaire". \\Cet évènement se place donc dans les dates clés de notre projet en matière de promotion et de communication afin de pouvoir avoir des contacts avec les professionnels intéressés. Ce salon permettra aussi de tester la réaction d'un public initié aux nouvelles technologies.
+			L'objectif principal est d'obtenir un maximum de visite sur le stand du projet NaoCar.
+		\newpage
 	                \subsubsection{Salon de l'étudiant de Montpellier}
 				\begin{figure}[htb]
 				\centering
@@ -193,9 +173,43 @@ Loick Michard}
 		\subsection{Partenariat}
 			Afin de travailler dans de meilleures conditions nous envisageons divers partenariats, et plus particulièrement un partenariat avec un concessionaire automobile qui serai apte à nous fournir une voiture de meilleure qualité.
 		\subsection{Vidéos de promotion}
-			Des vidéos de promotion devront être réalisées et diffusées sur les réseaux sociaux ainsi que sur différentes plateformes de streaming, afin faire connaitre le projet au plus de personnes possible, et ainsi d'améliorer les chances de partenariats.
+			Des vidéos de promotion devront être réalisées et diffusées sur les réseaux sociaux ainsi que sur différentes plateformes de streaming, afin faire connaitre le projet au plus de personnes possible, et ainsi d'améliorer les chances de partenariats.\\
+			Notre objectif est de réaliser plus de 100 000 vues.
 		\subsection{Ouverture à la communauté}
 			Les sources du projet sont disponible sur Github sous licence libre, ce qui permet à toutes les personnes intéressées d'utiliser et de modifier NaoCar comme bon leur semble.
+
+\chapter{Problématiques et solutions techniques}
+	\section{Mise en place technique}
+		\subsection{Contrôle et déplacement du robot}
+			\paragraph{Problématiques}
+				Pour répondre aux besoins du Nao pour l'intéraction avec la voiture, celle-ci doit être adaptée à ces mouvements. Pour cela il faudra construire un siège ainsi qu'un guidon pour mettre Nao dans la meilleure position possible.\\
+				Nous devrons résoudre les problèmes liés à la direction, pour une meilleure maniabilité de la voiture.
+		\subsection{Intelligence artificielle: conduite autonome}
+			\subsubsection{Conduite et reconnaissance de formes}
+				Nao devra pouvoir conduire en suivant une piste reconnaissable. En effet, la piste doit être repérable dans l'environnement par une webcam. On utilisera la librairie openCV, qui est directement intégrée au SDK Nao. Grâce à cette même librairie, Nao détectera un feu tricolore. La difficulté repose dans le fait d'isoler une sphère d'une couleur spécifique dans l'image de la caméra.
+			\subsubsection{Vers une conduite en totale autonomie}
+				Pour palier au problème de déplacements approximatifs de la NaoCar, nous devrons mettre en place un algorithme d'intelligence artificielle permetant au Nao de se repérer dans un monde non-déterministe. Nous utliserons la méthode des filtres particulaires pour situer Nao dans son environnement. \\ Nous devrons étudier les différents paramètres du programme en ce qui concerne la marge d'erreur des différents mouvements. Les caméras du Nao n'étant pas suffisantes, nous utiliserons un radar, comme le Kinect, pour détecter la distance au mur se situant devant Nao.\\
+Grâce à ce radar, nous pourrons également détecter les obstacles trop proches de Nao.
+			\subsubsection{Plannification et modélisation}	
+				Nao devra résoudre le problème de déplacement dans un monde continu non-déterministe.
+				Il prendra en compte le caractère approximatif de ces mouvements et de ses perceptions.\\
+				Dans un second temps, Nao sera capable de cartographer son environnement. Il pourra ainsi se déplacer dans un contexte totalement inconnu. Pour cela il utilisera une technique de S.L.A.M. (Simultaneous localization and mapping).
+		\subsection{Matériel}
+			\subsubsection{Voiture}
+			Dans un premier temps, Nao disposera d'une voiture pour enfant modèle Fiat 500. Ce modèle engendre de nombreux problème pour le pilotage de Nao. En effet, il faudra modifier le siège pour rendre la conduite facile, ainsi que remplacer le volant par un guidon pour plus de maniabilité.\\
+			D'autre problème se posent, comme la précision de la direction qui sera difficile à corriger. On peut imaginer construire une voiture personnalisée à Nao dans une seconde partie pour minimiser les problèmes de contrôle.
+			\subsubsection{Nao}
+			Nous disposons actuellement d'un Nao V3, et une tete next-gen. Ce robot à des problèmes de précision des mouvements et de surchauffe après une longue utilisation. Idéalement, nous aimerions posséder un Nao next-gen permettant plus de liberté et d'actions.
+			\subsubsection{Batterie}
+			Nao à une autonomie assez faible (15 minutes), c'est pourquoi nous voulons augmentez celle-ci. De plus, la Nao Car embarquera un Kinect qui doit etre alimenté. Pour cela nous ajouterons à la voiture une batterie permettant d'alimenter le Nao et la Kinect.
+			\subsubsection{Wifi}
+			Pour pouvoir controler Nao sur de grande distances, nous souhaiterions embarquer un routeur wifi sur la voiture pour une plus grande portée. En effet, la carte wifi du Nao permet d'émettre et de recevoir seulement sur une distance de 10 mètres.
+	\newpage
+	\section{Communication autour du projet}
+		\subsection{Vidéos de promotion}
+			Pour maximiser le nombre de vues, nous allons axer nos efforts sur la réalisation et la promotion de la vidéo.\\
+			Pour cela, nous tournerons la vidéo avec un appareil photo proffessionel. Le montage devra être accrocheur, avoir un scénario, des musiques, des effets, etc..\\
+			Nous devrons faire la promotions de la vidéo sur internet en la publiant sur les différentes plateformes d'hébergement vidéos comme Youtube et Daylimotion. Ainsi que partager la vidéo sur les réseaux sociaux et les sites de vidéos inédites.
 \chapter{Planning}
 	\section{Deadlines}
 		\subsection{6 octobre 2012}
