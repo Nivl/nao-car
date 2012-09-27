@@ -5,7 +5,7 @@
 // Login   <olivie_a@epitech.net>
 // 
 // Started on  Thu Sep  6 23:58:43 2012 samuel olivier
-// Last update Tue Sep 25 20:52:10 2012 gael jochaud-du-plessix
+// Last update Wed Sep 26 20:08:10 2012 samuel olivier
 //
 
 #include <alcommon/albroker.h>
@@ -69,4 +69,9 @@ Pose	PoseManager::getRobotPose()
   for (uint i = 0; i < names.size(); ++i)
     res.setAngle(names[i], angles[i]);
   return (res);
+}
+
+AL::ALMotionProxy&	PoseManager::getMotionProxy()
+{
+  return (_motion);
 }

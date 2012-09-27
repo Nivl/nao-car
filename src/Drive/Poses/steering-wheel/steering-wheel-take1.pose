@@ -1,6 +1,4 @@
 take
-HeadPitch;0.506178141
-HeadYaw;0.08893013
 LAnklePitch;-0.0291879177
 LAnkleRoll;-0.0106959343
 LElbowRoll;-1.53395808
@@ -13,8 +11,6 @@ LKneePitch;1.04921412
 LShoulderPitch;1.51094806
 LShoulderRoll;-0.211734056
 LWristYaw;-1.41439009
-RAnklePitch;-0.177901983
-RAnkleRoll;-0.00609397888
 RElbowRoll;1.374506
 RElbowYaw;1.55696809
 RHand;0.997599959

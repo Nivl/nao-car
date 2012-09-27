@@ -5,7 +5,7 @@
 // Login   <olivie_a@epitech.net>
 // 
 // Started on  Thu Sep  6 23:58:39 2012 samuel olivier
-// Last update Tue Sep 25 19:00:26 2012 gael jochaud-du-plessix
+// Last update Wed Sep 26 20:07:41 2012 samuel olivier
 //
 
 #ifndef __POSE_MANAGER_HH__
@@ -30,6 +30,8 @@ public:
   void	takePose(Pose const& pose, float duration);
   void	setPose(Pose const& pose, float speed);
   Pose	getRobotPose();
+
+  AL::ALMotionProxy&	getMotionProxy();
 
 private:
   boost::shared_ptr<AL::ALBroker>	_broker;

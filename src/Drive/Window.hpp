@@ -5,7 +5,7 @@
 // Login   <olivie_a@epitech.net>
 // 
 // Started on  Fri Sep  7 19:59:36 2012 samuel olivier
-// Last update Mon Sep 10 15:46:44 2012 gael jochaud-du-plessix
+// Last update Thu Sep 27 00:51:02 2012 samuel olivier
 //
 
 #ifndef __WINDOW__
@@ -62,12 +62,12 @@ private:
       Down
     };
 
-  std::map<std::string, Animation>	_animations;
-  PoseManager	_poseManager;
-  bool		_steeringWheelIsTaken;
-  bool		_gasPedalIsPushed;
-  SteeringWheel	_steeringWheelDirection;
-  Speed		_speed;
+  // std::map<std::string, Animation>	_animations;
+  // PoseManager	_poseManager;
+  // bool		_steeringWheelIsTaken;
+  // bool		_gasPedalIsPushed;
+  // SteeringWheel	_steeringWheelDirection;
+  // Speed		_speed;
   AL::ALVideoDeviceProxy	_camera;
   std::string			_cameraId;
   QTimer*			_cameraTimer;
