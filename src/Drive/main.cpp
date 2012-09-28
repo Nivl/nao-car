@@ -5,7 +5,7 @@
 // Login   <olivie_a@epitech.net>
 // 
 // Started on  Wed Sep  5 23:56:24 2012 samuel olivier
-// Last update Fri Sep  7 00:49:35 2012 samuel olivier
+// Last update Fri Sep 28 15:18:57 2012 samuel olivier
 //
 
 #include <iostream>
@@ -17,7 +17,7 @@
 #include <alcommon/albrokermanager.h>
 #include <alcommon/altoolsmain.h>
 
-#include "Drive.hh"
+#include "Drive.hpp"
 
 #ifdef _WIN32
 # define ALCALL __declspec(dllexport)
@@ -45,10 +45,10 @@ extern "C"
 
 int main(int argc, char *argv[])
 {
-  // pointer to createModule                                                                                                                               
+  // pointer to createModule
   TMainType sig;
   sig = &_createModule;
-  // call main                                                                                                                                             
+  // call main
   return ALTools::mainFunction("Drive", argc, argv, sig);
 }
 #endif

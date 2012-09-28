@@ -5,10 +5,11 @@
 // Login   <olivie_a@epitech.net>
 // 
 // Started on  Wed Sep 26 15:45:37 2012 samuel olivier
-// Last update Fri Sep 28 03:02:46 2012 samuel olivier
+// Last update Fri Sep 28 19:10:54 2012 samuel olivier
 //
 
 #include <iostream>
+#include <alcommon/almodulecore.h>
 #include "sfWindow.hpp"
 
 int main(int ac, char **av)
@@ -27,7 +28,10 @@ int main(int ac, char **av)
                                           0,
                                           av[1],
                                           9559,
-                                          0);
+                                          0);      
+#ifndef DRIVE_IS_REMOTE
+      AL::ALModuleCore::createModuleCore<Drive>(broker, "Drive");
+#endif
     }
   catch (...)
     {

@@ -17,12 +17,10 @@ find_package (SFML 2.0 REQUIRED window graphics system network)
 
 option(DRIVE_IS_REMOTE
   "module is compiled as a remote module (ON or OFF)"
-  ON)
+  OFF)
 
 set(_srcs
-    Drive.cpp
-    Drive.hh
-    main.cpp)
+    Drive.cpp)
 
 if(DRIVE_IS_REMOTE)
 	add_definitions( " -DDRIVE_IS_REMOTE ")
@@ -32,23 +30,33 @@ else()
 endif()
 
 qi_use_lib(Drive ALCOMMON BOOST)
-link_directories(libPose)
 find_library(POSE_DIR Pose lib)
-include_directories(libPose)
 target_link_libraries(Drive ${POSE_DIR})
-
-set(QtAppSrcs qtMain.cpp Window.cpp)
-set(QtAppHeaders Window.hpp)
-qt4_wrap_cpp(QtAppHeadersMoc ${QtAppHeaders})
-qi_create_bin(QtApp ${QtAppSrcs} ${QtAppHeadersMoc})
-qi_use_lib(QtApp ALCOMMON BOOST)
-add_definitions(${QT_DEFINITIONS})
-include(${QT_USE_FILE})
 include_directories(include)
-target_link_libraries(QtApp ${QT_LIBRARIES} ${POSE_DIR})
+
+include_directories(.)
+set(DriveProxySrcs DriveProxy.cpp)
+qi_create_lib(DriveProxy ${DriveProxySrcs})
+qi_use_lib(DriveProxy ALCOMMON BOOST)
+target_link_libraries(DriveProxy Drive)
+
+# set(QtAppSrcs qtMain.cpp Window.cpp)
+# set(QtAppHeaders Window.hpp)
+# qt4_wrap_cpp(QtAppHeadersMoc ${QtAppHeaders})
+# qi_create_bin(QtApp ${QtAppSrcs} ${QtAppHeadersMoc})
+# qi_use_lib(QtApp ALCOMMON BOOST)
+# add_definitions(${QT_DEFINITIONS})
+# include(${QT_USE_FILE})
+# target_link_libraries(QtApp ${QT_LIBRARIES} ${POSE_DIR})
 
 set(SfmlAppSrcs sfmlMain.cpp sfWindow.cpp)
 qi_create_bin(SfmlApp ${SfmlAppSrcs})
 qi_use_lib(SfmlApp ALCOMMON BOOST)
-include_directories(/usr/include/gstreamer-0.10 /usr/include/glib-2.0 /usr/lib64/glib-2.0/include /usr/include/libxml2)
-target_link_libraries(SfmlApp ${SFML_LIBRARIES} ${POSE_DIR} pthread gstreamer-0.10 gobject-2.0 gmodule-2.0 xml2 gthread-2.0 rt glib-2.0 gstapp-0.10)
+include_directories(/usr/include/gstreamer-0.10
+		    /usr/include/glib-2.0
+		    /usr/lib64/glib-2.0/include
+		    /usr/include/libxml2)
+target_link_libraries(SfmlApp ${SFML_LIBRARIES} ${POSE_DIR}
+		      pthread gstreamer-0.10 gobject-2.0
+		      gmodule-2.0 xml2 gthread-2.0 rt
+		      glib-2.0 gstapp-0.10 DriveProxy)

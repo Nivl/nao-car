@@ -70,8 +70,9 @@ void Window::updateCamera()
   _camera.releaseImage(_cameraId);
 }
 
-void	Window::keyPressEvent(QKeyEvent *event)
+void	Window::keyPressEvent(QKeyEvent *event)  
 {
+  (void)event;
   // if (event->isAutoRepeat())
   //   return ;
   // if (event->key() == Qt::Key_Up)
@@ -187,6 +188,7 @@ void	Window::keyPressEvent(QKeyEvent *event)
 
 void	Window::keyReleaseEvent(QKeyEvent *event)
 {
+  (void)event;
   // if (event->isAutoRepeat())
   //   return ;
   // if (event->key() == Qt::Key_Up)
@@ -233,6 +235,7 @@ void	Window::keyReleaseEvent(QKeyEvent *event)
 
 void	Window::launch(std::string const& name)
 {
+  (void)name;
   // try
   //   {
   //     _animations[name].animate(_poseManager);
