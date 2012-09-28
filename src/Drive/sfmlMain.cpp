@@ -5,7 +5,7 @@
 // Login   <olivie_a@epitech.net>
 // 
 // Started on  Wed Sep 26 15:45:37 2012 samuel olivier
-// Last update Thu Sep 27 12:11:40 2012 samuel olivier
+// Last update Fri Sep 28 03:02:46 2012 samuel olivier
 //
 
 #include <iostream>
@@ -33,10 +33,11 @@ int main(int ac, char **av)
     {
       std::cerr << "Error" << std::endl;
     }
+  gst_init (&ac, &av);
   int id = 1;
   if (ac == 3)
     id = std::atoi(av[2]);
-  Window	win(broker, id);
+  Window	win(broker, id, av[1]);
   win.exec();
   return (0);
 }

@@ -14,7 +14,7 @@ set (CMAKE_CXX_FLAGS "-std=c++0x -W -Wall -Wno-ignored-qualifiers")
 find_package(Qt4 REQUIRED)
 find_package(qibuild)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/CMake/Modules ${CMAKE_MODULE_PATH})
-find_package (SFML 2.0 REQUIRED window graphics system)
+find_package (SFML 2.0 REQUIRED window graphics system network)
 
 option(DRIVE_IS_REMOTE
   "module is compiled as a remote module (ON or OFF)"
@@ -51,4 +51,5 @@ target_link_libraries(QtApp ${QT_LIBRARIES} ${POSE_DIR})
 set(SfmlAppSrcs sfmlMain.cpp sfWindow.cpp)
 qi_create_bin(SfmlApp ${SfmlAppSrcs})
 qi_use_lib(SfmlApp ALCOMMON BOOST)
-target_link_libraries(SfmlApp ${SFML_LIBRARIES} ${POSE_DIR})
+include_directories(/usr/include/gstreamer-0.10 /usr/include/glib-2.0 /usr/lib64/glib-2.0/include /usr/include/libxml2)
+target_link_libraries(SfmlApp ${SFML_LIBRARIES} ${POSE_DIR} pthread gstreamer-0.10 gobject-2.0 gmodule-2.0 xml2 gthread-2.0 rt glib-2.0 gstapp-0.10)
