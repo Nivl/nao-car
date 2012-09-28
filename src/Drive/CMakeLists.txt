@@ -34,7 +34,7 @@ endif()
 
 qi_use_lib(Drive ALCOMMON BOOST)
 link_directories(libPose)
-find_library(POSE_DIR Pose libPose)
+find_library(POSE_DIR Pose lib)
 include_directories(libPose)
 target_link_libraries(Drive ${POSE_DIR})
 
@@ -45,7 +45,7 @@ qi_create_bin(QtApp ${QtAppSrcs} ${QtAppHeadersMoc})
 qi_use_lib(QtApp ALCOMMON BOOST)
 add_definitions(${QT_DEFINITIONS})
 include(${QT_USE_FILE})
-include_directories(libPose)
+include_directories(include)
 target_link_libraries(QtApp ${QT_LIBRARIES} ${POSE_DIR})
 
 set(SfmlAppSrcs sfmlMain.cpp sfWindow.cpp)
