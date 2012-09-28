@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 2.8)
 cmake_policy(SET CMP0015 NEW)
 
 project(Drive)
-set(CMAKE_MODULE_PATH "~/rendu/nao/nao-car/src/Drive/cmake/Modules/")
 set(GCC46_PATH "/usr/bin/g++-4.6")
 
 if (EXISTS ${GCC46_PATH})
@@ -13,7 +12,7 @@ set (CMAKE_CXX_FLAGS "-std=c++0x -W -Wall -Wno-ignored-qualifiers")
 
 find_package(Qt4 REQUIRED)
 find_package(qibuild)
-set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/CMake/Modules ${CMAKE_MODULE_PATH})
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/CMake/Modules)
 find_package (SFML 2.0 REQUIRED window graphics system network)
 
 option(DRIVE_IS_REMOTE
