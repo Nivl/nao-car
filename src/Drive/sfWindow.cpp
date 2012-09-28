@@ -5,7 +5,7 @@
 // Login   <olivie_a@epitech.net>
 // 
 // Started on  Wed Sep 26 18:34:52 2012 samuel olivier
-// Last update Fri Sep 28 03:12:11 2012 samuel olivier
+// Last update Fri Sep 28 11:48:32 2012 gael jochaud-du-plessix
 //
 
 #include <iostream>
@@ -43,6 +43,8 @@ static GstFlowReturn appsink_new_buffer(GstAppSink *sink, gpointer user_data)
   gst_structure_get_int(structure, "height", &height);
   gst_structure_get_int(structure, "bpp", &bpp);
   ((Window *)user_data)->setStreamImage(data, width, height, bpp);
+  gst_caps_unref(caps);
+  gst_buffer_unref(buffer);
   return GST_FLOW_OK;
 }
 
