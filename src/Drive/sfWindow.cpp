@@ -309,6 +309,8 @@ void	Window::checkEvent(sf::Event *event)
 
 void	Window::checkJoystick()
 {
+  if (!sf::Joystick::isConnected(_joystickId))
+    return ;
   if (_module.isAnimating() == false &&
       !sf::Joystick::isButtonPressed(_joystickId, 2) &&
       _module.isNoHand() == true)
