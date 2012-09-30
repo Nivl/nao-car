@@ -21,42 +21,48 @@
 
 #include "Drive.hpp"
 
+#ifdef NAO_LOCAL_COMPILATION
+# define POSE_DIR "/home/nao/modules/Poses/"
+#else
+# define POSE_DIR "Poses/"
+#endif
+
 static void	launchAnimThread(void *mod);
 
 std::map<std::string, Drive::Anim>	Drive::_animations =
   {
     {"DownShift",
-     Anim{Animation::loadFromFile("Poses/downshift.anim"), Down,
+     Anim{Animation::loadFromFile(POSE_DIR "downshift.anim"), Down,
 	  (std::atomic<int> (Drive::*))&Drive::_speed}},
     {"UpShift",
-     Anim{Animation::loadFromFile("Poses/upshift.anim"), Up,
+     Anim{Animation::loadFromFile(POSE_DIR "upshift.anim"), Up,
 	  (std::atomic<int> (Drive::*))&Drive::_speed}},
     {"PushGasPedal",
-     Anim{Animation::loadFromFile("Poses/push-gas-pedal.anim"), true,
+     Anim{Animation::loadFromFile(POSE_DIR "push-gas-pedal.anim"), true,
 	  (std::atomic<int> (Drive::*))&Drive::_gasPedalIsPushed}},
     {"ReleaseGasPedal",
-     Anim{Animation::loadFromFile("Poses/release-gas-pedal.anim"), false,
+     Anim{Animation::loadFromFile(POSE_DIR "release-gas-pedal.anim"), false,
 	  (std::atomic<int> (Drive::*))&Drive::_gasPedalIsPushed}},
     {"TakeSteeringWheel",
-     Anim{Animation::loadFromFile("Poses/take-steering-wheel.anim"), true,
+     Anim{Animation::loadFromFile(POSE_DIR "take-steering-wheel.anim"), true,
 	  (std::atomic<int> (Drive::*))&Drive::_steeringWheelIsTaken}},
     {"ReleaseSteeringWheel",
-     Anim{Animation::loadFromFile("Poses/release-steering-wheel.anim"), false,
+     Anim{Animation::loadFromFile(POSE_DIR "release-steering-wheel.anim"), false,
 	  (std::atomic<int> (Drive::*))&Drive::_steeringWheelIsTaken}},
     {"TurnLeft",
-     Anim{Animation::loadFromFile("Poses/turn-left.anim"), Left,
+     Anim{Animation::loadFromFile(POSE_DIR "turn-left.anim"), Left,
 	  (std::atomic<int> (Drive::*))&Drive::_steeringWheelDirection}},
     {"TurnFront",
-     Anim{Animation::loadFromFile("Poses/turn-front.anim"), Front,
+     Anim{Animation::loadFromFile(POSE_DIR "turn-front.anim"), Front,
 	  (std::atomic<int> (Drive::*))&Drive::_steeringWheelDirection}},
     {"TurnRight",
-     Anim{Animation::loadFromFile("Poses/turn-right.anim"), Right,
+     Anim{Animation::loadFromFile(POSE_DIR "turn-right.anim"), Right,
 	  (std::atomic<int> (Drive::*))&Drive::_steeringWheelDirection}},
     {"BeginNoHand",
-     Anim{Animation::loadFromFile("Poses/begin-no-hand.anim"), true,
+     Anim{Animation::loadFromFile(POSE_DIR "begin-no-hand.anim"), true,
 	  (std::atomic<int> (Drive::*))&Drive::_noHand}},
     {"StopNoHand",
-     Anim{Animation::loadFromFile("Poses/stop-no-hand.anim"), false,
+     Anim{Animation::loadFromFile(POSE_DIR "stop-no-hand.anim"), false,
 	  (std::atomic<int> (Drive::*))&Drive::_noHand}},
   };
 
@@ -66,7 +72,7 @@ Drive::Drive(boost::shared_ptr<AL::ALBroker> broker,
 {
   setModuleDescription("The NaoCar Driving Module");
   functionName("start", getName(), "Set the nao ready for starting");
-  BIND_METHOD(Drive::start);
+  BIND_METHOD(Drive::start)
   functionName("stop", getName(), "Stop the nao");
   BIND_METHOD(Drive::stop);
   functionName("up", getName(), "Move forward");
@@ -131,6 +137,7 @@ void	Drive::start()
   _stopThread = false;
   if (_animThread == NULL)
     _animThread = new std::thread(launchAnimThread, (void*)this);
+  _poseManager.getMotionProxy().setStiffnesses("Body", 1);
   addAnim("ReleaseSteeringWheel");
   addAnim("UpShift");
 }
@@ -144,6 +151,7 @@ void	Drive::stop()
       delete _animThread;
       _animThread = NULL;
     }
+  _poseManager.getMotionProxy().setStiffnesses("Body", 0);
 }
 
 void	Drive::up()
@@ -402,7 +410,6 @@ extern "C"
 {
   ALCALL int _createModule(boost::shared_ptr<AL::ALBroker> broker)
   {
-    system("echo bouyaka > /home/nao/out.log");
     AL::ALBrokerManager::setInstance(broker->fBrokerManager.lock());
     AL::ALBrokerManager::getInstance()->addBroker(broker);
     AL::ALModule::createModule<Drive>(broker, "Drive");

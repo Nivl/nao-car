@@ -10,16 +10,24 @@ endif()
 
 set (CMAKE_CXX_FLAGS "-std=c++0x -W -Wall -Wno-ignored-qualifiers")
 
-# find_package(Qt4 REQUIRED)
 find_package(qibuild)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/CMake/Modules)
 find_package (SFML 2.0 REQUIRED window graphics system network)
 option(DRIVE_IS_REMOTE
   "module is compiled as a remote module (ON or OFF)"
+  OFF)
+set(_srcs
+    Drive.cpp)
+
+option(NAO_LOCAL_COMPILATION
+  "module is compiled as a local module for the nao (ON or OFF)"
   ON)
 set(_srcs
     Drive.cpp)
 
+if(NAO_LOCAL_COMPILATION)
+  add_definitions( " -DNAO_LOCAL_COMPILATION ")
+endif()
 if(DRIVE_IS_REMOTE)
   add_definitions( " -DDRIVE_IS_REMOTE ")
   qi_create_bin(Drive ${_srcs})
@@ -36,15 +44,6 @@ set(DriveProxySrcs DriveProxy.cpp)
 qi_create_lib(DriveProxy ${DriveProxySrcs})
 qi_use_lib(DriveProxy ALCOMMON BOOST)
 target_link_libraries(DriveProxy)
-
-# set(QtAppSrcs qtMain.cpp Window.cpp)
-# set(QtAppHeaders Window.hpp)
-# qt4_wrap_cpp(QtAppHeadersMoc ${QtAppHeaders})
-# qi_create_bin(QtApp ${QtAppSrcs} ${QtAppHeadersMoc})
-# qi_use_lib(QtApp ALCOMMON BOOST)
-# add_definitions(${QT_DEFINITIONS})
-# include(${QT_USE_FILE})
-# target_link_libraries(QtApp ${QT_LIBRARIES} ${POSE_DIR})
 
 set(SfmlAppSrcs sfmlMain.cpp sfWindow.cpp)
 qi_create_bin(SfmlApp ${SfmlAppSrcs})

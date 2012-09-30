@@ -26,7 +26,6 @@ DriveProxy::DriveProxy(const std::string &pIp, int pPort,
 		       int pProxyMask, int timeout) :
   AL::ALProxy("Drive", pIp, pPort, pProxyMask, timeout)
 {
-
 }
 
 DriveProxy::DriveProxy(const std::string &pIp, int pPort,
@@ -34,13 +33,11 @@ DriveProxy::DriveProxy(const std::string &pIp, int pPort,
 		       int pProxyMask, int timeout) :
   AL::ALProxy("Drive", pIp, pPort, pBroker, pProxyMask, timeout)
 {
-
 }
 
 DriveProxy::DriveProxy(int pProxyOption, int pTimeout) :
   AL::ALProxy("Drive", pProxyOption, pTimeout)
 {
-
 }
 
 void	DriveProxy::start()

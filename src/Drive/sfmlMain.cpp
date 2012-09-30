@@ -29,16 +29,16 @@ int main(int ac, char **av)
                                           av[1],
                                           9559,
                                           0);      
+      // boost::shared_ptr<AL::ALModuleCore> drive(new AL::ALModuleCore(broker,
+      // 								     "Drive"));
+      // broker->registerModule(drive);
     }
   catch (...)
     {
       std::cerr << "Error" << std::endl;
+      return (1);
     }
-  boost::shared_ptr< std::vector< AL::ALModuleInfo > >  pModuleList(new std::vector<AL::ALModuleInfo>());
-  broker->getModuleList(pModuleList);
-  for (int i = 0; i < pModuleList->size(); ++i)
-    std::cout << pModuleList->at(i).name << std::endl;
-  gst_init (&ac, &av);
+  gst_init(&ac, &av);
   int id = 1;
   if (ac == 3)
     id = std::atoi(av[2]);

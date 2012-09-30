@@ -50,8 +50,7 @@ public:
 private:
   void	checkEvent(sf::Event *event);
   void	checkJoystick();
-  void	keyPressEvent(sf::Event *event);
-  void	keyReleaseEvent(sf::Event *event);
+  void	checkKeyboard();
 
   struct CameraMode
   {

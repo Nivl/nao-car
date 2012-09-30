@@ -82,15 +82,24 @@ Window::Window(boost::shared_ptr<AL::ALBroker> broker, int joystickId,
   tmp.loadFromFile("resources/logo.png");
   _textures["Logo"] = tmp;  
   _sayFont.loadFromFile("resources/arial.ttf");
+  AL::ALModuleInfo	infos;
+  // _module.getInfo(infos);
+  // std::cout << "Name : " << infos.name << std::endl;
+  // boost::shared_ptr<AL::ALModule>	mod = _module.getModule();
+  // std::vector<std::string> names = mod->getMethodList();
+  // for (int i = 0; i < names.size(); ++i)
+  //   std::cout << names[i] << std::endl;
   _module.start();
   _cameraModes[0] = CameraMode{"SelectCameraTop", "1"};
   _cameraModes[1] = CameraMode{"SelectCameraBottom", "3"};
   _isConnected = _socket.connect(sf::IpAddress(ip), 8080) == sf::TcpSocket::Done;
   if (_isConnected)
-    _socket.send(_cameraModes[_currentCameraMode]._networkValue.c_str(),
+    {
+      _socket.send(_cameraModes[_currentCameraMode]._networkValue.c_str(),
 		 _cameraModes[_currentCameraMode]._networkValue.size());
-  setPipeline("udpsrc port=8081 ! smokedec ! ffmpegcolorspace ! "
-	      "video/x-raw-rgb,bpp=32");
+      setPipeline("udpsrc port=8081 ! smokedec ! ffmpegcolorspace ! "
+		  "video/x-raw-rgb,bpp=32");
+    }
 }
 
 Window::~Window()
@@ -171,6 +180,7 @@ void	Window::exec()
       while (_window.pollEvent(event))
 	checkEvent(&event);
       checkJoystick();
+      checkKeyboard();
       _window.clear();
       if (_streamImageChanged)
 	{
@@ -254,10 +264,6 @@ void	Window::checkEvent(sf::Event *event)
 {
   if (event->type == sf::Event::Closed)
     _window.close();
-  else if (event->type == sf::Event::KeyPressed)
-    keyPressEvent(event);
-  else if (event->type == sf::Event::KeyReleased)
-    keyReleaseEvent(event);
   else if (event->type == sf::Event::Resized)
     {
       _window.setView(sf::View(sf::FloatRect(0, 0, event->size.width,
@@ -333,35 +339,45 @@ void	Window::checkJoystick()
     _module.right();
   else
     _module.stopTurn();
-  static int pX = 0, pY = 0;
-  pX = sf::Joystick::getAxisPosition(_joystickId, sf::Joystick::U);
-  pY = sf::Joystick::getAxisPosition(_joystickId, sf::Joystick::V);
+  // static int pX = 0, pY = 0;
+  // pX = sf::Joystick::getAxisPosition(_joystickId, sf::Joystick::U);
+  // pY = sf::Joystick::getAxisPosition(_joystickId, sf::Joystick::V);
   // _module.setHead((((float)(-pX + 100) / 200.f) * (120.f + 120.f) - 120.f) *
   // 		    M_PI / 180,
   // 		    (((float)(pY + 100) / 200.f) * (30.f + 40.f) - 40.f) *
   // 		    M_PI / 180, 0.4);
 }
 
-void	Window::keyPressEvent(sf::Event *event)
+void	Window::checkKeyboard()
 {
-  if (event->key.code == sf::Keyboard::Up)
+  // if (_module.isAnimating() == false &&
+  //     !sf::Keyboard::isKeyPressed(sf::Keyboard::) &&
+  //     _module.isNoHand() == true)
+  //   {
+  //     _module.endNoHand();
+  //     _module.takeSteeringWheel();
+  //   }
+  // if (_module.isAnimating() == false &&
+  //     sf::Joystick::isButtonPressed(_joystickId, 2) &&
+  //     _module.isNoHand() == false)
+  //   {
+  //     _textListMutex.lock();
+  //     _textList.push_back("Sans les mains");
+  //     _textListMutex.unlock();
+  //     if (_module.steeringWheelDirection() != Drive::Front)
+  // 	_module.stopTurn();
+  //     _module.beginNoHand();
+  //   }
+  if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
     _module.up();
-  else if (event->key.code == sf::Keyboard::Down)
+  else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
     _module.down();
-  else if (event->key.code == sf::Keyboard::Left)
-    _module.left();
-  else if (event->key.code == sf::Keyboard::Right)
-    _module.right();
-}
-
-void	Window::keyReleaseEvent(sf::Event *event)
-{
-  if ((event->key.code == sf::Keyboard::Up && _module.speed() == Drive::Up) ||
-      (event->key.code == sf::Keyboard::Down &&
-       _module.speed() == Drive::Down))
+  else
     _module.stopPush();
-  else if (_module.steeringWheelIsTaken() == true &&
-	   (event->key.code == sf::Keyboard::Left ||
-	    event->key.code == sf::Keyboard::Right))
+  if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+    _module.left();
+  else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+    _module.right();
+  else
     _module.stopTurn();
 }
