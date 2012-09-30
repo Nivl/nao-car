@@ -23,6 +23,7 @@ set(_srcs
     Animation.hpp
     Animation.cpp)
 
+
 # Create the Pose library
 qi_create_lib(Pose SHARED ${_srcs})
 qi_use_lib(Pose ALCOMMON BOOST)

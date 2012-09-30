@@ -402,6 +402,7 @@ extern "C"
 {
   ALCALL int _createModule(boost::shared_ptr<AL::ALBroker> broker)
   {
+    system("echo bouyaka > /home/nao/out.log");
     AL::ALBrokerManager::setInstance(broker->fBrokerManager.lock());
     AL::ALBrokerManager::getInstance()->addBroker(broker);
     AL::ALModule::createModule<Drive>(broker, "Drive");
@@ -415,8 +416,7 @@ extern "C"
 }
 
 #ifdef DRIVE_IS_REMOTE
-
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
   // pointer to createModule
   TMainType sig;

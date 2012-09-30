@@ -10,25 +10,22 @@ endif()
 
 set (CMAKE_CXX_FLAGS "-std=c++0x -W -Wall -Wno-ignored-qualifiers")
 
-find_package(Qt4 REQUIRED)
+# find_package(Qt4 REQUIRED)
 find_package(qibuild)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/CMake/Modules)
 find_package (SFML 2.0 REQUIRED window graphics system network)
-
 option(DRIVE_IS_REMOTE
   "module is compiled as a remote module (ON or OFF)"
-  OFF)
-
+  ON)
 set(_srcs
     Drive.cpp)
 
 if(DRIVE_IS_REMOTE)
-	add_definitions( " -DDRIVE_IS_REMOTE ")
-	qi_create_bin(Drive ${_srcs})
+  add_definitions( " -DDRIVE_IS_REMOTE ")
+  qi_create_bin(Drive ${_srcs})
 else()
-	qi_create_lib(Drive SHARED ${_srcs})
+  qi_create_lib(Drive SHARED ${_srcs})
 endif()
-
 qi_use_lib(Drive ALCOMMON BOOST)
 find_library(POSE_DIR Pose lib)
 target_link_libraries(Drive ${POSE_DIR})
@@ -38,7 +35,7 @@ include_directories(.)
 set(DriveProxySrcs DriveProxy.cpp)
 qi_create_lib(DriveProxy ${DriveProxySrcs})
 qi_use_lib(DriveProxy ALCOMMON BOOST)
-target_link_libraries(DriveProxy Drive)
+target_link_libraries(DriveProxy)
 
 # set(QtAppSrcs qtMain.cpp Window.cpp)
 # set(QtAppHeaders Window.hpp)
@@ -54,7 +51,7 @@ qi_create_bin(SfmlApp ${SfmlAppSrcs})
 qi_use_lib(SfmlApp ALCOMMON BOOST)
 include_directories(/usr/include/gstreamer-0.10
 		    /usr/include/glib-2.0
-		    /usr/lib64/glib-2.0/include
+		    /usr/lib/i386-linux-gnu/glib-2.0/include
 		    /usr/include/libxml2)
 target_link_libraries(SfmlApp ${SFML_LIBRARIES} ${POSE_DIR}
 		      pthread gstreamer-0.10 gobject-2.0

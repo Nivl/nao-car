@@ -10,6 +10,7 @@
 
 #include <iostream>
 #include <alcommon/almodulecore.h>
+#include <alcommon/almoduleinfo.h>
 #include "sfWindow.hpp"
 
 int main(int ac, char **av)
@@ -22,21 +23,21 @@ int main(int ac, char **av)
   boost::shared_ptr<AL::ALBroker> broker;
   try
     {
-      broker = AL::ALBroker::createBroker(
-                                          "broker",
+      broker = AL::ALBroker::createBroker("broker",
                                           "0.0.0.0",
                                           0,
                                           av[1],
                                           9559,
                                           0);      
-#ifndef DRIVE_IS_REMOTE
-      AL::ALModuleCore::createModuleCore<Drive>(broker, "Drive");
-#endif
     }
   catch (...)
     {
       std::cerr << "Error" << std::endl;
     }
+  boost::shared_ptr< std::vector< AL::ALModuleInfo > >  pModuleList(new std::vector<AL::ALModuleInfo>());
+  broker->getModuleList(pModuleList);
+  for (int i = 0; i < pModuleList->size(); ++i)
+    std::cout << pModuleList->at(i).name << std::endl;
   gst_init (&ac, &av);
   int id = 1;
   if (ac == 3)

@@ -336,10 +336,10 @@ void	Window::checkJoystick()
   static int pX = 0, pY = 0;
   pX = sf::Joystick::getAxisPosition(_joystickId, sf::Joystick::U);
   pY = sf::Joystick::getAxisPosition(_joystickId, sf::Joystick::V);
-  _module.setHead((((float)(-pX + 100) / 200.f) * (120.f + 120.f) - 120.f) *
-		    M_PI / 180,
-		    (((float)(pY + 100) / 200.f) * (30.f + 40.f) - 40.f) *
-		    M_PI / 180, 0.4);
+  // _module.setHead((((float)(-pX + 100) / 200.f) * (120.f + 120.f) - 120.f) *
+  // 		    M_PI / 180,
+  // 		    (((float)(pY + 100) / 200.f) * (30.f + 40.f) - 40.f) *
+  // 		    M_PI / 180, 0.4);
 }
 
 void	Window::keyPressEvent(sf::Event *event)
