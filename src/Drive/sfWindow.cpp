@@ -80,7 +80,9 @@ Window::Window(boost::shared_ptr<AL::ALBroker> broker, int joystickId,
   tmp.loadFromFile("resources/button-camera-bottom.png");
   _textures["SelectCameraBottom"] = tmp;
   tmp.loadFromFile("resources/logo.png");
-  _textures["Logo"] = tmp;  
+  _textures["Logo"] = tmp;
+  tmp.loadFromFile("resources/epitech.png");
+  _textures["Epitech"] = tmp;
   _sayFont.loadFromFile("resources/arial.ttf");
   _module.start();
   _cameraModes[0] = CameraMode{"SelectCameraTop", "1"};
@@ -200,6 +202,9 @@ void	Window::exec()
       _window.draw(tmpSprite);
       tmpSprite.setTexture(_textures["Logo"], true);
       tmpSprite.setPosition(_window.getSize().x - 89, 7);
+      _window.draw(tmpSprite);
+      tmpSprite.setTexture(_textures["Epitech"], true);
+      tmpSprite.setPosition(10, 7);
       _window.draw(tmpSprite);
       tmpSprite.setTexture(_textures["Say"], true);
       tmpSprite.setPosition(12, _window.getSize().y - 46);
