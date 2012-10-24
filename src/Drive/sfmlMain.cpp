@@ -5,7 +5,7 @@
 // Login   <olivie_a@epitech.net>
 // 
 // Started on  Wed Sep 26 15:45:37 2012 samuel olivier
-// Last update Fri Sep 28 19:10:54 2012 samuel olivier
+// Last update Sat Oct  6 17:05:00 2012 samuel olivier
 //
 
 #include <iostream>
@@ -29,8 +29,8 @@ int main(int ac, char **av)
                                           av[1],
                                           9559,
                                           0);      
-      // boost::shared_ptr<AL::ALModuleCore> drive(new AL::ALModuleCore(broker,
-      // 								     "Drive"));
+      boost::shared_ptr<AL::ALModuleCore> drive(new AL::ALModuleCore(broker,
+      								     "Drive"));
       // broker->registerModule(drive);
     }
   catch (...)

@@ -8,7 +8,7 @@ if (EXISTS ${GCC46_PATH})
    set (CMAKE_CXX_COMPILER ${GCC46_PATH})
 endif()
 
-set (CMAKE_CXX_FLAGS "-std=c++0x -W -Wall -Wno-ignored-qualifiers")
+set (CMAKE_CXX_FLAGS "-std=c++0x -W -Wall -Wno-ignored-qualifiers -Wno-sign-compare")
 
 find_package(qibuild)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/CMake/Modules)
@@ -59,7 +59,8 @@ target_link_libraries(SfmlApp ${SFML_LIBRARIES} ${POSE_DIR}
 
 set(AutoSrcs auto.cpp)
 qi_create_bin(Auto ${AutoSrcs})
-qi_use_lib(Auto ALCOMMON BOOST ALVISION OPENCV2_CORE OPENCV2_HIGHGUI OPENCV2_IMGPROC)
+# qi_use_lib(Auto ALCOMMON BOOST ALVISION OPENCV2_CORE OPENCV2_HIGHGUI OPE
+qi_use_lib(Auto ALCOMMON BOOST)
 include_directories(/usr/include/gstreamer-0.10
 		    /usr/include/glib-2.0
 		    /usr/lib64/glib-2.0/include
@@ -67,5 +68,9 @@ include_directories(/usr/include/gstreamer-0.10
 target_link_libraries(Auto ${POSE_DIR}
 		      pthread gstreamer-0.10 gobject-2.0
 		      gmodule-2.0 xml2 gthread-2.0 rt
-		      glib-2.0 gstapp-0.10 DriveProxy)
+		      glib-2.0 gstapp-0.10 opencv_core opencv_imgproc
+		      opencv_highgui opencv_ml opencv_video
+		      opencv_features2d opencv_calib3d opencv_objdetect
+		      opencv_contrib opencv_legacy opencv_flann
+		      DriveProxy)
 

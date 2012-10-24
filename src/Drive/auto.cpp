@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Sep 28 13:59:38 2012 gael jochaud-du-plessix
-// Last update Tue Oct  2 15:05:16 2012 loick michard
+// Last update Tue Oct  2 19:16:01 2012 samuel olivier
 //
 
 #include <alcommon/almodulecore.h>
@@ -19,7 +19,9 @@
 
 #include <iostream>
 #include <math.h>
+#include <signal.h>
 
+#include "DriveProxy.hpp"
 
 using namespace cv;
 
@@ -65,6 +67,14 @@ bool isCollapsed(Vec4i& line1, Vec4i& line2, double threshold=10.0);
 double lineSpace(Vec4i& line1, Vec4i& line2);
 double distance(double x1, double y1, double x2, double y2);
 
+DriveProxy	*proxy;
+
+void	catchSig(int signum)
+{
+  proxy->stop();
+  exit(0);
+}
+
 int main(int ac, char **av)
 {
   boost::shared_ptr<AL::ALBroker> broker;
@@ -77,12 +87,15 @@ int main(int ac, char **av)
       std::cerr << "Error" << std::endl;
       return (1);
     }
-  
 
+  proxy = new DriveProxy(broker);
+  proxy->start();
+  proxy->takeSteeringWheel();
+  signal(SIGINT, catchSig);
   // Create the gstreamer pipeline
   gst_init(0, NULL);
   GError* error = NULL;
-  //GstElement *pipeline = gst_parse_launch("v4l2src ! video/x-raw-yuv,width=640,height=480 ! ffmpegcolorspace ! video/x-raw-rgb ! appsink", &error);
+  // GstElement *pipeline = gst_parse_launch("v4l2src ! video/x-raw-yuv,width=640,height=480 ! ffmpegcolorspace ! video/x-raw-rgb ! appsink", &error);
   GstElement *pipeline = gst_parse_launch("udpsrc port=8081 ! smokedec ! ffmpegcolorspace ! video/x-raw-rgb ! appsink", &error);
 
   if (!pipeline || error) {
@@ -109,7 +122,7 @@ int main(int ac, char **av)
 
   int tolerance = 181;
   createTrackbar("Tolerance", "opencv", &tolerance, 255);
-  int untolerance = 98;
+  int untolerance = 120;
   createTrackbar("Untolerance", "opencv", &untolerance, 255);
   int v1 = 4, v2 = 80, v3 = 80, v4 = 30, v5 = 50;
   createTrackbar("v1", "opencv", &v1, 200);
@@ -141,9 +154,9 @@ int main(int ac, char **av)
     // 	    Scalar(untolerance, untolerance, 255),
     // 	    mask);
     inRange(src,
-	    Scalar(40, 40, 40),
-	    Scalar(122, 122, 122),
-	    mask);
+    	    Scalar(40, 40, 40),
+    	    Scalar(122, 122, 122),
+    	    mask);
 
     Mat color_dst = src;
 
@@ -195,7 +208,7 @@ int main(int ac, char **av)
       }
     }
 
-    std::cout << lines.size() << " lines found, collapsed in " << collapsedLines.size() << std::endl;
+    // std::cout << lines.size() << " lines found, collapsed in " << collapsedLines.size() << std::endl;
 
     // Once we have collapsed lines, search for the best one
     // If we already have one, just take the nearest    
@@ -214,7 +227,7 @@ int main(int ac, char **av)
 	    minSpace = space;
 	  }
 	}
-	std::cout << "Choosed nearest\n";
+	// std::cout << "Choosed nearest\n";
 	if (std::abs(nearest[1] - nearest[3]) > 50) {
 	  redLine = nearest;
 	  found = true;
@@ -222,7 +235,7 @@ int main(int ac, char **av)
     }
     // If we don't have a line, take the first of the list
     if (!found && collapsedLines.size() > 0) {
-      std::cout << "Choosed first\n";
+      // std::cout << "Choosed first\n";
       if (std::abs(collapsedLines[0][1] - collapsedLines[0][3]) > 50)
 	redLine = collapsedLines[0];
     }
@@ -273,18 +286,18 @@ int main(int ac, char **av)
 	index += 1;
       }
 
-    //Debug lines
+    // //Debug lines
     // for (int i = 0; i < collapsedLines.size(); ++i) {
     //   line(color_dst, Point(collapsedLines[i][0], collapsedLines[i][1]),
     // 	   Point(collapsedLines[i][2], collapsedLines[i][3]), Scalar(255, 0, 0), 3, 8);
     // }
 
     // LA OU CA MARCHE PAS MAIS IL FAUT LENLEVER ET LA FAIRE MARCHER AVANT, CA DOIT AFFICHER UNE PETITE LIGNE ROUGE(COMME TA BITE)
-    line(color_dst, Point(0, 0), Point(50, 50), Scalar(255, 0, 0), 3, 8);
-    for (int i = 0; i < points.size() - 1; ++i) {
-      line(color_dst, points[i],
-	   points[i + 1], Scalar(255, 255, 0), 3, 8);
-    }
+    // line(color_dst, Point(0, 0), Point(50, 50), Scalar(255, 0, 0), 3, 8);
+    // for (int i = 0; i < points.size() - 1; ++i) {
+    //   line(color_dst, points[i],
+    // 	   points[i + 1], Scalar(255, 255, 0), 3, 8);
+    // }
 
     //line(color_dst, Point(redLine[0], redLine[1]),
     //	 Point(redLine[2], redLine[3]), Scalar(0, 255, 0), 3, 8);
@@ -315,8 +328,22 @@ int main(int ac, char **av)
     }
     sum /= road.size();
 
-    // LA OU CA SEGFAULT NORMALEMENT
-    std::cout << sum << std::endl;
+    if (sum > 340)
+      {
+	proxy->right();
+	std::cout << "RIGHT" << std::endl;
+      }
+    else if (sum < 300)
+      {
+	proxy->left();
+	std::cout << "LEFT" << std::endl;
+      }
+    else
+      {
+	proxy->stopTurn();
+	std::cout << "FRONT" << std::endl;
+      }
+    proxy->up();
     line(color_dst, Point(sum, 0),
     	 Point(sum, 480), Scalar(255, 255, 255), 3, 8);
 
@@ -327,6 +354,7 @@ int main(int ac, char **av)
   gst_element_set_state(pipeline, GST_STATE_NULL);
   gst_object_unref(GST_OBJECT(pipeline));
 
+  proxy->stop();
   return 0;
 }
 

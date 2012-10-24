@@ -82,13 +82,6 @@ Window::Window(boost::shared_ptr<AL::ALBroker> broker, int joystickId,
   tmp.loadFromFile("resources/logo.png");
   _textures["Logo"] = tmp;  
   _sayFont.loadFromFile("resources/arial.ttf");
-  AL::ALModuleInfo	infos;
-  // _module.getInfo(infos);
-  // std::cout << "Name : " << infos.name << std::endl;
-  // boost::shared_ptr<AL::ALModule>	mod = _module.getModule();
-  // std::vector<std::string> names = mod->getMethodList();
-  // for (int i = 0; i < names.size(); ++i)
-  //   std::cout << names[i] << std::endl;
   _module.start();
   _cameraModes[0] = CameraMode{"SelectCameraTop", "1"};
   _cameraModes[1] = CameraMode{"SelectCameraBottom", "3"};
@@ -326,7 +319,7 @@ void	Window::checkJoystick()
       _textList.push_back("Sans les mains");
       _textListMutex.unlock();
       if (_module.steeringWheelDirection() != Drive::Front)
-	_module.stopTurn();
+  	_module.stopTurn();
       _module.beginNoHand();
     }
   if (sf::Joystick::getAxisPosition(_joystickId, sf::Joystick::R) > 0)
@@ -341,19 +334,21 @@ void	Window::checkJoystick()
     _module.right();
   else
     _module.stopTurn();
-  // static int pX = 0, pY = 0;
-  // pX = sf::Joystick::getAxisPosition(_joystickId, sf::Joystick::U);
-  // pY = sf::Joystick::getAxisPosition(_joystickId, sf::Joystick::V);
-  // _module.setHead((((float)(-pX + 100) / 200.f) * (120.f + 120.f) - 120.f) *
-  // 		    M_PI / 180,
-  // 		    (((float)(pY + 100) / 200.f) * (30.f + 40.f) - 40.f) *
-  // 		    M_PI / 180, 0.4);
+  static int pX = 0, pY = 0;
+  pX = sf::Joystick::getAxisPosition(_joystickId, sf::Joystick::U);
+  pY = sf::Joystick::getAxisPosition(_joystickId, sf::Joystick::V);
+  _module.setHead((((float)(-pX + 100) / 200.f) * (120.f + 120.f) - 120.f) *
+  		    M_PI / 180,
+  		    (((float)(pY + 100) / 200.f) * (30.f + 40.f) - 40.f) *
+  		    M_PI / 180, 0.4);
 }
 
 void	Window::checkKeyboard()
 {
+  if (sf::Joystick::isConnected(_joystickId))
+    return ;
   // if (_module.isAnimating() == false &&
-  //     !sf::Keyboard::isKeyPressed(sf::Keyboard::) &&
+  //     !sf::Keyboard::isKeyPressed(sf::Keyboard) &&
   //     _module.isNoHand() == true)
   //   {
   //     _module.endNoHand();
