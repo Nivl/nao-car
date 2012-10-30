@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Sep 28 13:59:38 2012 gael jochaud-du-plessix
-// Last update Tue Oct  2 19:16:01 2012 samuel olivier
+// Last update Wed Oct 24 15:11:19 2012 samuel olivier
 //
 
 #include <alcommon/almodulecore.h>
@@ -343,7 +343,7 @@ int main(int ac, char **av)
 	proxy->stopTurn();
 	std::cout << "FRONT" << std::endl;
       }
-    proxy->up();
+    // proxy->up();
     line(color_dst, Point(sum, 0),
     	 Point(sum, 480), Scalar(255, 255, 255), 3, 8);
 

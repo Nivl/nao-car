@@ -5,7 +5,7 @@
 // Login   <olivie_a@epitech.net>
 // 
 // Started on  Thu Sep  6 23:58:43 2012 samuel olivier
-// Last update Wed Sep 26 20:08:10 2012 samuel olivier
+// Last update Tue Oct 30 19:20:11 2012 samuel olivier
 //
 
 #include <alcommon/albroker.h>
@@ -16,12 +16,10 @@
 PoseManager::PoseManager(boost::shared_ptr<AL::ALBroker> broker) :
   _broker(broker), _motion(_broker)
 {
-  _motion.setStiffnesses("Body", 1);
 }
 
 PoseManager::~PoseManager()
 {
-  _motion.setStiffnesses("Body", 0);
 }
 
 void	PoseManager::takePose(Pose const& pose, float duration)
