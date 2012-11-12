@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Sep 28 13:59:38 2012 gael jochaud-du-plessix
-// Last update Wed Oct 24 15:11:19 2012 samuel olivier
+// Last update Mon Nov 12 16:36:10 2012 samuel olivier
 //
 
 #include <alcommon/almodulecore.h>
@@ -120,9 +120,9 @@ int main(int ac, char **av)
   namedWindow("opencv2", CV_WINDOW_AUTOSIZE | CV_WINDOW_FREERATIO);
   cvMoveWindow("opencv2", 640, 0);
 
-  int tolerance = 181;
+  int tolerance = 200;
   createTrackbar("Tolerance", "opencv", &tolerance, 255);
-  int untolerance = 120;
+  int untolerance = 80;
   createTrackbar("Untolerance", "opencv", &untolerance, 255);
   int v1 = 4, v2 = 80, v3 = 80, v4 = 30, v5 = 50;
   createTrackbar("v1", "opencv", &v1, 200);
@@ -149,14 +149,14 @@ int main(int ac, char **av)
     if (!src.data)
       continue ;
 
-    // inRange(src,
-    // 	    Scalar(0, 0, tolerance),
-    // 	    Scalar(untolerance, untolerance, 255),
-    // 	    mask);
     inRange(src,
-    	    Scalar(40, 40, 40),
-    	    Scalar(122, 122, 122),
+    	    Scalar(0, 0, tolerance),
+    	    Scalar(untolerance, untolerance, 255),
     	    mask);
+    // inRange(src,
+    // 	    Scalar(40, 40, 40),
+    // 	    Scalar(122, 122, 122),
+    // 	    mask);
 
     Mat color_dst = src;
 
