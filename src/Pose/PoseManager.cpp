@@ -8,6 +8,7 @@
 // Last update Tue Oct 30 19:20:11 2012 samuel olivier
 //
 
+#include <iostream>
 #include <alcommon/albroker.h>
 #include <qi/os.hpp>
 
@@ -16,6 +17,7 @@
 PoseManager::PoseManager(boost::shared_ptr<AL::ALBroker> broker) :
   _broker(broker), _motion(_broker)
 {
+  std::cout << "plop" << std::endl;
 }
 
 PoseManager::~PoseManager()

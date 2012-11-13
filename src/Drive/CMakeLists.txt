@@ -13,18 +13,17 @@ set (CMAKE_CXX_FLAGS "-std=c++0x -W -Wall -Wno-ignored-qualifiers -Wno-sign-comp
 find_package(qibuild)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/CMake/Modules)
 find_package (SFML 2.0 REQUIRED window graphics system network)
+
 option(DRIVE_IS_REMOTE
   "module is compiled as a remote module (ON or OFF)"
   OFF)
 set(_srcs
     Drive.cpp)
-
 option(NAO_LOCAL_COMPILATION
   "module is compiled as a local module for the nao (ON or OFF)"
   ON)
 set(_srcs
     Drive.cpp)
-
 if(NAO_LOCAL_COMPILATION)
   add_definitions( " -DNAO_LOCAL_COMPILATION ")
 endif()
@@ -50,7 +49,7 @@ qi_create_bin(SfmlApp ${SfmlAppSrcs})
 qi_use_lib(SfmlApp ALCOMMON BOOST)
 include_directories(/usr/include/gstreamer-0.10
 		    /usr/include/glib-2.0
-		    /usr/lib64/glib-2.0/include
+		    /usr/lib/i386-linux-gnu/glib-2.0/include
 		    /usr/include/libxml2)
 target_link_libraries(SfmlApp ${SFML_LIBRARIES} ${POSE_DIR}
 		      pthread gstreamer-0.10 gobject-2.0
@@ -59,18 +58,46 @@ target_link_libraries(SfmlApp ${SFML_LIBRARIES} ${POSE_DIR}
 
 set(AutoSrcs auto.cpp)
 qi_create_bin(Auto ${AutoSrcs})
-# qi_use_lib(Auto ALCOMMON BOOST ALVISION OPENCV2_CORE OPENCV2_HIGHGUI OPE
+qi_use_lib(Auto ALCOMMON BOOST ALVISION OPENCV OPENCV2_CORE
+  #OPENCV2_HIGHGUI
+  )
+#find_library(CV_DIR cv /home/aurao/naoqi-sdk/lib)
 qi_use_lib(Auto ALCOMMON BOOST)
 include_directories(/usr/include/gstreamer-0.10
 		    /usr/include/glib-2.0
-		    /usr/lib64/glib-2.0/include
-		    /usr/include/libxml2)
+		    /usr/lib/glib-2.0/include
+		    /usr/include/libxml2
+		    #/home/aurao/naoqi-sdk/include
+		    )
 target_link_libraries(Auto ${POSE_DIR}
 		      pthread gstreamer-0.10 gobject-2.0
 		      gmodule-2.0 xml2 gthread-2.0 rt
-		      glib-2.0 gstapp-0.10 opencv_core opencv_imgproc
-		      opencv_highgui opencv_ml opencv_video
-		      opencv_features2d opencv_calib3d opencv_objdetect
-		      opencv_contrib opencv_legacy opencv_flann
+		      glib-2.0 gstapp-0.10
+		      # opencv_core opencv_imgproc
+		      # opencv_highgui opencv_ml opencv_video
+		      # opencv_features2d opencv_calib3d opencv_objdetect
+		      # opencv_contrib opencv_legacy opencv_flann
+		      ${CV_DIR}
 		      DriveProxy)
 
+option(AUTODRIVE_IS_REMOTE
+  "module is compiled as a remote module (ON or OFF)"
+  OFF)
+set(_srcs
+    AutoDrive.cpp)
+if(AUTODRIVE_IS_REMOTE)
+  add_definitions( " -DAUTODRIVE_IS_REMOTE ")
+   qi_create_bin(AutoDrive ${_srcs})
+else()
+  qi_create_lib(AutoDrive SHARED ${_srcs})
+endif()
+qi_use_lib(AutoDrive ALCOMMON BOOST)
+find_library(POSE_DIR Pose lib)
+target_link_libraries(AutoDrive ${POSE_DIR})
+include_directories(include)
+
+
+include_directories(.)
+set(AutoDriveProxySrcs AutoDriveProxy.cpp)
+qi_create_lib(AutoDriveProxy ${AutoDriveProxySrcs})
+qi_use_lib(AutoDriveProxy ALCOMMON BOOST)
