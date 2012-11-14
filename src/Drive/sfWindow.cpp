@@ -204,7 +204,7 @@ void	Window::exec()
       tmpSprite.setPosition(_window.getSize().x - 89, 7);
       _window.draw(tmpSprite);
       tmpSprite.setTexture(_textures["Epitech"], true);
-      tmpSprite.setPosition(10, 7);
+      tmpSprite.setPosition(10, 60);
       _window.draw(tmpSprite);
       tmpSprite.setTexture(_textures["Say"], true);
       tmpSprite.setPosition(12, _window.getSize().y - 46);
