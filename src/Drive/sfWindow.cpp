@@ -174,7 +174,7 @@ void	Window::exec()
       sf::Event	event;
       while (_window.pollEvent(event))
 	checkEvent(&event);
-      checkJoystick();
+      //checkJoystick();
       checkKeyboard();
       _window.clear();
       if (_streamImageChanged)
@@ -282,27 +282,27 @@ void	Window::checkEvent(sf::Event *event)
       else if (event->text.unicode != '\b')
       	_currentText += (char)event->text.unicode;
     }
-  if (event->type == sf::Event::JoystickButtonPressed &&
-      event->joystickButton.joystickId == _joystickId)
-    {
-      if (_module.isAnimating() == false &&
-	  event->joystickButton.button == 0 && _module.isNoHand() == false)
-	{
-	  if (_module.steeringWheelIsTaken() == true)
-	    _module.releaseSteeringWheel();
-	  else
-	    _module.takeSteeringWheel();
-	}
-      if (event->joystickButton.button == 4)
-	_currentCameraMode = (_currentCameraMode - 1 + _cameraModes.size()) %
-	  _cameraModes.size();
-      if (event->joystickButton.button == 5)
-	_currentCameraMode = (_currentCameraMode + 1) % _cameraModes.size();
-      if ((event->joystickButton.button == 5 ||
-	   event->joystickButton.button == 4) && _isConnected)
-	_socket.send(_cameraModes[_currentCameraMode]._networkValue.c_str(),
-		     _cameraModes[_currentCameraMode]._networkValue.size());
-    }
+  // if (event->type == sf::Event::JoystickButtonPressed &&
+  //     event->joystickButton.joystickId == _joystickId)
+  //   {
+  //     if (_module.isAnimating() == false &&
+  // 	  event->joystickButton.button == 0 && _module.isNoHand() == false)
+  // 	{
+  // 	  if (_module.steeringWheelIsTaken() == true)
+  // 	    _module.releaseSteeringWheel();
+  // 	  else
+  // 	    _module.takeSteeringWheel();
+  // 	}
+  //     if (event->joystickButton.button == 4)
+  // 	_currentCameraMode = (_currentCameraMode - 1 + _cameraModes.size()) %
+  // 	  _cameraModes.size();
+  //     if (event->joystickButton.button == 5)
+  // 	_currentCameraMode = (_currentCameraMode + 1) % _cameraModes.size();
+  //     if ((event->joystickButton.button == 5 ||
+  // 	   event->joystickButton.button == 4) && _isConnected)
+  // 	_socket.send(_cameraModes[_currentCameraMode]._networkValue.c_str(),
+  // 		     _cameraModes[_currentCameraMode]._networkValue.size());
+  //   }
 }
 
 void	Window::checkJoystick()
