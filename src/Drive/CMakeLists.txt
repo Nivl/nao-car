@@ -65,18 +65,17 @@ qi_use_lib(Auto ALCOMMON BOOST ALVISION OPENCV OPENCV2_CORE
 qi_use_lib(Auto ALCOMMON BOOST)
 include_directories(/usr/include/gstreamer-0.10
 		    /usr/include/glib-2.0
-		    /usr/lib/glib-2.0/include
+		    /usr/lib64/glib-2.0/include
 		    /usr/include/libxml2
-		    #/home/aurao/naoqi-sdk/include
 		    )
 target_link_libraries(Auto ${POSE_DIR}
 		      pthread gstreamer-0.10 gobject-2.0
 		      gmodule-2.0 xml2 gthread-2.0 rt
 		      glib-2.0 gstapp-0.10
-		      # opencv_core opencv_imgproc
-		      # opencv_highgui opencv_ml opencv_video
-		      # opencv_features2d opencv_calib3d opencv_objdetect
-		      # opencv_contrib opencv_legacy opencv_flann
+		      opencv_core opencv_imgproc
+		      opencv_highgui opencv_ml opencv_video
+		      opencv_features2d opencv_calib3d opencv_objdetect
+		      opencv_contrib opencv_legacy opencv_flann
 		      ${CV_DIR}
 		      DriveProxy)
 
@@ -93,9 +92,21 @@ else()
 endif()
 qi_use_lib(AutoDrive ALCOMMON BOOST)
 find_library(POSE_DIR Pose lib)
-target_link_libraries(AutoDrive ${POSE_DIR})
-include_directories(include)
-
+include_directories(/usr/include/gstreamer-0.10
+		    /usr/include/glib-2.0
+		    /usr/lib64/glib-2.0/include
+		    /usr/include/libxml2
+		    )
+target_link_libraries(AutoDrive
+		      pthread gstreamer-0.10 gobject-2.0
+		      gmodule-2.0 xml2 gthread-2.0 rt
+		      glib-2.0 gstapp-0.10
+		      opencv_core opencv_imgproc
+		      opencv_highgui opencv_ml opencv_video
+		      opencv_features2d opencv_calib3d opencv_objdetect
+		      opencv_contrib opencv_legacy opencv_flann
+		      ${CV_DIR}
+		      DriveProxy)
 
 include_directories(.)
 set(AutoDriveProxySrcs AutoDriveProxy.cpp)

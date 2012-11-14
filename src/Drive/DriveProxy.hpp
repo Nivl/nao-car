@@ -5,11 +5,11 @@
 // Login   <olivie_a@epitech.net>
 // 
 // Started on  Fri Sep 28 16:49:12 2012 samuel olivier
-// Last update Fri Sep 28 18:52:36 2012 samuel olivier
+// Last update Tue Nov 13 19:59:27 2012 samuel olivier
 //
 
-#ifndef __DIRVE_PROXY__
-# define __DIRVE_PROXY__
+#ifndef __DRIVE_PROXY__
+# define __DRIVE_PROXY__
 
 # include <string>
 # include <alcommon/alproxy.h>

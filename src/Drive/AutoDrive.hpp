@@ -5,7 +5,7 @@
 // Login   <olivie_a@epitech.net>
 // 
 // Started on  Wed Sep  5 23:47:40 2012 samuel olivier
-// Last update Fri Sep 28 18:58:18 2012 samuel olivier
+// Last update Tue Nov 13 23:53:21 2012 samuel olivier
 //
 
 #ifndef __AUTO_DRIVE_HH__
@@ -21,6 +21,7 @@
 # include <mutex>
 
 # include "DriveProxy.hpp"
+
 namespace AL
 {
   class ALBroker;
@@ -35,13 +36,15 @@ public:
   virtual ~AutoDrive();
 
   virtual void	init();
-  void start();
-  void stop();
+  void		start();
+  void		stop();
+  int		thread();
 
 private:
-  
   boost::shared_ptr<AL::ALBroker>	_broker;
   DriveProxy*				_proxy;
+  std::thread				*_thread;
+  std::atomic<bool>			_stopThread;
 };
 
 #endif
