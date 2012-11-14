@@ -41,6 +41,8 @@ public:
   void	releaseSteeringWheel();
   void	beginNoHand();
   void	endNoHand();
+  void	takeCarembar();
+  void	giveCarembar();
   void	setHead(float headYaw, float headPitch, float maxSpeed);
 
   bool			steeringWheelIsTaken();

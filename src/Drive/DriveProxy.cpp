@@ -100,6 +100,16 @@ void	DriveProxy::endNoHand()
   callVoid("endNoHand");
 }
 
+void	DriveProxy::takeCarembar()
+{
+  callVoid("takeCarembar");
+}
+
+void	DriveProxy::giveCarembar()
+{
+  callVoid("giveCarembar");
+}
+
 void	DriveProxy::setHead(float headYaw, float headPitch, float maxSpeed)
 {
   callVoid("setHead", headYaw, headPitch, maxSpeed);

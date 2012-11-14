@@ -64,6 +64,12 @@ std::map<std::string, Drive::Anim>	Drive::_animations =
     {"StopNoHand",
      Anim{Animation::loadFromFile(POSE_DIR "stop-no-hand.anim"), false,
 	  (std::atomic<int> (Drive::*))&Drive::_noHand}},
+    {"TakeCarembar",
+     Anim{Animation::loadFromFile(POSE_DIR "take-carembar.anim"), true,
+	  (std::atomic<int> (Drive::*))&Drive::_carembar}},
+    {"GiveCarembar",
+     Anim{Animation::loadFromFile(POSE_DIR "give-carembar.anim"), false,
+	  (std::atomic<int> (Drive::*))&Drive::_carembar}},
   };
 
 Drive::Drive(boost::shared_ptr<AL::ALBroker> broker,
@@ -96,6 +102,10 @@ Drive::Drive(boost::shared_ptr<AL::ALBroker> broker,
   BIND_METHOD(Drive::beginNoHand);
   functionName("endNoHand", getName(), "Stop \"No Hand Driving\"");
   BIND_METHOD(Drive::endNoHand);
+  functionName("takeCarembar", getName(), "Take a carambar");
+  BIND_METHOD(Drive::takeCarembar);
+  functionName("giveCarembar", getName(), "Give the carembar and return to driving position");
+  BIND_METHOD(Drive::giveCarembar);
   functionName("setHead", getName(), "Set the specified angles "
 	       "to the head");
   BIND_METHOD(Drive::setHead);
@@ -134,6 +144,7 @@ void	Drive::start()
   _steeringWheelDirection = Front;
   _speed = Down;
   _noHand = false;
+  _carembar = false;
   _stopThread = false;
   if (_animThread == NULL)
     _animThread = new std::thread(launchAnimThread, (void*)this);
@@ -160,7 +171,7 @@ void	Drive::up()
     return ;
   if (_speed == Down)
     {
-      if (_steeringWheelIsTaken == true && _noHand == false)
+      if (_steeringWheelIsTaken == true && _noHand == false && _carembar == false)
 	{
 	  if (_steeringWheelDirection != Front)
 	    addAnim("TurnFront");
@@ -170,9 +181,9 @@ void	Drive::up()
 	addAnim("StopNoHand");
       addAnim("UpShift");
     }
-  if (_steeringWheelIsTaken == false && _noHand == false)
+  if (_steeringWheelIsTaken == false && _noHand == false && _carembar == false)
     addAnim("TakeSteeringWheel");
-  if (_gasPedalIsPushed == false &&
+  if (_gasPedalIsPushed == false  && _carembar == false &&
       (_steeringWheelIsTaken == true || _noHand == true) && _speed == Up)
     {
       _animationsMutex.lock();
@@ -189,7 +200,7 @@ void	Drive::down()
     return ;
   if (_speed == Up)
     {
-      if (_steeringWheelIsTaken == true && _noHand == false)
+      if (_steeringWheelIsTaken == true && _noHand == false && _carembar == false)
 	{
 	  if (_steeringWheelDirection != Front)
 	    addAnim("TurnFront");
@@ -199,9 +210,9 @@ void	Drive::down()
 	addAnim("StopNoHand");
       addAnim("DownShift");
     }
-  if (_steeringWheelIsTaken == false && _noHand == false)
+  if (_steeringWheelIsTaken == false && _noHand == false && _carembar == false)
     addAnim("TakeSteeringWheel");
-  if (_gasPedalIsPushed == false &&
+  if (_gasPedalIsPushed == false && _carembar == false &&
       (_steeringWheelIsTaken == true || _noHand == true) && _speed == Down)
     {
       _animationsMutex.lock();
@@ -234,9 +245,9 @@ void	Drive::right()
   if (_isAnimating == true)
     return ;
   std::cout << "right" << std::endl;
-  if (_steeringWheelIsTaken == false && _noHand == false)
+  if (_steeringWheelIsTaken == false && _noHand == false && _carembar == false)
     addAnim("TakeSteeringWheel");
-  if (_steeringWheelIsTaken == true && _noHand == false
+  if (_steeringWheelIsTaken == true && _noHand == false && _carembar == false
       && _steeringWheelDirection != Right)
     {
       _animationsMutex.lock();
@@ -293,6 +304,18 @@ void	Drive::endNoHand()
 {
   if (_noHand == true)
     addAnim("StopNoHand");
+}
+
+void	Drive::takeCarembar()
+{
+  if (_carembar == false)
+    addAnim("TakeCarembar");
+}
+
+void	Drive::giveCarembar()
+{
+  if (_carembar == true)
+    addAnim("GiveCarembar");
 }
 
 void	Drive::setHead(float const& headYaw, float const& headPitch,

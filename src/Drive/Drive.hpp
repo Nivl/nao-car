@@ -61,6 +61,8 @@ public:
   void	releaseSteeringWheel();
   void	beginNoHand();
   void	endNoHand();
+  void	takeCarembar();
+  void	giveCarembar();
   void	setHead(float const& headYaw, float const& headPitch,
 		float const& maxSpeed);
 
@@ -96,6 +98,7 @@ private:
   std::atomic<int>			_steeringWheelDirection;
   std::atomic<int>			_speed;
   std::atomic<int>			_noHand;
+  std::atomic<int>			_carembar;
 };
 
 #endif
