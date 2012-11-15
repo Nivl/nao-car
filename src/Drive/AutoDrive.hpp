@@ -5,11 +5,6 @@
 // Login   <olivie_a@epitech.net>
 // 
 // Started on  Wed Sep  5 23:47:40 2012 samuel olivier
-<<<<<<< HEAD
-// Last update Thu Nov 15 15:06:25 2012 loick michard
-=======
-// Last update Thu Nov 15 16:06:04 2012 samuel olivier
->>>>>>> 46edba40da0459a30bcea62a8e6cf6b906d201ae
 //
 
 #ifndef __AUTO_DRIVE_HH__
