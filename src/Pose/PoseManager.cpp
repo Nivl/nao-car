@@ -5,7 +5,7 @@
 // Login   <olivie_a@epitech.net>
 // 
 // Started on  Thu Sep  6 23:58:43 2012 samuel olivier
-// Last update Tue Oct 30 19:20:11 2012 samuel olivier
+// Last update Thu Nov 15 16:44:57 2012 samuel olivier
 //
 
 #include <iostream>
@@ -17,7 +17,6 @@
 PoseManager::PoseManager(boost::shared_ptr<AL::ALBroker> broker) :
   _broker(broker), _motion(_broker)
 {
-  std::cout << "plop" << std::endl;
 }
 
 PoseManager::~PoseManager()

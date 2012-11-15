@@ -5,7 +5,7 @@
 // Login   <olivie_a@epitech.net>
 // 
 // Started on  Wed Sep  5 23:47:17 2012 samuel olivier
-// Last update Fri Sep 28 19:18:31 2012 samuel olivier
+// Last update Thu Nov 15 17:19:41 2012 samuel olivier
 //
 
 #include <iostream>
@@ -127,6 +127,9 @@ Drive::Drive(boost::shared_ptr<AL::ALBroker> broker,
   functionName("isAnimating", getName(),
 	       "return isAnimating");
   BIND_METHOD(Drive::isAnimating);
+  functionName("isCarembar", getName(),
+	       "return isCarembar");
+  BIND_METHOD(Drive::isCarembar);
 }
 
 Drive::~Drive()
@@ -146,11 +149,11 @@ void	Drive::start()
   _noHand = false;
   _carembar = false;
   _stopThread = false;
-  if (_animThread == NULL)
-    _animThread = new std::thread(launchAnimThread, (void*)this);
   _poseManager.getMotionProxy().setStiffnesses("Body", 1);
   addAnim("ReleaseSteeringWheel");
   addAnim("UpShift");
+  if (_animThread == NULL)
+    _animThread = new std::thread(launchAnimThread, (void*)this);
 }
 
 void	Drive::stop()
@@ -244,7 +247,6 @@ void	Drive::right()
 {
   if (_isAnimating == true)
     return ;
-  std::cout << "right" << std::endl;
   if (_steeringWheelIsTaken == false && _noHand == false && _carembar == false)
     addAnim("TakeSteeringWheel");
   if (_steeringWheelIsTaken == true && _noHand == false && _carembar == false
@@ -354,6 +356,11 @@ bool	Drive::isNoHand()
   return (_noHand);
 }
 
+bool	Drive::isCarembar()
+{
+  return (_carembar);
+}
+
 bool	Drive::isAnimating()
 {
   return (_isAnimating);
@@ -384,6 +391,7 @@ void	Drive::animThread()
       _animListMutex.unlock();
       if (move == true)
 	{
+	  std::cout << "Launching : " << current << std::endl;
 	  launch(current);
 	  _animationsMutex.lock();
 	  this->*_animations[current]._valueToChange =
@@ -408,7 +416,6 @@ void	Drive::launch(std::string const& name)
   catch (...)
     {
     }
-  std::cout << "Launching : " << name << std::endl;
 }
 
 void	Drive::addAnim(std::string const& name)

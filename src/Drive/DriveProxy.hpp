@@ -5,7 +5,7 @@
 // Login   <olivie_a@epitech.net>
 // 
 // Started on  Fri Sep 28 16:49:12 2012 samuel olivier
-// Last update Tue Nov 13 19:59:27 2012 samuel olivier
+// Last update Thu Nov 15 16:09:35 2012 samuel olivier
 //
 
 #ifndef __DRIVE_PROXY__
@@ -51,6 +51,7 @@ public:
   Drive::Speed		speed();
   bool			isNoHand();
   bool			isAnimating();
+  bool			isCarembar();
 };
 
 #endif

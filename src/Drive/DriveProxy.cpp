@@ -5,7 +5,7 @@
 // Login   <olivie_a@epitech.net>
 // 
 // Started on  Fri Sep 28 16:49:09 2012 samuel olivier
-// Last update Fri Sep 28 19:08:37 2012 samuel olivier
+// Last update Thu Nov 15 16:11:11 2012 samuel olivier
 //
 
 #include "DriveProxy.hpp"
@@ -143,4 +143,9 @@ bool			DriveProxy::isNoHand()
 bool			DriveProxy::isAnimating()
 {
   return (call<bool>("isAnimating"));
+}
+
+bool			DriveProxy::isCarembar()
+{
+  return (call<bool>("isCarembar"));
 }
