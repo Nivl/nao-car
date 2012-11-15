@@ -5,7 +5,7 @@
 // Login   <olivie_a@epitech.net>
 // 
 // Started on  Wed Sep  5 23:47:40 2012 samuel olivier
-// Last update Thu Nov 15 14:17:01 2012 samuel olivier
+// Last update Thu Nov 15 16:06:04 2012 samuel olivier
 //
 
 #ifndef __AUTO_DRIVE_HH__
@@ -59,7 +59,6 @@ public:
 			     double value);
 
 private:
-
   boost::shared_ptr<AL::ALBroker>	_broker;
   DriveProxy*				_proxy;
   std::thread				*_thread;
