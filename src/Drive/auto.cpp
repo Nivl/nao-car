@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Sep 28 13:59:38 2012 gael jochaud-du-plessix
-// Last update Tue Nov 13 17:59:37 2012 loick michard
+// Last update Wed Nov 14 11:53:01 2012 loick michard
 //
 
 #include <alcommon/almodulecore.h>
@@ -182,6 +182,7 @@ int main(int ac, char **av)
 
   GstElement* appsink = gst_bin_get_by_name(GST_BIN(pipeline), "appsink0");
 
+
   // Register callbacks                                                                                                                                     
   GstAppSinkCallbacks callbacks = {
     NULL, appsink_new_preroll, appsink_new_buffer,
@@ -192,14 +193,15 @@ int main(int ac, char **av)
   gst_element_set_state(pipeline, GST_STATE_PLAYING);
 
   // Create the window
+
   namedWindow("opencv", CV_WINDOW_AUTOSIZE | CV_WINDOW_FREERATIO);
   cvMoveWindow("opencv", 0, 0);
   namedWindow("opencv2", CV_WINDOW_AUTOSIZE | CV_WINDOW_FREERATIO);
   cvMoveWindow("opencv2", 640, 0);
 
-  int tolerance = 210;//223;
+  int tolerance = 190;//223;
   createTrackbar("Tolerance", "opencv", &tolerance, 255);
-  int untolerance = 174;//171;
+  int untolerance = 125;//171;
   createTrackbar("Untolerance", "opencv", &untolerance, 255);
   int v1 = 4, v2 = 80, v3 = 80, v4 = 37, v5 = 9;
   createTrackbar("v1", "opencv", &v1, 200);
@@ -543,7 +545,6 @@ int main(int ac, char **av)
     if (total > 0)
       line(color_dst, Point(total * src.cols, 0),
 	   Point(total * src.cols, src.rows), Scalar(255, 255, 255), 3, 8);
-
     imshow("opencv", color_dst);
     imshow("opencv2", mask);
   } while (waitKey(10) != 'q');

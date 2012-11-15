@@ -58,10 +58,11 @@ target_link_libraries(SfmlApp ${SFML_LIBRARIES} ${POSE_DIR}
 
 set(AutoSrcs auto.cpp)
 qi_create_bin(Auto ${AutoSrcs})
-#qi_use_lib(Auto ALCOMMON BOOST ALVISION  OPENCV OPENCV2_CORE OPENCV2_HIGHGUI)
-qi_use_lib(Auto ALCOMMON BOOST)
+#qi_use_lib(Auto ALCOMMON BOOST ALVISION OPENCV OPENCV2_CORE
+#  OPENCV2_HIGHGUI
+#  )
 #find_library(CV_DIR cv /home/aurao/naoqi-sdk/lib)
-
+qi_use_lib(Auto ALCOMMON BOOST)
 include_directories(/usr/include/gstreamer-0.10
 		    /usr/include/glib-2.0
 		    /usr/lib64/glib-2.0/include
@@ -112,8 +113,7 @@ set(AutoDriveProxySrcs AutoDriveProxy.cpp)
 qi_create_lib(AutoDriveProxy ${AutoDriveProxySrcs})
 qi_use_lib(AutoDriveProxy ALCOMMON BOOST)
 
-set(AutoSrcs main_auto.cpp)
-qi_create_bin(AutoApp ${AutoSrcs})
+set(autosrc main_auto.cpp)
+qi_create_bin(AutoApp ${autosrc})
 qi_use_lib(AutoApp ALCOMMON BOOST)
-include_directories()
 target_link_libraries(AutoApp AutoDriveProxy)

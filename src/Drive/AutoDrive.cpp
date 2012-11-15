@@ -5,7 +5,7 @@
 // Login   <olivie_a@epitech.net>
 // 
 // Started on  Wed Sep  5 23:47:17 2012 samuel olivier
-// Last update Thu Nov 15 14:24:03 2012 samuel olivier
+// Last update Thu Nov 15 18:12:29 2012 loick michard
 //
 
 #include <iostream>
@@ -142,21 +142,21 @@ int		AutoDrive::thread()
   // Create the gstreamer pipeline
 
   // Create the window
-  namedWindow("opencv", CV_WINDOW_AUTOSIZE | CV_WINDOW_FREERATIO);
-  cvMoveWindow("opencv", 0, 0);
-  namedWindow("opencv2", CV_WINDOW_AUTOSIZE | CV_WINDOW_FREERATIO);
-  cvMoveWindow("opencv2", 640, 0);
+  // namedWindow("opencv", CV_WINDOW_AUTOSIZE | CV_WINDOW_FREERATIO);
+  // cvMoveWindow("opencv", 0, 0);
+  // namedWindow("opencv2", CV_WINDOW_AUTOSIZE | CV_WINDOW_FREERATIO);
+  // cvMoveWindow("opencv2", 640, 0);
 
-  int tolerance = 210;//223;
-  createTrackbar("Tolerance", "opencv", &tolerance, 255);
-  int untolerance = 174;//171;
-  createTrackbar("Untolerance", "opencv", &untolerance, 255);
+  int tolerance = 231;//223;
+  //createTrackbar("Tolerance", "opencv", &tolerance, 255);
+  int untolerance = 214;//171;
+  //createTrackbar("Untolerance", "opencv", &untolerance, 255);
   int v1 = 4, v2 = 80, v3 = 80, v4 = 37, v5 = 9;
-  createTrackbar("v1", "opencv", &v1, 200);
-  createTrackbar("v2", "opencv", &v2, 200);
-  createTrackbar("v3", "opencv", &v3, 200);
-  createTrackbar("v4", "opencv", &v4, 200);
-  createTrackbar("v5", "opencv", &v5, 200);
+  // createTrackbar("v1", "opencv", &v1, 200);
+  // createTrackbar("v2", "opencv", &v2, 200);
+  // createTrackbar("v3", "opencv", &v3, 200);
+  // createTrackbar("v4", "opencv", &v4, 200);
+  // createTrackbar("v5", "opencv", &v5, 200);
 
   Mat mask;
   Vec4i redLine(0, 0, 0, 0);
@@ -493,8 +493,8 @@ int		AutoDrive::thread()
     if (total > 0)
       line(color_dst, Point(total * src.cols, 0),
 	   Point(total * src.cols, src.rows), Scalar(255, 255, 255), 3, 8);
-    imshow("opencv", color_dst);
-    imshow("opencv2", mask);
+    //imshow("opencv", color_dst);
+    //imshow("opencv2", mask);
   } while (_stopThread == false);
   _proxy->stop();
   return 0;
@@ -566,8 +566,7 @@ double distance(double x1, double y1, double x2, double y2)
   return (sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)));
 }
 
-void	AutoDrive::getNextState(State &state, Direction &direction,
-				double value)
+void AutoDrive::getNextState(State &state, Direction &direction, double value)
 {  
   static bool isStart = false;
   static clock_t start;
