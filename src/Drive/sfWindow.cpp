@@ -174,7 +174,7 @@ void	Window::exec()
       sf::Event	event;
       while (_window.pollEvent(event))
 	checkEvent(&event);
-      //checkJoystick();
+      checkJoystick();
       checkKeyboard();
       _window.clear();
       if (_streamImageChanged)
