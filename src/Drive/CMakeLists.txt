@@ -86,7 +86,7 @@ set(_srcs
     AutoDrive.cpp)
 if(AUTODRIVE_IS_REMOTE)
   add_definitions( " -DAUTODRIVE_IS_REMOTE ")
-   qi_create_bin(AutoDrive ${_srcs})
+  qi_create_bin(AutoDrive ${_srcs})
 else()
   qi_create_lib(AutoDrive SHARED ${_srcs})
 endif()

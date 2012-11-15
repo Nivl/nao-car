@@ -29,8 +29,8 @@ Mat src;
 
 #define VALUE_RIGHT 0.55
 #define VALUE_LEFT 0.45
-#define VALUE_TOO_RIGHT 0.85
-#define VALUE_TOO_LEFT 0.15
+#define VALUE_TOO_RIGHT 0.80
+#define VALUE_TOO_LEFT 0.20
 
 bool isCollapsed(Vec4i& line1, Vec4i& line2, double threshold=10.0);
 double lineSpace(Vec4i& line1, Vec4i& line2);
@@ -64,10 +64,10 @@ void	AutoDrive::start()
 {
   gst_init(0, NULL);
   GError* error = NULL;
-  // GstElement *pipeline = gst_parse_launch("v4l2src ! video/x-raw-yuv,width=640,height=480 ! ffmpegcolorspace ! video/x-raw-rgb ! appsink", &error);
-  _pipeline = gst_parse_launch("udpsrc port=8081 ! smokedec ! ffmpegcolorspace ! video/x-raw-rgb ! appsink", &error);
+  _pipeline = gst_parse_launch("v4l2src device=/dev/video0 ! videoscale ! video/x-raw-yuv,width=320,height=240 ! ffmpegcolorspace ! video/x-raw-rgb ! appsink", &error);
+  // _pipeline = gst_parse_launch("v4l2src ! video/x-raw-yuv,width=640,height=480 ! ffmpegcolorspace ! video/x-raw-rgb ! appsink", &error);
+  // _pipeline = gst_parse_launch("udpsrc port=8081 ! smokedec ! ffmpegcolorspace ! video/x-raw-rgb ! appsink", &error);
 
-  std::cout << _pipeline << " " << error << std::endl;
   if (!_pipeline || error) {
     std::cerr << "Cannot create pipeline" << std::endl;
     return ;
@@ -147,9 +147,9 @@ int		AutoDrive::thread()
   // namedWindow("opencv2", CV_WINDOW_AUTOSIZE | CV_WINDOW_FREERATIO);
   // cvMoveWindow("opencv2", 640, 0);
 
-  int tolerance = 231;//223;
+  int tolerance = 216;//223;
   //createTrackbar("Tolerance", "opencv", &tolerance, 255);
-  int untolerance = 214;//171;
+  int untolerance = 178;//171;
   //createTrackbar("Untolerance", "opencv", &untolerance, 255);
   int v1 = 4, v2 = 80, v3 = 80, v4 = 37, v5 = 9;
   // createTrackbar("v1", "opencv", &v1, 200);
@@ -161,31 +161,35 @@ int		AutoDrive::thread()
   Mat mask;
   Vec4i redLine(0, 0, 0, 0);
 
-  double objectivesStartY = 150 * src.rows / 480;
-  double objectivesEndY = src.rows;
-  double objectivesStep = 1;
-  
-  vector<Vec2i> points;
-  for (size_t k = 0; k < (objectivesEndY - objectivesStartY) / objectivesStep; ++k)
-    {
-      Vec2i point(320 * src.cols / 640, objectivesEndY - objectivesStep * k);
-      points.push_back(point);
-    }
+  //std::cout << src.rows << std::endl;
+  //std::cout << src.cols << std::endl;
+
 
   //int previousStatus = 0;
   //int previousMotion = 0;
   State state = Stop;
   Direction direction = Front;
-  double values[5] = {-1, -1, -1, -1, -1};
+  double values[10] = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
   do {
 
     if (!src.data)
       continue ;
 
+    double objectivesStartY = 150 * src.rows / 480;
+    double objectivesEndY = src.rows;
+    double objectivesStep = 1;
+
+    vector<Vec2i> points;
+    for (size_t k = 0; k < (objectivesEndY - objectivesStartY) / objectivesStep; ++k)
+      {
+	Vec2i point(320 * src.cols / 640, objectivesEndY - objectivesStep * k);
+	points.push_back(point);
+      }
+    
     inRange(src,
-    	    Scalar(0, 0, tolerance),
-    	    Scalar(untolerance, untolerance, 255),
-    	    mask);
+	  Scalar(0, 0, tolerance),
+	  Scalar(untolerance, untolerance, 255),
+	  mask);
     // inRange(src,
     // 	    Scalar(40, 40, 40),
     // 	    Scalar(122, 122, 122),
@@ -241,7 +245,7 @@ int		AutoDrive::thread()
       }
     }
 
-    // std::cout << lines.size() << " lines found, collapsed in " << collapsedLines.size() << std::endl;
+    //    std::cout << lines.size() << " lines found, collapsed in " << collapsedLines.size() << std::endl;
 
     // Once we have collapsed lines, search for the best one
     // If we already have one, just take the nearest    
@@ -321,10 +325,10 @@ int		AutoDrive::thread()
       }
 
     //Debug lines
-    for (int i = 0; i < collapsedLines.size(); ++i) {
-      line(color_dst, Point(collapsedLines[i][0], collapsedLines[i][1]),
-    	   Point(collapsedLines[i][2], collapsedLines[i][3]), Scalar(0, 0, 255), 3, 8);
-    }
+    //for (int i = 0; i < collapsedLines.size(); ++i) {
+    // line(color_dst, Point(collapsedLines[i][0], collapsedLines[i][1]),
+    //	   Point(collapsedLines[i][2], collapsedLines[i][3]), Scalar(0, 0, 255), 3, 8);
+    //}
 
     // LA OU CA MARCHE PAS MAIS IL FAUT LENLEVER ET LA FAIRE MARCHER AVANT, CA DOIT AFFICHER UNE PETITE LIGNE ROUGE(COMME TA BITE)
     // line(color_dst, Point(0, 0), Point(50, 50), Scalar(255, 0, 0), 3, 8);
@@ -348,8 +352,9 @@ int		AutoDrive::thread()
     // roadCoords.push_back(340 * src.rows / 480);
     // roadCoords.push_back(370 * src.rows / 480);
     // roadCoords.push_back(400 * src.rows / 480);
+    
     vector<Vec2i> road;
-    for (int i = 0; i < points.size() - 1; ++i) {
+    for (int i = 0; points.size() != 0 && i < points.size() - 1; ++i) {
       for (int k = 0; k < roadCoords.size(); ++k)
 	{
 	  if (points[i][1] == roadCoords[k] && points[i][0] != -1)
@@ -359,17 +364,18 @@ int		AutoDrive::thread()
 	}
     }
 
-    for (int i = 0; road.size() != 0 && i < road.size() - 1; ++i) {
-      line(color_dst, road[i],
-           road[i + 1], Scalar(255, 0, 0), 3, 8);
-      line(color_dst, Point(0, road[i][1]),
-           Point(src.cols, road[i][1]), Scalar(0, 255 - i * 10, 0), 1, 1);
-    }
-    if (road.size() != 0)
-      {
-	line(color_dst, Point(0, road[road.size() - 1][1]),
-	     Point(src.cols, road[road.size() - 1][1]), Scalar(0, 255 - (road.size() - 1) * 10, 0), 1, 1);
-      }
+    //    for (int i = 0; road.size() != 0 && i < road.size() - 1; ++i) {
+    //line(color_dst, road[i],
+    //     road[i + 1], Scalar(255, 0, 0), 3, 8);
+    //line(color_dst, Point(0, road[i][1]),
+    //     Point(src.cols, road[i][1]), Scalar(0, 255 - i * 10, 0), 1, 1);
+    //}
+    //if (road.size() != 0)
+    //{
+    //	line(color_dst, Point(0, road[road.size() - 1][1]),
+    //	     Point(src.cols, road[road.size() - 1][1]), Scalar(0, 255 - (road.size() - 1) * 10, 0), 1, 1);
+    //}
+
     double sum = 0.0;
     double div = 0.0;
     for (int i = 0; road.size() != 0 && i < road.size(); ++i) {
@@ -379,23 +385,24 @@ int		AutoDrive::thread()
     if (div > 0)
       sum /= div;
 
-    for (int i = 5; i > 0; --i)
+    for (int i = 10; i > 0; --i)
       values[i] = values[i - 1];
     values[0] = sum / src.cols;
     double total = 0;
     div = 0;
-    for (int i = 0; i < 5; ++i)
+    for (int i = 0; i < 10; ++i)
       if (values[i] > 0)
     	{
-	  std::cout << values[i] << std::endl;
+	  //std::cout << values[i] << std::endl;
     	  total += values[i];
     	  div += 1;
     	}
     if (div >= 1)
       total /= div;
-
     if (total > 0)
       getNextState(state, direction, total);
+    if (total == 0 && state == Up)
+      state = Stop;
     std::cout << "TOTAL " << total << std::endl;
     std::cout << state << std::endl;
     std::cout << direction << std::endl;
@@ -490,9 +497,9 @@ int		AutoDrive::thread()
     // 	  --previousMotion;
     // 	//_proxy->up();
     //   }
-    if (total > 0)
-      line(color_dst, Point(total * src.cols, 0),
-	   Point(total * src.cols, src.rows), Scalar(255, 255, 255), 3, 8);
+    //if (total > 0)
+    //line(color_dst, Point(total * src.cols, 0),
+    //	   Point(total * src.cols, src.rows), Scalar(255, 255, 255), 3, 8);
     //imshow("opencv", color_dst);
     //imshow("opencv2", mask);
   } while (_stopThread == false);
@@ -614,7 +621,8 @@ void AutoDrive::getNextState(State &state, Direction &direction, double value)
       else
 	{
 	  clock_t end = clock();
-	  if (((double)end - start) / CLOCKS_PER_SEC > 1.0)
+	  std::cout << "TIMER :" << ((double)end - start) / CLOCKS_PER_SEC << std::endl;
+	  if (((double)end - start) / CLOCKS_PER_SEC > 3.0)
 	    {
 	      isStart = false;
 	      _proxy->stopPush();
