@@ -14,6 +14,8 @@ find_package(qibuild)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/CMake/Modules)
 find_package (SFML 2.0 REQUIRED window graphics system network)
 
+
+
 option(DRIVE_IS_REMOTE
   "module is compiled as a remote module (ON or OFF)"
   OFF)
@@ -38,11 +40,16 @@ find_library(POSE_DIR Pose lib)
 target_link_libraries(Drive ${POSE_DIR})
 include_directories(include)
 
+
+
+
 include_directories(.)
 set(DriveProxySrcs DriveProxy.cpp)
 qi_create_lib(DriveProxy ${DriveProxySrcs})
 qi_use_lib(DriveProxy ALCOMMON BOOST)
 target_link_libraries(DriveProxy)
+
+
 
 set(SfmlAppSrcs sfmlMain.cpp sfWindow.cpp)
 qi_create_bin(SfmlApp ${SfmlAppSrcs})
@@ -54,14 +61,16 @@ include_directories(/usr/include/gstreamer-0.10
 target_link_libraries(SfmlApp ${SFML_LIBRARIES} ${POSE_DIR}
 		      pthread gstreamer-0.10 gobject-2.0
 		      gmodule-2.0 xml2 gthread-2.0 rt
-		      glib-2.0 gstapp-0.10 DriveProxy)
+		      glib-2.0 gstapp-0.10 DriveProxy
+		      AutoDriveProxy)
+
+
 
 set(AutoSrcs auto.cpp)
 qi_create_bin(Auto ${AutoSrcs})
 #qi_use_lib(Auto ALCOMMON BOOST ALVISION  OPENCV OPENCV2_CORE OPENCV2_HIGHGUI)
 qi_use_lib(Auto ALCOMMON BOOST)
 #find_library(CV_DIR cv /home/aurao/naoqi-sdk/lib)
-
 include_directories(/usr/include/gstreamer-0.10
 		    /usr/include/glib-2.0
 		    /usr/lib64/glib-2.0/include
@@ -77,6 +86,9 @@ target_link_libraries(Auto ${POSE_DIR}
 		      opencv_contrib opencv_legacy opencv_flann
 		      ${CV_DIR}
 		      DriveProxy)
+
+
+
 
 option(AUTODRIVE_IS_REMOTE
   "module is compiled as a remote module (ON or OFF)"
@@ -107,10 +119,14 @@ target_link_libraries(AutoDrive
 		      ${CV_DIR}
 		      DriveProxy)
 
-include_directories(.)
+
+
 set(AutoDriveProxySrcs AutoDriveProxy.cpp)
 qi_create_lib(AutoDriveProxy ${AutoDriveProxySrcs})
 qi_use_lib(AutoDriveProxy ALCOMMON BOOST)
+
+
+
 
 set(AutoSrcs main_auto.cpp)
 qi_create_bin(AutoApp ${AutoSrcs})

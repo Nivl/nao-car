@@ -47,7 +47,7 @@ Window::Window(boost::shared_ptr<AL::ALBroker> broker, int joystickId,
   _module(broker), _window(sf::VideoMode(640, 480), "NaoCar"),
   _joystickId(joystickId), _t2p(broker), _stopThread(false),
   _voiceThread(launchVoiceThread, this), _streamImageChanged(false),
-  _pipeline(NULL), _resize(true), _currentCameraMode(0)
+  _pipeline(NULL), _resize(true), _currentCameraMode(0), _isAutoDriving(false)
 {
   _window.setVerticalSyncEnabled(true);
   _window.setFramerateLimit(30); 
@@ -285,6 +285,26 @@ void	Window::checkEvent(sf::Event *event)
   if (event->type == sf::Event::JoystickButtonPressed &&
       event->joystickButton.joystickId == _joystickId)
     {
+      // if (_module.isAnimating() == false && _isAutoDriving == false &&
+      // 	  event->joystickButton.button == 1)
+      // 	{
+      // 	  _textListMutex.lock();
+      // 	  _textList.push_back("Auto Drailleve!");
+      // 	  _textListMutex.unlock();
+      // 	  _isAutoDriving = true;
+      // 	  _autoDriveProxy->start();
+      // 	}
+      // else if (_module.isAnimating() == false && _isAutoDriving == true &&
+      // 	  event->joystickButton.button == 1)
+      // 	{
+      // 	  _textListMutex.lock();
+      // 	  _textList.push_back("Stop Auto Drailleve");
+      // 	  _textListMutex.unlock();
+      // 	  _isAutoDriving = false;
+      // 	  _autoDriveProxy->stop();
+      // 	}
+      // if (_isAutoDriving == true)
+      // 	return ;
       if (_module.isAnimating() == false &&
   	  event->joystickButton.button == 0 && _module.isNoHand() == false)
   	{
@@ -293,6 +313,26 @@ void	Window::checkEvent(sf::Event *event)
   	  else
   	    _module.takeSteeringWheel();
   	}
+      if (_module.isAnimating() == false &&
+  	  event->joystickButton.button == 3)
+	{
+	  if (_module.isCarembar() == false)
+	    {
+	      _textListMutex.lock();
+	      _textList.push_back("Tiens ton carambar!");
+	      _textListMutex.unlock();
+	      if (_module.steeringWheelDirection() != Drive::Front)
+		_module.stopTurn();
+	      _module.takeCarembar();
+	    }
+	  else
+	    {
+	      _textListMutex.lock();
+	      _textList.push_back("Au revoir petit enfant!");
+	      _textListMutex.unlock();
+	      _module.giveCarembar();
+	    }
+	}
       if (event->joystickButton.button == 4)
   	_currentCameraMode = (_currentCameraMode - 1 + _cameraModes.size()) %
   	  _cameraModes.size();
@@ -307,7 +347,7 @@ void	Window::checkEvent(sf::Event *event)
 
 void	Window::checkJoystick()
 {
-  if (!sf::Joystick::isConnected(_joystickId))
+  if (_isAutoDriving == true || !sf::Joystick::isConnected(_joystickId))
     return ;
   if (_module.isAnimating() == false &&
       !sf::Joystick::isButtonPressed(_joystickId, 2) &&
@@ -326,28 +366,6 @@ void	Window::checkJoystick()
       if (_module.steeringWheelDirection() != Drive::Front)
   	_module.stopTurn();
       _module.beginNoHand();
-    }
-  if (_module.isAnimating() == false &&
-      sf::Joystick::isButtonPressed(_joystickId, 3) &&
-      _module.isCarembar() == false)
-    {
-      _textListMutex.lock();
-      _textList.push_back("Tiens ton carambar!");
-      _textListMutex.unlock();
-      if (_module.steeringWheelDirection() != Drive::Front)
-  	_module.stopTurn();
-      _module.takeCarembar();
-    }
-  if (_module.isAnimating() == false &&
-      sf::Joystick::isButtonPressed(_joystickId, 3) &&
-      _module.isCarembar() == true)
-    {
-      _textListMutex.lock();
-      _textList.push_back("Au revoir petit enfant!");
-      _textListMutex.unlock();
-      if (_module.steeringWheelDirection() != Drive::Front)
-  	_module.stopTurn();
-      _module.giveCarembar();
     }
   if (sf::Joystick::getAxisPosition(_joystickId, sf::Joystick::R) > 0)
     _module.up();
@@ -372,7 +390,7 @@ void	Window::checkJoystick()
 
 void	Window::checkKeyboard()
 {
-  if (sf::Joystick::isConnected(_joystickId))
+  if (_isAutoDriving == true || sf::Joystick::isConnected(_joystickId))
     return ;
   // if (_module.isAnimating() == false &&
   //     !sf::Keyboard::isKeyPressed(sf::Keyboard) &&

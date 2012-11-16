@@ -5,7 +5,7 @@
 // Login   <olivie_a@epitech.net>
 // 
 // Started on  Wed Sep 26 18:34:54 2012 samuel olivier
-// Last update Fri Sep 28 18:02:08 2012 samuel olivier
+// Last update Thu Nov 15 19:39:56 2012 samuel olivier
 //
 
 #ifndef __WINDOW__
@@ -26,7 +26,9 @@
 # include <gst/gst.h>
 # include <glib.h>
 # include <gst/app/gstappsink.h>
+
 # include "DriveProxy.hpp"
+# include "AutoDriveProxy.hpp"
 
 namespace AL
 {
@@ -84,6 +86,8 @@ private:
   int				_currentCameraMode;
   sf::TcpSocket			_socket;
   bool				_isConnected;
+  bool				_isAutoDriving;
+  AutoDriveProxy		*_autoDriveProxy;
 };
 
 #endif
