@@ -5,7 +5,6 @@
 // Login   <olivie_a@epitech.net>
 // 
 // Started on  Wed Sep  5 23:47:40 2012 samuel olivier
-// Last update Thu Nov 15 16:06:04 2012 samuel olivier
 //
 
 #ifndef __AUTO_DRIVE_HH__
@@ -38,17 +37,17 @@ public:
 	    const std::string &name);
   virtual ~AutoDrive();
 
-  typedef enum State {
+  enum State {
     Up,
     Down,
     Stop
-  } State;
+  };
 
-  typedef enum Direction {
+  enum Direction {
     Right,
     Left,
     Front
-  } Direction;
+  };
 
   virtual void	init();
   void		start();
