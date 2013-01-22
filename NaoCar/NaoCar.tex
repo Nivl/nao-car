@@ -117,30 +117,16 @@ Loick Michard}
 		\newpage
 		\subsection{Intelligence artificielle: conduite autonome}
 			\subsubsection{Conduite et reconnaissance de formes}
-				Dans un premier temps, nao doit etre capable:
-				\begin{itemize}
-				\item De pouvoir conduire en suivant une ligne de couleur ou une piste différenciable
-				\item De reconnaitre des formes simples pour permettre de s'arrêter au feu rouge par exemple
-				\item De détecter les obstacles, s'arrêter, voire les contourner
-				\end{itemize}
+				Dans un premier temps, nao doit etre capable de pouvoir conduire en suivant une ligne de couleur ou une piste différenciable
 			\subsubsection{Vers une conduite en totale autonomie}
 				Dans un second temps, Nao doit pouvoir:
 				\begin{itemize}
-			  	\item Conduire dans un espace connu en totale autonomie.
-				\item Suivre un itinéraire donné
+				\item Integrer la Kinect dans NaoCar
+				\item Detecter les obstacles
 				\item Éviter les obstacles
-				\item Se repérer dans un environnement en 3 dimensions.
 				\end{itemize}
-			\subsubsection{Plannification et modélisation}
-				Enfin, Nao pourra évoluer dans un monde inconnu. Il devra être capable:
-				\begin{itemize}
-				\item De parcourir un tout nouvel environnement
-				\item De dresser une carte en 2 ou 3 dimensions de celui-ci.
-				\end{itemize}
-				Grâce à cela, Nao sera en mesure de modeliser et de parcourir l'ensemble d'un environement totalement inconnu et non déerministe.
 		\subsection{Matériel}
-			Dans un premier temps, le véhicule utilisé sera une voiture pour enfant légèrement modifiée afin de pouvoir être pilotée par Nao. La voiture retenue se déplace à une vitesse de 3 km/h et dispose d'un faible angle de braquage. Cette première solution permettra de concevoir les solutions logicielles de pilotage et de conduite autonome afin de réaliser un premier prototype.\\
-			Dans une seconde partie, l'objectif est de réaliser un véhicule spécialement dédié au Nao, lui permettant de se déplacer plus vite et disposant d'un meilleur angle de braquage.
+			Le véhicule utilisé sera une voiture pour enfant légèrement modifiée afin de pouvoir être pilotée par Nao. La voiture retenue se déplace à une vitesse de 3 km/h et dispose d'un faible angle de braquage. Cette première solution permettra de concevoir les solutions logicielles de pilotage et de conduite autonome afin de réaliser un premier prototype.\\
 	\section{Communication autour du projet}
 		\subsection{Évènements}
 			\subsubsection{Foire exposition de Montpellier}
@@ -174,10 +160,11 @@ Loick Michard}
 			Afin de travailler dans de meilleures conditions nous envisageons divers partenariats, et plus particulièrement un partenariat avec un concessionaire automobile qui serai apte à nous fournir une voiture de meilleure qualité.
 		\subsection{Vidéos de promotion}
 			Des vidéos de promotion devront être réalisées et diffusées sur les réseaux sociaux ainsi que sur différentes plateformes de streaming, afin faire connaitre le projet au plus de personnes possible, et ainsi d'améliorer les chances de partenariats.\\
-			Notre objectif est de réaliser plus de 100 000 vues.
+			Notre objectif est de réaliser plus de 3 000 vues.
 		\subsection{Ouverture à la communauté}
-			Les sources du projet sont disponible sur Github sous licence libre, ce qui permet à toutes les personnes intéressées d'utiliser et de modifier NaoCar comme bon leur semble.
-
+			Les sources du projet sont disponibles sur Github sous licence libre, ce qui permet à toutes les personnes intéressées d'utiliser et de modifier NaoCar comme bon leur semble.
+		\subsection{Continuite du projet}
+			Nous allons commencer a permettre aux etudiants des nouvelles promotions de reprendre NaoCar afin de faire vivre le projet, le pousser au bout de ses limites afin d'atteindre des objectifs que nous ne pourrons pas nous fixer.
 \chapter{Problématiques et solutions techniques}
 	\section{Mise en place technique}
 		\subsection{Contrôle et déplacement du robot}
@@ -208,8 +195,12 @@ Grâce à ce radar, nous pourrons également détecter les obstacles trop proche
 	\section{Communication autour du projet}
 		\subsection{Vidéos de promotion}
 			Pour maximiser le nombre de vues, nous allons axer nos efforts sur la réalisation et la promotion de la vidéo.\\
-			Pour cela, nous tournerons la vidéo avec un appareil photo proffessionel. Le montage devra être accrocheur, avoir un scénario, des musiques, des effets, etc..\\
+			Pour cela, nous tournerons la vidéo avec un appareil photo professionel. Le montage devra être accrocheur, avoir un scénario, des musiques, des effets, etc..\\
 			Nous devrons faire la promotions de la vidéo sur internet en la publiant sur les différentes plateformes d'hébergement vidéos comme Youtube et Dailymotion. Ainsi que partager la vidéo sur les réseaux sociaux et les sites de vidéos inédites.
+		\subsection{Site Web}
+			Nous allons egalement concentrer nos efforts dans la realisation d'un site web presentant l'equipe, regroupant les differents articles parus dans la presse etc.
+		\subsection{Continuite du projet}
+			Des le Salon de l'etudiant, nous allons chercher des etudiants de deuxieme annee pour pouvoir etre presents sur le salon et commencer a prendre en main le Nao.
 \chapter{Planning}
 	\section{Deadlines}
 		\subsection{6 octobre 2012}
@@ -218,11 +209,9 @@ Grâce à ce radar, nous pourrons également détecter les obstacles trop proche
 		\subsection{15-18 novembre 2012}
 			Nao pourra se déplacer de manière quasi-autonome, en suivant un marquage spécifique au sol.
 			Il devra détecter les obstacles qui se présentent devant lui.
-			Il doit pouvoir détecter la présence d'un feu tricolore et agir en conséquence : au rouge s'arrêter, au vert avancer.
 		\subsection{Avril 2013}
-			Nao et sa voiture pourront se déplacer dans un environnement connu en totale autonomie.
-			Nao pourra prévoir sa trajectoire et se rendre à une destination donnée.
-			On peut imaginer que Nao pourra être capable de se localiser et de cartographier son environemment totalement inconnu.
+			Nao et sa voiture pourront se déplacer dans un environnement en detectant et evitant les obstacles se presentant a lui.
+			On peut imaginer que Nao pourra être capable de se localiser dans un environemment connu.
 	\section{Planning général}
 		\begin{tabular}{|l|l|l|}
 			\hline
@@ -233,10 +222,8 @@ Grâce à ce radar, nous pourrons également détecter les obstacles trop proche
 			07/09/2012 & 10/09/2012 & Actions basiques de conduite : touner, accélérer, marche avant/arrière\\ \hline
 			10/09/2012 & 06/10/2012 & Contrôle à distance\\ \hline
 			06/10/2012 & 25/10/2012 & Conduite suivant un marquage au sol\\ \hline
-			25/10/2012 & 03/11/2012 & Détection des obstacles\\ \hline
-			03/11/2012 & 15/11/2012 & Arrêt au feu tricolore\\ \hline
-			15/11/2012 & 15/01/2013 & Localisation dans un espace connu (filtre particulaire)\\ \hline
-			15/01/2013 & 01/02/2013 & Plannification et prévision de trajectoire\\ \hline
-			01/02/2013 & 15/04/2013 & Localisation et cartographie, autres fonctionnalités...\\ \hline
+			23/01/2013 & 04/04/2013 & Transmettre le projet\\ \hline
+			04/02/2013 & 05/03/2013 & Détection des obstacles\\ \hline
+			05/03/2013 & 04/04/2013 & Eviter les obstacles\\ \hline
 			\end{tabular}
 \end{document}
