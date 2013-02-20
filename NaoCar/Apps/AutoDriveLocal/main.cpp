@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Sep 28 13:59:38 2012 gael jochaud-du-plessix
-// Last update Fri Nov 16 17:59:08 2012 samuel olivier
+// Last update Wed Feb 20 19:42:05 2013 samuel olivier
 //
 
 #include <alcommon/almodulecore.h>
@@ -28,13 +28,13 @@ using namespace cv;
 
 Mat src;
 
-GstFlowReturn appsink_new_preroll(GstAppSink *sink, gpointer user_data)
+GstFlowReturn appsink_new_preroll(GstAppSink *sink, gpointer)
 {
-  GstBuffer *buffer =  gst_app_sink_pull_preroll(sink);
+  gst_app_sink_pull_preroll(sink);
   return (GST_FLOW_OK);
 }
 
-GstFlowReturn appsink_new_buffer(GstAppSink *sink, gpointer user_data)
+GstFlowReturn appsink_new_buffer(GstAppSink *sink, gpointer)
 {
   GstBuffer *buffer = gst_app_sink_pull_buffer(sink);
 
@@ -146,13 +146,13 @@ void	getNextState(State &state, Direction &direction, double value)
     }
 }
 
-void	catchSig(int signum)
+void	catchSig(int)
 {
   proxy->stop();
   exit(0);
 }
 
-int main(int ac, char **av)
+int main(int, char **av)
 {
   boost::shared_ptr<AL::ALBroker> broker;
   try
