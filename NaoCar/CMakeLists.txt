@@ -46,6 +46,11 @@ SET (NAOCAR_AUTODRIVE_PROXY_PATH ${NAOCAR_PROXIES_PATH}/AutoDrive)
 SET (NAOCAR_REMOTE_CONTROL_APP_PATH ${NAOCAR_APPS_PATH}/RemoteControl)
 SET (NAOCAR_AUTODRIVE_APP_PATH ${NAOCAR_APPS_PATH}/AutoDrive)
 SET (NAOCAR_AUTODRIVELOCAL_APP_PATH ${NAOCAR_APPS_PATH}/AutoDriveLocal)
+SET (NAOCAR_SAVE_POSE_APP_PATH ${NAOCAR_APPS_PATH}/SavePose)
+SET (NAOCAR_TAKE_POSE_APP_PATH ${NAOCAR_APPS_PATH}/TakePose)
+SET (NAOCAR_CREATE_ANIMATION_APP_PATH ${NAOCAR_APPS_PATH}/CreateAnimation)
+SET (NAOCAR_SET_STIFFNESSES_APP_PATH ${NAOCAR_APPS_PATH}/SetStiffnesses)
+SET (NAOCAR_LAUNCH_ANIMATION_APP_PATH ${NAOCAR_APPS_PATH}/LaunchAnimation)
 
 
 
@@ -159,11 +164,50 @@ FILE (
     ${NAOCAR_AUTODRIVELOCAL_APP_PATH}/*
 )
 
+# AutoDriveLocal App
+FILE (
+    GLOB_RECURSE
+    SAVE_POSE_APP_SOURCES
+    ${NAOCAR_SAVE_POSE_APP_PATH}/*
+)
+
+# AutoDriveLocal App
+FILE (
+    GLOB_RECURSE
+    TAKE_POSE_APP_SOURCES
+    ${NAOCAR_TAKE_POSE_APP_PATH}/*
+)
+
+# AutoDriveLocal App
+FILE (
+    GLOB_RECURSE
+    CREATE_ANIMATION_APP_SOURCES
+    ${NAOCAR_CREATE_ANIMATION_APP_PATH}/*
+)
+
+# AutoDriveLocal App
+FILE (
+    GLOB_RECURSE
+    SET_STIFFNESSES_APP_SOURCES
+    ${NAOCAR_SET_STIFFNESSES_APP_PATH}/*
+)
+
+# AutoDriveLocal App
+FILE (
+    GLOB_RECURSE
+    LAUNCH_ANIMATION_APP_SOURCES
+    ${NAOCAR_LAUNCH_ANIMATION_APP_PATH}/*
+)
+
 
 
 ###############################################################################
+# Modules Compilation And Linking
+###############################################################################
+
+#
 # Pose Module
-###############################################################################
+#
 
 QI_CREATE_LIB (
 	Pose
@@ -177,10 +221,9 @@ QI_USE_LIB (
 )
 
 
-
-###############################################################################
+#
 # Drive Module
-###############################################################################
+#
 
 OPTION (DRIVE_IS_REMOTE
   "module is compiled as a remote module (ON or OFF)"
@@ -188,11 +231,9 @@ OPTION (DRIVE_IS_REMOTE
 OPTION (NAO_LOCAL_COMPILATION
   "module is compiled as a local module for the nao (ON or OFF)"
   ON)
-
 IF (NAO_LOCAL_COMPILATION)
   ADD_DEFINITIONS ( " -DNAO_LOCAL_COMPILATION ")
 ENDIF ()
-
 IF (DRIVE_IS_REMOTE)
   ADD_DEFINITIONS ( " -DDRIVE_IS_REMOTE ")
   QI_CREATE_BIN(
@@ -206,7 +247,6 @@ ELSE ()
 	${DRIVE_MODULE_SOURCES}
   )
 ENDIF ()
-
 QI_USE_LIB (
 	DriveModule
 	ALCOMMON
@@ -218,56 +258,9 @@ TARGET_LINK_LIBRARIES (
 )
 
 
-###############################################################################
-# Drive Proxy
-###############################################################################
-
-QI_CREATE_LIB (
-	DriveProxy
-	${DRIVE_PROXY_SOURCES}
-)
-QI_USE_LIB (
-	DriveProxy
-	ALCOMMON
-	BOOST
-)
-
-
-
-###############################################################################
-# Remote Control App
-###############################################################################
-
-QI_CREATE_BIN (
-	RemoteControl
-	${REMOTE_CONTROL_APP_SOURCES}
-)
-QI_USE_LIB (
-	RemoteControl
-	ALCOMMON
-	BOOST
-)
-TARGET_LINK_LIBRARIES (
-	RemoteControl
-	${SFML_LIBRARIES}
-	Pose
-	DriveProxy
-	pthread
-	gstreamer-0.10
-	gobject-2.0
-	gmodule-2.0
-	gthread-2.0
-	glib-2.0
-	gstapp-0.10
-	xml2
-	rt
-)
-
-
-
-###############################################################################
+#
 # AutoDrive Module
-###############################################################################
+#
 
 OPTION (
 	AUTODRIVE_IS_REMOTE
@@ -305,8 +298,27 @@ TARGET_LINK_LIBRARIES (
 
 
 ###############################################################################
-# AutoDrive Proxy
+# Proxies Compilation And Linking
 ###############################################################################
+
+#
+# Drive Proxy
+#
+
+QI_CREATE_LIB (
+	DriveProxy
+	${DRIVE_PROXY_SOURCES}
+)
+QI_USE_LIB (
+	DriveProxy
+	ALCOMMON
+	BOOST
+)
+
+
+#
+# AutoDrive Proxy
+#
 
 QI_CREATE_LIB (
 	AutoDriveProxy
@@ -321,8 +333,42 @@ QI_USE_LIB (
 
 
 ###############################################################################
-# AutoDrive App
+# Apps Compilation And Linking
 ###############################################################################
+
+#
+# Remote Control App
+#
+
+QI_CREATE_BIN (
+	RemoteControl
+	${REMOTE_CONTROL_APP_SOURCES}
+)
+QI_USE_LIB (
+	RemoteControl
+	ALCOMMON
+	BOOST
+)
+TARGET_LINK_LIBRARIES (
+	RemoteControl
+	${SFML_LIBRARIES}
+	Pose
+	DriveProxy
+	pthread
+	gstreamer-0.10
+	gobject-2.0
+	gmodule-2.0
+	gthread-2.0
+	glib-2.0
+	gstapp-0.10
+	xml2
+	rt
+)
+
+
+#
+# AutoDrive App
+#
 
 QI_CREATE_BIN (
 	AutoDriveApp
@@ -339,10 +385,9 @@ TARGET_LINK_LIBRARIES (
 )
 
 
-
-###############################################################################
+#
 # AutoDriveLocal App
-###############################################################################
+#
 
 QI_CREATE_BIN (
 	AutoDriveLocal
@@ -356,9 +401,101 @@ QI_USE_LIB (
 	OPENCV2_IMGPROC
 	OPENCV2_HIGHGUI
 )
-TARGET_LINK_LIBRARIES (AutoDriveLocal
-		      pthread gstreamer-0.10 gobject-2.0
-		      gmodule-2.0 xml2 gthread-2.0 rt
-		      glib-2.0 gstapp-0.10
-		      DriveProxy
+TARGET_LINK_LIBRARIES(
+	AutoDriveLocal
+	pthread
+	gstreamer-0.10
+	gobject-2.0
+	gmodule-2.0
+	gthread-2.0
+	glib-2.0
+	gstapp-0.10
+	xml2
+	rt
+	DriveProxy
+)
+
+
+#
+# SavePose App
+#
+
+QI_CREATE_BIN (
+	SavePose
+	${SAVE_POSE_APP_SOURCES}
+)
+QI_USE_LIB (
+	SavePose
+	ALCOMMON
+	BOOST
+)
+TARGET_LINK_LIBRARIES (
+	SavePose
+	Pose
+)
+
+
+#
+# TakePose App
+#
+
+QI_CREATE_BIN (
+	TakePose
+	${TAKE_POSE_APP_SOURCES})
+QI_USE_LIB (
+	TakePose
+	ALCOMMON
+	BOOST
+)
+TARGET_LINK_LIBRARIES (
+	TakePose
+	Pose
+)
+
+
+#
+# CreateAnimation App
+#
+
+QI_CREATE_BIN (
+	CreateAnimation
+	${CREATE_ANIMATION_APP_SOURCES}
+)
+TARGET_LINK_LIBRARIES (
+	CreateAnimation
+	Pose
+)
+
+
+#
+# SetStiffnesses App
+#
+
+QI_CREATE_BIN (
+	SetStiffnesses
+	${SET_STIFFNESSES_APP_SOURCES}
+)
+QI_USE_LIB (
+	SetStiffnesses
+	ALCOMMON
+	BOOST
+)
+
+
+#
+# LaunchAnimation App
+#
+
+QI_CREATE_BIN (
+	LaunchAnimation
+	${LAUNCH_ANIMATION_APP_SOURCES}
+)
+QI_USE_LIB (
+	LaunchAnimation
+	ALCOMMON
+	BOOST
+)
+TARGET_LINK_LIBRARIES (
+	LaunchAnimation
+	Pose
 )

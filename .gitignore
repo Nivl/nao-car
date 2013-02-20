@@ -11,14 +11,8 @@
 *.la
 *.a
 
-/src/*/build-mytoolchain/
-/src/*/build-sys-linux-x86_64/
-/src/*/build-sys-linux-i686/
-/src/Drive/libPose
+build-*
 .qi
-
-/src/Drive/include/*
-/src/Drive/lib/*
 
 # Latex
 Thumbs.db
