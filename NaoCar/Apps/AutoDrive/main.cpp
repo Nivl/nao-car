@@ -19,6 +19,8 @@
 
 int	main(int ac, char **av)
 {
+  (void)ac;
+  (void)av;
   boost::shared_ptr<AL::ALBroker> broker;
   try
     {
