@@ -311,7 +311,7 @@ int main(int, char **av)
 	&& lineSpace(collapsedLines[0], redLine) < redLineLength) {
 	Vec4i nearest = collapsedLines[0];
 	double minSpace = lineSpace(collapsedLines[0], redLine);
-	for (int i = 1; i < collapsedLines.size(); ++i) {
+	for (unsigned int i = 1; i < collapsedLines.size(); ++i) {
 	  double space = lineSpace(collapsedLines[i], redLine);
 	  // If the lines are not too far from each other
 	  if (space < minSpace && (space < redLineLength)) {
@@ -342,7 +342,7 @@ int main(int, char **av)
 	double distanceToPrevX = -1;
 	double newX = -1;
 	for(size_t i = 0; i < collapsedLines.size(); i++ ) {
-	  if ((collapsedLines[i][1] >= y && collapsedLines[i][3] <= y) || (collapsedLines[i][1] <= y && collapsedLines[i][3] >= y))
+	  if (((size_t)collapsedLines[i][1] >= y && (size_t)collapsedLines[i][3] <= y) || ((size_t)collapsedLines[i][1] <= y && (size_t)collapsedLines[i][3] >= y))
 	    {
 	      if (collapsedLines[i][2] != collapsedLines[i][0])
 		{
@@ -380,7 +380,7 @@ int main(int, char **av)
       }
 
     //Debug lines
-    for (int i = 0; i < collapsedLines.size(); ++i) {
+    for (size_t i = 0; i < collapsedLines.size(); ++i) {
       line(color_dst, Point(collapsedLines[i][0], collapsedLines[i][1]),
     	   Point(collapsedLines[i][2], collapsedLines[i][3]), Scalar(0, 0, 255), 3, 8);
     }
@@ -408,8 +408,8 @@ int main(int, char **av)
     // roadCoords.push_back(370 * src.rows / 480);
     // roadCoords.push_back(400 * src.rows / 480);
     vector<Vec2i> road;
-    for (int i = 0; i < points.size() - 1; ++i) {
-      for (int k = 0; k < roadCoords.size(); ++k)
+    for (size_t i = 0; i < points.size() - 1; ++i) {
+      for (size_t k = 0; k < roadCoords.size(); ++k)
 	{
 	  if (points[i][1] == roadCoords[k] && points[i][0] != -1)
 	    {
@@ -418,7 +418,7 @@ int main(int, char **av)
 	}
     }
 
-    for (int i = 0; road.size() != 0 && i < road.size() - 1; ++i) {
+    for (size_t i = 0; road.size() != 0 && i < road.size() - 1; ++i) {
       line(color_dst, road[i],
            road[i + 1], Scalar(255, 0, 0), 3, 8);
       line(color_dst, Point(0, road[i][1]),
@@ -431,7 +431,7 @@ int main(int, char **av)
       }
     double sum = 0.0;
     double div = 0.0;
-    for (int i = 0; road.size() != 0 && i < road.size(); ++i) {
+    for (size_t i = 0; road.size() != 0 && i < road.size(); ++i) {
       sum += (road.size() - i) * road[i][0];
       div += (road.size() - i);
     }

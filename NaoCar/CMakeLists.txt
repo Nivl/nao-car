@@ -20,7 +20,7 @@ IF (EXISTS ${GCC46_PATH})
    SET (CMAKE_CXX_COMPILER ${GCC46_PATH})
 ENDIF ()
 
-SET (CMAKE_CXX_FLAGS "-std=c++0x -W -Wall -Wno-ignored-qualifiers -Wno-sign-compare -Wunused-variable")
+SET (CMAKE_CXX_FLAGS "-std=c++0x -Wall -Wextra -Wno-ignored-qualifiers")
 
 
 
@@ -43,6 +43,7 @@ SET (NAOCAR_DRIVE_PROXY_PATH ${NAOCAR_PROXIES_PATH}/Drive)
 SET (NAOCAR_AUTODRIVE_PROXY_PATH ${NAOCAR_PROXIES_PATH}/AutoDrive)
 
 # Apps
+SET (NAOCAR_REMOTE_APP_PATH ${NAOCAR_APPS_PATH}/Remote)
 SET (NAOCAR_REMOTE_CONTROL_APP_PATH ${NAOCAR_APPS_PATH}/RemoteControl)
 SET (NAOCAR_AUTODRIVE_APP_PATH ${NAOCAR_APPS_PATH}/AutoDrive)
 SET (NAOCAR_AUTODRIVELOCAL_APP_PATH ${NAOCAR_APPS_PATH}/AutoDriveLocal)
@@ -142,6 +143,13 @@ FILE (
 #
 # Apps
 #
+
+# Remote App
+FILE (
+    GLOB_RECURSE
+    REMOTE_APP_SOURCES
+    ${NAOCAR_REMOTE_APP_PATH}/*
+)
 
 # Remote Control App
 FILE (
@@ -335,6 +343,35 @@ QI_USE_LIB (
 ###############################################################################
 # Apps Compilation And Linking
 ###############################################################################
+
+#
+# Remote App
+#
+
+QI_CREATE_BIN (
+	Remote
+	${REMOTE_APP_SOURCES}
+)
+QI_USE_LIB (
+	Remote
+	ALCOMMON
+	BOOST
+)
+TARGET_LINK_LIBRARIES (
+	Remote
+	${SFML_LIBRARIES}
+	Pose
+	DriveProxy
+	pthread
+	gstreamer-0.10
+	gobject-2.0
+	gmodule-2.0
+	gthread-2.0
+	glib-2.0
+	gstapp-0.10
+	xml2
+	rt
+)
 
 #
 # Remote Control App
