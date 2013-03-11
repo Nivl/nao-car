@@ -5,7 +5,7 @@
 // Login   <olivie_a@epitech.net>
 // 
 // Started on  Wed Sep  5 23:47:17 2012 samuel olivier
-// Last update Wed Feb 20 12:51:39 2013 samuel olivier
+// Last update Mon Mar 11 13:14:20 2013 samuel olivier
 //
 
 #include <iostream>
@@ -24,7 +24,7 @@
 #ifdef NAO_LOCAL_COMPILATION
 # define POSE_DIR "/home/nao/modules/Poses/"
 #else
-# define POSE_DIR "Poses/"
+# define POSE_DIR "Modules/Drive/Poses/"
 #endif
 
 static void	launchAnimThread(void *mod);
