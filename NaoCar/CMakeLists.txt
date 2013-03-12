@@ -37,6 +37,7 @@ SET (NAOCAR_APPS_PATH ${CMAKE_SOURCE_DIR}/Apps)
 SET (NAOCAR_POSE_MODULE_PATH ${NAOCAR_MODULES_PATH}/Pose)
 SET (NAOCAR_DRIVE_MODULE_PATH ${NAOCAR_MODULES_PATH}/Drive)
 SET (NAOCAR_AUTODRIVE_MODULE_PATH ${NAOCAR_MODULES_PATH}/AutoDrive)
+SET (NAOCAR_REMOTE_SERVER_MODULE_PATH ${NAOCAR_MODULES_PATH}/RemoteServer)
 
 # Proxies
 SET (NAOCAR_DRIVE_PROXY_PATH ${NAOCAR_PROXIES_PATH}/Drive)
@@ -67,11 +68,17 @@ SET (CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/CMakeModules ${CMAKE_MODULE_PATH})
 # Dependencies
 ###############################################################################
 
-# Find SFML
-FIND_PACKAGE (SFML 2 REQUIRED system window graphics audio network)
+# Find qibuild
 FIND_PACKAGE (qibuild)
 
+# Find SFML
+FIND_PACKAGE (SFML 2 REQUIRED system window graphics audio network)
 
+# Find and configure Qt
+FIND_PACKAGE (Qt4 REQUIRED)
+INCLUDE (${QT_USE_FILE})
+ADD_DEFINITIONS (${QT_DEFINITIONS})
+INCLUDE_DIRECTORIES (${CMAKE_CURRENT_BINARY_DIR})
 
 ###############################################################################
 # Include Directories
@@ -120,6 +127,13 @@ FILE (
     ${NAOCAR_AUTODRIVE_MODULE_PATH}/*
 )
 
+# Remote Server Module
+FILE (
+    GLOB_RECURSE
+    REMOTE_SERVER_MODULE_SOURCES
+    ${NAOCAR_REMOTE_SERVER_MODULE_PATH}/*
+)
+
 
 #
 # Proxies
@@ -148,8 +162,19 @@ FILE (
 FILE (
     GLOB_RECURSE
     REMOTE_APP_SOURCES
-    ${NAOCAR_REMOTE_APP_PATH}/*
+    ${NAOCAR_REMOTE_APP_PATH}/Sources/*
 )
+FILE (
+    GLOB_RECURSE
+    REMOTE_APP_UI
+    ${NAOCAR_REMOTE_APP_PATH}/Ui/*
+)
+FILE (
+    GLOB_RECURSE
+    REMOTE_APP_HEADERS
+    ${NAOCAR_REMOTE_APP_PATH}/Sources/*.hpp
+)
+SET (REMOTE_APP_RESOURCES)
 
 # Remote Control App
 FILE (
@@ -303,6 +328,39 @@ TARGET_LINK_LIBRARIES (
 	DriveProxy
 )
 
+#
+# RemoteServer Module
+#
+
+OPTION (
+	REMOTE_SERVER_IS_REMOTE
+  	"module is compiled as a remote module (ON or OFF)"
+  	ON
+)
+IF (REMOTE_SERVER_IS_REMOTE)
+  ADD_DEFINITIONS (" -DREMOTE_SERVER_IS_REMOTE ")
+  QI_CREATE_BIN (
+	RemoteServerModule
+	${REMOTE_SERVER_MODULE_SOURCES}
+  )
+ELSE ()
+  QI_CREATE_LIB (
+	RemoteServerModule
+	SHARED
+	${REMOTE_SERVER_MODULE_SOURCES}
+  )
+ENDIF ()
+QI_USE_LIB (
+	RemoteServerModule
+	ALCOMMON
+	BOOST
+	OPENCV2_CORE
+	OPENCV2_IMGPROC
+)
+TARGET_LINK_LIBRARIES (
+	RemoteServerModule
+	dns_sd
+)
 
 
 ###############################################################################
@@ -348,9 +406,25 @@ QI_USE_LIB (
 # Remote App
 #
 
+QT4_WRAP_UI (
+	REMOTE_APP_UI_HEADERS
+	${REMOTE_APP_UI}
+)
+QT4_WRAP_CPP (
+	REMOTE_APP_HEADERS_MOC
+	${REMOTE_APP_HEADERS}
+)
+QT4_ADD_RESOURCES (
+	REMOTE_APP_RESOURCES_RCC
+	${REMOTE_APP_RESOURCES}
+)
+
 QI_CREATE_BIN (
 	Remote
 	${REMOTE_APP_SOURCES}
+	${REMOTE_APP_UI_HEADERS}
+	${REMOTE_APP_HEADERS_MOC}
+	${REMOTE_APP_RESOURCES_RCC}
 )
 QI_USE_LIB (
 	Remote
@@ -359,18 +433,13 @@ QI_USE_LIB (
 )
 TARGET_LINK_LIBRARIES (
 	Remote
+	${QT_QTCORE_LIBRARIES}
+	${QT_QTGUI_LIBRARIES}
+	${QT_QTNETWORK_LIBRARIES}
 	${SFML_LIBRARIES}
 	Pose
 	DriveProxy
-	pthread
-	gstreamer-0.10
-	gobject-2.0
-	gmodule-2.0
-	gthread-2.0
-	glib-2.0
-	gstapp-0.10
-	xml2
-	rt
+	dns_sd
 )
 
 #
