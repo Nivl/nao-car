@@ -235,10 +235,10 @@ QI_USE_LIB (
 
 OPTION (DRIVE_IS_REMOTE
   "module is compiled as a remote module (ON or OFF)"
-  ON)
+  OFF)
 OPTION (NAO_LOCAL_COMPILATION
   "module is compiled as a local module for the nao (ON or OFF)"
-  OFF)
+  ON)
 IF (NAO_LOCAL_COMPILATION)
   ADD_DEFINITIONS ( " -DNAO_LOCAL_COMPILATION ")
 ENDIF ()
@@ -273,7 +273,7 @@ TARGET_LINK_LIBRARIES (
 OPTION (
 	AUTODRIVE_IS_REMOTE
   	"module is compiled as a remote module (ON or OFF)"
-  	ON
+  	OFF
 )
 IF (AUTODRIVE_IS_REMOTE)
   ADD_DEFINITIONS (" -DAUTODRIVE_IS_REMOTE ")
