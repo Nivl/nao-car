@@ -9,6 +9,7 @@
 #include <iostream>
 #include <SFML/Window/Joystick.hpp>
 #include <QSocketNotifier>
+#include <QDebug>
 
 #include "dns_sd.h"
 
@@ -26,6 +27,7 @@ void bonjourResolveReply(DNSServiceRef sdRef,
 			 const unsigned char *txtRecord,
 			 void *context)
 {
+  Remote* remote = (Remote*)context;
   if (errorCode != kDNSServiceErr_NoError) {
     std::cerr << "Resolving error\n";
     return;
@@ -36,8 +38,13 @@ void bonjourResolveReply(DNSServiceRef sdRef,
 	    << fullname << "\n"
 	    << hosttarget << "\n"
 	    << port << std::endl;
-//   QHostInfo::lookupHost(QString::fromUtf8(hostTarget),
-// 			resolver, SLOT(finishConnect(const QHostInfo &)));
+  QHostInfo::lookupHost(QString::fromUtf8(hosttarget),
+			remote, SLOT(finishConnect(const QHostInfo &)));
+}
+
+void Remote::finishConnect(const QHostInfo &hostInfo)
+{
+  qDebug() << hostInfo.addresses();
 }
 
 void bonjourBrowseReply(DNSServiceRef,
@@ -51,6 +58,8 @@ void bonjourBrowseReply(DNSServiceRef,
     std::cerr << "error!\n";
   } else {
     std::cout << serviceName << "\n";
+    std::cout << regType << "\n";
+    std::cout << replyDomain << "\n";
     // Now resolve the service host
     DNSServiceErrorType err =
       DNSServiceResolve(&dnssref2, 0, 0,
