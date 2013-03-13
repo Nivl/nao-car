@@ -20,6 +20,8 @@ public:
 
   void setGamepadId(int id);
 
+  QMainWindow* getWindow(void);
+
 public slots:
   void connectAction(void);
   void viewChanged(int index);

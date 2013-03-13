@@ -5,123 +5,21 @@
 
 #include "Remote.hpp"
 
-#include <arpa/inet.h>
 #include <iostream>
 #include <SFML/Window/Joystick.hpp>
 #include <QSocketNotifier>
 #include <QDebug>
-
-#include "dns_sd.h"
-
-DNSServiceRef dnssref = NULL;
-DNSServiceRef dnssref2 = NULL;
-
-void bonjourResolveReply(DNSServiceRef sdRef,
-			 DNSServiceFlags flags,
-			 uint32_t interfaceIndex,
-			 DNSServiceErrorType errorCode,
-			 const char *fullname,
-			 const char *hosttarget,
-			 uint16_t port, /* In network byte order */
-			 uint16_t txtLen,
-			 const unsigned char *txtRecord,
-			 void *context)
-{
-  Remote* remote = (Remote*)context;
-  if (errorCode != kDNSServiceErr_NoError) {
-    std::cerr << "Resolving error\n";
-    return;
-  }
-     
-  port = ntohs(port);
-  std::cout << "resolved!\n"
-	    << fullname << "\n"
-	    << hosttarget << "\n"
-	    << port << std::endl;
-  QHostInfo::lookupHost(QString::fromUtf8(hosttarget),
-			remote, SLOT(finishConnect(const QHostInfo &)));
-}
-
-void Remote::finishConnect(const QHostInfo &hostInfo)
-{
-  qDebug() << hostInfo.addresses();
-}
-
-void bonjourBrowseReply(DNSServiceRef,
-			DNSServiceFlags flags, quint32,
-			DNSServiceErrorType errorCode,
-			const char *serviceName, const char *regType,
-			const char *replyDomain, void *context) {
-  Remote* remote = (Remote*)context;
-  std::cout << "BROWSE!\n";
-  if (errorCode != kDNSServiceErr_NoError) {
-    std::cerr << "error!\n";
-  } else {
-    std::cout << serviceName << "\n";
-    std::cout << regType << "\n";
-    std::cout << replyDomain << "\n";
-    // Now resolve the service host
-    DNSServiceErrorType err =
-      DNSServiceResolve(&dnssref2, 0, 0,
-			serviceName,
-			regType,
-			replyDomain,
-			bonjourResolveReply, remote);
-    if (err != kDNSServiceErr_NoError) {
-      std::cerr << "error: cannot resolve\n";
-    } else {
-      int sockfd = DNSServiceRefSockFD(dnssref2);
-      if (sockfd == -1) {
-	std::cerr << "error: cannot resolve2\n";
-      } else {
-	QSocketNotifier* bonjourSocket = new QSocketNotifier(sockfd,
-							     QSocketNotifier::Read, remote);
-	QObject::connect(bonjourSocket, SIGNAL(activated(int)),
-			 remote, SLOT(bonjourSocketReadyRead2()));
-      }
-    }
-  }
-}
-
-void Remote::bonjourSocketReadyRead(void) {
-  std::cout << "ready read\n";
-  DNSServiceErrorType err =
-    DNSServiceProcessResult(dnssref);
-  if (err != kDNSServiceErr_NoError)
-    std::cout << "error: cannot process browser" << std::endl;    
-}
-
-void Remote::bonjourSocketReadyRead2(void) {
-  std::cout << "ready read2\n";
-  DNSServiceErrorType err =
-    DNSServiceProcessResult(dnssref2);
-  if (err != kDNSServiceErr_NoError)
-    std::cout << "error: cannot process browser" << std::endl;    
-}
+#include <QMessageBox>
 
 Remote::Remote(int argc, char** argv)
-  : _app(argc, argv), _mainWindow(this), _gamepadId(0) {
-
-  
-  DNSServiceErrorType err =
-    DNSServiceBrowse(&dnssref, 0, 0,
-		     "_http._tcp", NULL,
-		     bonjourBrowseReply, this);
-  if (err != kDNSServiceErr_NoError) {
-    std::cout << "error: cannot browse" << std::endl;
-  } else {
-    int sockfd = DNSServiceRefSockFD(dnssref);
-    if (sockfd == -1) {
-      std::cout << "error: cannot browse2" << std::endl;
-    } else {
-      QSocketNotifier* bonjourSocket = new QSocketNotifier(sockfd,
-							   QSocketNotifier::Read, this);
-      QObject::connect(bonjourSocket, SIGNAL(activated(int)),
-		       this, SLOT(bonjourSocketReadyRead()));
-    }
-  }
-  
+  : _app(argc, argv), _mainWindow(this), _gamepadId(0),
+    _bonjour(this), _serverbonjourService() {
+  // Search for an Xbox gamepad
   chooseGamepad();
+  // Launch Bonjour to automatically detect Nao on a local network
+  if (!_bonjour.browseServices("_http._tcp")) {
+    std::cerr << "Cannot browse Bonjour services" << std::endl;
+  }
 }
 
 Remote::~Remote(void) {
@@ -147,8 +45,46 @@ void Remote::chooseGamepad(void) {
   }
 }
 
+void Remote::serviceBrowsed(bool error,
+			    Bonjour::BrowsingType browsingType,
+			    std::string const& name,
+			    std::string const& type,
+			    std::string const& domain) {
+  if (error) {
+    std::cerr << "Error browsing Bonjour services" << std::endl;
+  }
+  else if (name == NAOCAR_BONJOUR_SERVICE_NAME || 1) {
+    if (browsingType == Bonjour::BrowsingAdd) {
+      _serverbonjourService.available = true;
+      _serverbonjourService.name = name;
+      _serverbonjourService.type = type;
+      _serverbonjourService.domain = domain;
+      _bonjour.resolveService(name, type, domain);
+    } else if (browsingType == Bonjour::BrowsingRemove) {
+      _serverbonjourService.available = false;
+    }
+  }
+}
+
+void Remote::serviceResolved(bool error, std::string const& hostname,
+			       std::string const& ip,
+			       unsigned short port) {
+  if (error) {
+    std::cerr << "Error resolving Bonjour service address" << std::endl;
+  } else if (_serverbonjourService.available) {
+    _serverbonjourService.hostname = hostname;
+    _serverbonjourService.ip = ip;
+    _serverbonjourService.port = port;    
+  }
+}
+
 void Remote::connect(void) {
-  
+  if (_serverbonjourService.available) {
+
+  } else {
+    QMessageBox::critical(_mainWindow.getWindow(), "Connect error",
+			  "No available NaoCar server found");
+  }
 }
 
 void Remote::disconnect(void) {

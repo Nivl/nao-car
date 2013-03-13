@@ -37,6 +37,10 @@ void MainWindow::setGamepadId(int id) {
   _windowUi.gamepadID->setValue(id);
 }
 
+QMainWindow* MainWindow::getWindow(void) {
+  return &_window;
+}
+
 void MainWindow::connectAction(void) {
   if (_delegate)
     _delegate->connect();
