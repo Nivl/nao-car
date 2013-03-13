@@ -7,13 +7,17 @@
 # define __REMOTE_SERVER_HPP__
 
 # include <alcommon/almodule.h>
+# include <boost/asio.hpp>
+
+# include "Bonjour.hpp"
+# include "BonjourDelegate.hpp"
 
 namespace AL
 {
   class ALBroker;
 }
 
-class RemoteServer : public AL::ALModule
+class RemoteServer : public AL::ALModule, public BonjourDelegate
 {
 public:
 
@@ -23,8 +27,11 @@ public:
 
   virtual void	init();
 
+  virtual void serviceRegistered(bool error, std::string const& name="");
+
 private:
-  boost::shared_ptr<AL::ALBroker>	_broker;
+  boost::asio::io_service		_ioService;
+  Bonjour				_bonjour;
 };
 
 #endif

@@ -7,6 +7,7 @@
 # define _REMOTE_HPP_
 
 # include <QApplication>
+# include <QtNetwork/QHostInfo>
 # include <QObject>
 
 # include "MainWindow.hpp"
@@ -35,6 +36,7 @@ public:
 public slots:
   void bonjourSocketReadyRead(void);
   void bonjourSocketReadyRead2(void);
+  void finishConnect(const QHostInfo &hostInfo);
 
 private:
   QApplication	_app;
