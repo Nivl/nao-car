@@ -7,8 +7,11 @@
 # define _REMOTE_HPP_
 
 # include <QApplication>
-# include <QtNetwork/QHostInfo>
 # include <QObject>
+# include <QNetworkAccessManager>
+# include <QNetworkReply>
+# include <QUrl>
+
 # include <map>
 
 # include "MainWindow.hpp"
@@ -27,9 +30,6 @@ public:
 
   int exec(void);
 
-  //! Automatically search for a xbox gamepad
-  void chooseGamepad(void);
-
   //! Called when a new Bonjour service is detected
   virtual void serviceBrowsed(bool error,
 			      Bonjour::BrowsingType browsingType=Bonjour::BrowsingAdd,
@@ -42,32 +42,35 @@ public:
 			       std::string const& hostname="",
 			       std::string const& ip="",
 			       unsigned short port=0);
+
+  // Main window delegate functions
   void connect(void);
   void disconnect(void);
   void viewChanged(int index);
-  void gamepadIDChanged(int id);
-  void takeCarambar(void);
-  void giveCarambar(void);
+  void carambarAction(void);
   void talk(std::string message);
   void autoDriving(void);
+  void steeringWheelAction(void);
+  void funAction(void);
+  void steeringWheelDirectionChanged(MainWindow::Direction direction);
+  void moveChanged(MainWindow::Move move);
+
+  void sendRequest(std::string request,
+		   std::string paramName="",
+		   std::string paramValue="");
+
+public slots:
+  void networkRequestFinished(QNetworkReply* reply);
 
 private:
-  
-  struct BonjourService {
-    bool		available;
-    std::string		name;
-    std::string		type;
-    std::string		domain;
-    std::string		hostname;
-    std::string		ip;
-    unsigned short	port;
-  };
-
   QApplication		_app;
   MainWindow		_mainWindow;
-  int			_gamepadId;
   Bonjour		_bonjour;
-  BonjourService	_serverbonjourService;
+  bool			_naoAvailable;
+  QUrl			_naoUrl;
+  QNetworkAccessManager	_networkManager;
+
+  bool			_connected;
 };
 
 #endif

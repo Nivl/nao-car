@@ -127,7 +127,7 @@ void Bonjour::resolveHostNameCallback(DNSServiceRef sdRef,
     return ;
   }
   // Now resolve ip !
-  bonjour->_resolvingPort = port;
+  bonjour->_resolvingPort = ntohs(port);
   DNSServiceRef dnssref = NULL;
   DNSServiceErrorType err =
     DNSServiceGetAddrInfo(&dnssref, 0, 0,
