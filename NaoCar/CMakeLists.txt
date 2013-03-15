@@ -436,13 +436,13 @@ QI_USE_LIB (
 )
 TARGET_LINK_LIBRARIES (
 	Remote
+	dns_sd
 	${QT_QTCORE_LIBRARIES}
 	${QT_QTGUI_LIBRARIES}
 	${QT_QTNETWORK_LIBRARIES}
 	${SFML_LIBRARIES}
 	Pose
 	DriveProxy
-	dns_sd
 )
 
 #

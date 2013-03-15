@@ -84,7 +84,7 @@ Window::Window(boost::shared_ptr<AL::ALBroker> broker, int joystickId,
   tmp.loadFromFile("Apps/RemoteControl/resources/epitech.png");
   _textures["Epitech"] = tmp;
   _sayFont.loadFromFile("Apps/RemoteControl/resources/arial.ttf");
-  _module.start();
+  _module.begin();
   _cameraModes[0] = CameraMode{"SelectCameraTop", "1"};
   _cameraModes[1] = CameraMode{"SelectCameraBottom", "3"};
   _isConnected = _socket.connect(sf::IpAddress(ip), 8080) == sf::TcpSocket::Done;
@@ -287,12 +287,7 @@ void	Window::checkEvent(sf::Event *event)
     {
       if (_module.isAnimating() == false &&
   	  event->joystickButton.button == 0 && _module.isNoHand() == false)
-  	{
-  	  if (_module.steeringWheelIsTaken() == true)
-  	    _module.releaseSteeringWheel();
-  	  else
-  	    _module.takeSteeringWheel();
-  	}
+	_module.steeringWheelAction();
       if (_module.isAnimating() == false &&
   	  event->joystickButton.button == 3)
 	{
@@ -301,17 +296,14 @@ void	Window::checkEvent(sf::Event *event)
 	      _textListMutex.lock();
 	      _textList.push_back("Tiens ton carambar!");
 	      _textListMutex.unlock();
-	      if (_module.steeringWheelDirection() != DriveProxy::Front)
-		_module.stopTurn();
-	      _module.takeCarembar();
 	    }
 	  else
 	    {
 	      _textListMutex.lock();
 	      _textList.push_back("Au revoir petit enfant!");
 	      _textListMutex.unlock();
-	      _module.giveCarembar();
 	    }
+	  _module.carambarAction();
 	}
       if (event->joystickButton.button == 4)
   	_currentCameraMode = (_currentCameraMode - 1 + _cameraModes.size()) %
@@ -333,8 +325,8 @@ void	Window::checkJoystick()
       !sf::Joystick::isButtonPressed(_joystickId, 2) &&
       _module.isNoHand() == true)
     {
-      _module.endNoHand();
-      _module.takeSteeringWheel();
+      _module.funAction();
+      _module.steeringWheelAction();
     }
   if (_module.isAnimating() == false &&
       sf::Joystick::isButtonPressed(_joystickId, 2) &&
@@ -344,21 +336,21 @@ void	Window::checkJoystick()
       _textList.push_back("Sans les mains");
       _textListMutex.unlock();
       if (_module.steeringWheelDirection() != DriveProxy::Front)
-  	_module.stopTurn();
-      _module.beginNoHand();
+  	_module.turnFront();
+      _module.funAction();
     }
   if (sf::Joystick::getAxisPosition(_joystickId, sf::Joystick::R) > 0)
-    _module.up();
+    _module.goFrontwards();
   else if (sf::Joystick::getAxisPosition(_joystickId, sf::Joystick::Z) > 0)
-    _module.down();
+    _module.goBackwards();
   else
-    _module.stopPush();
+    _module.stop();
   if (sf::Joystick::getAxisPosition(_joystickId, sf::Joystick::X) < -50)
-    _module.left();
+    _module.turnLeft();
   else if (sf::Joystick::getAxisPosition(_joystickId, sf::Joystick::X) > 50)
-    _module.right();
+    _module.turnRight();
   else
-    _module.stopTurn();
+    _module.turnFront();
   static int pX = 0, pY = 0;
   pX = sf::Joystick::getAxisPosition(_joystickId, sf::Joystick::U);
   pY = sf::Joystick::getAxisPosition(_joystickId, sf::Joystick::V);
@@ -391,15 +383,15 @@ void	Window::checkKeyboard()
   //     _module.beginNoHand();
   //   }
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-    _module.up();
+    _module.goFrontwards();
   else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-    _module.down();
+    _module.goBackwards();
   else
-    _module.stopPush();
+    _module.stop();
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-    _module.left();
+    _module.turnLeft();
   else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-    _module.right();
+    _module.turnRight();
   else
-    _module.stopTurn();
+    _module.turnFront();
 }

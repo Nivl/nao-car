@@ -5,7 +5,7 @@
 // Login   <olivie_a@epitech.net>
 // 
 // Started on  Wed Sep  5 23:47:40 2012 samuel olivier
-// Last update Thu Nov 15 15:59:43 2012 samuel olivier
+// Last update Fri Mar 15 14:17:26 2013 samuel olivier
 //
 
 #ifndef __DRIVE_HH__
@@ -46,27 +46,24 @@ public:
   virtual ~Drive();
 
   virtual void	init();
-
-  void	start();
-  void	stop();
   void	animThread();
 
-  void	up();
-  void	down();
-  void	left();
-  void	right();
-  void	stopPush();
-  void	stopTurn();
-  void	takeSteeringWheel();
-  void	releaseSteeringWheel();
-  void	beginNoHand();
-  void	endNoHand();
-  void	takeCarembar();
-  void	giveCarembar();
+  void	begin();
+  void	end();
+
+  void	goFrontwards();
+  void	goBackwards();
+  void	turnLeft();
+  void	turnRight();
+  void	turnFront();
+  void	stop();
+  void	steeringWheelAction();
+  void	funAction();
+  void	carambarAction();
   void	setHead(float const& headYaw, float const& headPitch,
 		float const& maxSpeed);
 
-  bool	steeringWheelIsTaken();
+  bool	isSteeringWheelTaken();
   bool	isGasPedalPushed();
   int	steeringWheelDirection();
   int	speed();

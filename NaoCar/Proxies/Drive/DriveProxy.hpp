@@ -5,7 +5,7 @@
 // Login   <olivie_a@epitech.net>
 // 
 // Started on  Fri Sep 28 16:49:12 2012 samuel olivier
-// Last update Wed Feb 20 13:07:23 2013 samuel olivier
+// Last update Fri Mar 15 14:32:15 2013 samuel olivier
 //
 
 #ifndef __DRIVE_PROXY__
@@ -40,30 +40,28 @@ public:
 	     int pProxyMask=0, int timeout=0);
   DriveProxy(int pProxyOption, int pTimeout);
 
-  void	start();
-  void	stop();
+  void  begin();
+  void  end();
 
-  void	up();
-  void	down();
-  void	left();
-  void	right();
-  void	stopPush();
-  void	stopTurn();
-  void	takeSteeringWheel();
-  void	releaseSteeringWheel();
-  void	beginNoHand();
-  void	endNoHand();
-  void	takeCarembar();
-  void	giveCarembar();
-  void	setHead(float headYaw, float headPitch, float maxSpeed);
+  void  goFrontwards();
+  void  goBackwards();
+  void  turnLeft();
+  void  turnRight();
+  void  turnFront();
+  void  stop();
+  void  steeringWheelAction();
+  void  funAction();
+  void  carambarAction();
+  void  setHead(float const& headYaw, float const& headPitch,
+                float const& maxSpeed);
 
-  bool			steeringWheelIsTaken();
-  bool			isGasPedalPushed();
-  DriveProxy::SteeringWheel	steeringWheelDirection();
-  DriveProxy::Speed		speed();
-  bool			isNoHand();
-  bool			isAnimating();
-  bool			isCarembar();
+  bool  isSteeringWheelTaken();
+  bool  isGasPedalPushed();
+  SteeringWheel	steeringWheelDirection();
+  Speed	speed();
+  bool  isNoHand();
+  bool  isAnimating();
+  bool  isCarembar();
 };
 
 #endif

@@ -5,7 +5,7 @@
 // Login   <olivie_a@epitech.net>
 // 
 // Started on  Wed Sep  5 23:47:17 2012 samuel olivier
-// Last update Wed Feb 20 17:41:27 2013 samuel olivier
+// Last update Fri Mar 15 14:40:17 2013 samuel olivier
 //
 
 #include <iostream>
@@ -137,8 +137,8 @@ int main(int argc, char* argv[])
 
 int		AutoDrive::thread()
 {
-  _proxy->start();
-  _proxy->takeSteeringWheel();
+  _proxy->begin();
+  _proxy->steeringWheelAction();
   // Create the gstreamer pipeline
 
   // Create the window
@@ -409,17 +409,17 @@ int		AutoDrive::thread()
     std::cout << direction << std::endl;
 
     if (direction == Right)
-      _proxy->right();
+      _proxy->turnRight();
     else if (direction == Left)
-      _proxy->left();
+      _proxy->turnLeft();
     else
-      _proxy->stopTurn();
+      _proxy->turnFront();
     if (state == Up)
-      _proxy->up();
+      _proxy->goFrontwards();
     else if (state == Down)
-      _proxy->down();
+      _proxy->goBackwards();
     else
-      _proxy->stopPush();
+      _proxy->stop();
 
     // bool recule = false;
     // if (sum == 0) {}
@@ -615,7 +615,7 @@ void AutoDrive::getNextState(State &state, Direction &direction, double value)
     {
       if (!isStart)
 	{
-	  _proxy->stopPush();
+	  _proxy->stop();
 	  isStart = true;
 	  start = clock();
 	}
@@ -626,7 +626,7 @@ void AutoDrive::getNextState(State &state, Direction &direction, double value)
 	  if (((double)end - start) / CLOCKS_PER_SEC > 3.0)
 	    {
 	      isStart = false;
-	      _proxy->stopPush();
+	      _proxy->stop();
 	      direction = Front;
 	      state = Up;
 	    }

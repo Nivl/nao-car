@@ -27,29 +27,29 @@ RemoteServer::RemoteServer(boost::shared_ptr<AL::ALBroker> broker,
 {
   if (_getFunctions.size() == 0) {
     _getFunctions["/"] = &RemoteServer::defaultParams;
-    _getFunctions["/start"] = &RemoteServer::start;
-    _getFunctions["/stop"] = &RemoteServer::stop;
+    _getFunctions["/begin"] = &RemoteServer::begin;
+    _getFunctions["/end"] = &RemoteServer::end;
 
-    _getFunctions["/up"] = &RemoteServer::up;
-    _getFunctions["/down"] = &RemoteServer::down;
-    _getFunctions["/turn-left"] = &RemoteServer::left;
-    _getFunctions["/turn-right"] = &RemoteServer::right;
-    _getFunctions["/stopPush"] = &RemoteServer::stopPush;
-    _getFunctions["/turn-front"] = &RemoteServer::stopTurn;
-    _getFunctions["/takeSteeringWheel"] = &RemoteServer::takeSteeringWheel;
-    _getFunctions["/releaseSteeringWheel"] =
-      &RemoteServer::releaseSteeringWheel;
-    _getFunctions["/beginNoHand"] = &RemoteServer::beginNoHand;
-    _getFunctions["/endNoHand"] = &RemoteServer::endNoHand;
-    // _getFunctions["/takeCarembar"] = &RemoteServer::takeCarembar;
-    // _getFunctions["/giveCarembar"] = &RemoteServer::giveCarembar;
+    _getFunctions["/go-frontwards"] = &RemoteServer::goFrontwards;
+    _getFunctions["/go-backwards"] = &RemoteServer::goBackwards;
+    _getFunctions["/turn-left"] = &RemoteServer::turnLeft;
+    _getFunctions["/turn-right"] = &RemoteServer::turnRight;
+    _getFunctions["/turn-front"] = &RemoteServer::turnFront;
+    _getFunctions["/stop"] = &RemoteServer::stop;
+    _getFunctions["/steeringwheel-action"] =
+      &RemoteServer::steeringWheelAction;
+    _getFunctions["/fun-action"] = &RemoteServer::funAction;
+    _getFunctions["/carambar-action"] = &RemoteServer::carambarAction;
     _getFunctions["/setHead"] = &RemoteServer::setHead;
+
+    
   }
   setModuleDescription("NaoCar Remote server");
 }
 
 RemoteServer::~RemoteServer()
 {
+  delete _streamServer;
   for (std::list<Network::ATcpSocket*>::iterator it =
 	 _clients.begin(); it != _clients.end(); ++it) {
     (*it)->close();
@@ -71,6 +71,9 @@ void	RemoteServer::init()
     std::cerr << "could not listen on this port" << std::endl;
     return ;
   }
+  _streamServer = new StreamServer(_ioService);
+  _streamPort = _streamServer->run();
+  std::cout << _streamPort << std::endl;
   if (!_bonjour.registerService("nao-car", "_http._tcp",
   				_tcpServer->getPort()))
    std::cerr << "Could not register Bonjour service" << std::endl;
@@ -221,103 +224,87 @@ void	RemoteServer::_writeData(Network::ATcpSocket* target,
 
 void	RemoteServer::defaultParams(Network::ATcpSocket* sender,
 				    std::map<std::string, std::string> & params) {
-  std::cout << "default params" << std::endl;
   for (auto it = params.begin(); it != params.end(); ++it)
     std::cout << "\tkey='" << it->first << "' value='"
 	      << it->second << "'" << std::endl;
   _writeHttpResponse(sender, boost::asio::const_buffer("", 0));
 }
 
-void	RemoteServer::start(Network::ATcpSocket* sender,
+void	RemoteServer::getStreamIpAndPort(Network::ATcpSocket* sender,
+					 std::map<std::string, std::string>& params) {
+  std::stringstream tmp(std::ios_base::in | std::ios_base::out);
+  tmp << _streamPort;
+  _writeHttpResponse(sender, boost::asio::const_buffer(tmp.str().c_str(),
+						       tmp.str().size()));
+}
+
+void	RemoteServer::begin(Network::ATcpSocket* sender,
 			    std::map<std::string,std::string>&) {
-  _drive.start();
+  _drive.begin();
+  _writeHttpResponse(sender, boost::asio::const_buffer("", 0));
+}
+
+void	RemoteServer::end(Network::ATcpSocket* sender,
+			   std::map<std::string,std::string>&) {
+  _drive.end();
+  _writeHttpResponse(sender, boost::asio::const_buffer("", 0));
+}
+
+void	RemoteServer::goFrontwards(Network::ATcpSocket* sender,
+			 std::map<std::string,std::string>&) {
+  _drive.goFrontwards();
+  _writeHttpResponse(sender, boost::asio::const_buffer("", 0));
+}
+
+void	RemoteServer::goBackwards(Network::ATcpSocket* sender,
+			   std::map<std::string,std::string>&) {
+  _drive.goBackwards();
+  _writeHttpResponse(sender, boost::asio::const_buffer("", 0));
+}
+
+void	RemoteServer::turnLeft(Network::ATcpSocket* sender,
+			   std::map<std::string,std::string>&) {
+  _drive.turnLeft();
+  _writeHttpResponse(sender, boost::asio::const_buffer("", 0));
+}
+
+void	RemoteServer::turnRight(Network::ATcpSocket* sender,
+			    std::map<std::string,std::string>&) {
+  _drive.turnRight();
+  _writeHttpResponse(sender, boost::asio::const_buffer("", 0));
+}
+
+void	RemoteServer::turnFront(Network::ATcpSocket* sender,
+			       std::map<std::string,std::string>&) {
+  _drive.turnFront();
   _writeHttpResponse(sender, boost::asio::const_buffer("", 0));
 }
 
 void	RemoteServer::stop(Network::ATcpSocket* sender,
-			   std::map<std::string,std::string>&) {
+			       std::map<std::string,std::string>&) {
   _drive.stop();
   _writeHttpResponse(sender, boost::asio::const_buffer("", 0));
 }
 
-void	RemoteServer::up(Network::ATcpSocket* sender,
-			 std::map<std::string,std::string>&) {
-  _drive.up();
-  _writeHttpResponse(sender, boost::asio::const_buffer("", 0));
-}
-
-void	RemoteServer::down(Network::ATcpSocket* sender,
-			   std::map<std::string,std::string>&) {
-  _drive.down();
-  _writeHttpResponse(sender, boost::asio::const_buffer("", 0));
-}
-
-void	RemoteServer::left(Network::ATcpSocket* sender,
-			   std::map<std::string,std::string>&) {
-  _drive.left();
-  _writeHttpResponse(sender, boost::asio::const_buffer("", 0));
-}
-
-void	RemoteServer::right(Network::ATcpSocket* sender,
-			    std::map<std::string,std::string>&) {
-  _drive.right();
-  _writeHttpResponse(sender, boost::asio::const_buffer("", 0));
-}
-
-void	RemoteServer::stopPush(Network::ATcpSocket* sender,
-			       std::map<std::string,std::string>&) {
-  _drive.stopPush();
-  _writeHttpResponse(sender, boost::asio::const_buffer("", 0));
-}
-
-void	RemoteServer::stopTurn(Network::ATcpSocket* sender,
-			       std::map<std::string,std::string>&) {
-  _drive.stopTurn();
-  _writeHttpResponse(sender, boost::asio::const_buffer("", 0));
-}
-
-void	RemoteServer::takeSteeringWheel(Network::ATcpSocket* sender,
+void	RemoteServer::steeringWheelAction(Network::ATcpSocket* sender,
 					std::map<std::string,std::string>&) {
-  _drive.takeSteeringWheel();
+  _drive.steeringWheelAction();
   _writeHttpResponse(sender, boost::asio::const_buffer("", 0));
 }
 
-void	RemoteServer::releaseSteeringWheel(Network::ATcpSocket* sender,
-					   std::map<std::string,
-						    std::string>&) {
-  _drive.releaseSteeringWheel();
-  _writeHttpResponse(sender, boost::asio::const_buffer("", 0));
-}
-
-void	RemoteServer::beginNoHand(Network::ATcpSocket* sender,
+void	RemoteServer::funAction(Network::ATcpSocket* sender,
 				  std::map<std::string,
 					   std::string>&) {
-  _drive.beginNoHand();
+  _drive.funAction();
   _writeHttpResponse(sender, boost::asio::const_buffer("", 0));
 }
 
-void	RemoteServer::endNoHand(Network::ATcpSocket* sender,
-				std::map<std::string,
-					 std::string>&) {
-  _drive.endNoHand();
-  _writeHttpResponse(sender, boost::asio::const_buffer("", 0));
-}
-
-void	RemoteServer::takeCarembar(Network::ATcpSocket* sender,
+void	RemoteServer::carambarAction(Network::ATcpSocket* sender,
 				   std::map<std::string,
 					    std::string>&) {
-  _drive.takeCarembar();
+  _drive.carambarAction();
   _writeHttpResponse(sender, boost::asio::const_buffer("", 0));
 }
-
-void	RemoteServer::giveCarembar(Network::ATcpSocket* sender,
-				   std::map<std::string,
-					    std::string>&) {
-  _drive.giveCarembar();
-  _writeHttpResponse(sender, boost::asio::const_buffer("", 0));
-}
-
-
 
 void	RemoteServer::setHead(Network::ATcpSocket* sender,
 			      std::map<std::string, std::string> &params) {
@@ -335,7 +322,6 @@ void	RemoteServer::setHead(Network::ATcpSocket* sender,
   _drive.setHead(yaw, pitch, speed);
   _writeHttpResponse(sender, boost::asio::const_buffer("", 0));
 }
-
 
 //! Naoqi module registration
 

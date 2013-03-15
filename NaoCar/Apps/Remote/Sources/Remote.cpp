@@ -26,7 +26,6 @@ Remote::Remote(int argc, char** argv)
 		   this, SLOT(networkRequestFinished(QNetworkReply*)));
   _naoUrl.setScheme("http");
 
-  _naoAvailable = true;
 }
 
 Remote::~Remote(void) {
@@ -69,7 +68,7 @@ void Remote::serviceResolved(bool error, std::string const& hostname,
 
 void Remote::connect(void) {
   if (_naoAvailable) {
-    sendRequest("/start");
+    sendRequest("/begin");
     sendRequest("/stream-socket");
   } else {
     QMessageBox::critical(_mainWindow.getWindow(), "Connect error",
@@ -79,7 +78,7 @@ void Remote::connect(void) {
 
 void Remote::disconnect(void) {
   if (_naoAvailable)
-    sendRequest("/stop");
+    sendRequest("/end");
 }
 
 void Remote::viewChanged(int index) {

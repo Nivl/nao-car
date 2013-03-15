@@ -17,6 +17,7 @@
 # include "Network/ITcpServerDelegate.h"
 # include "Network/ITcpSocketDelegate.h"
 # include "DriveProxy.hpp"
+# include "StreamServer.hpp"
 
 namespace AL
 {
@@ -39,10 +40,6 @@ public:
   virtual void serviceRegistered(bool error, std::string const& name="");
 
   void networkThread();
-  void _acceptHandler(const boost::system::error_code& error,
-		      boost::asio::ip::tcp::socket* socket);
-  void _startAccept();
-
 
   virtual void newConnection(Network::ATcpServer* sender,
 			     Network::ATcpSocket* socket);
@@ -68,37 +65,32 @@ private:
   void	_writeData(Network::ATcpSocket* target,
 		   std::stringstream *buffer);
 
-
   void	defaultParams(Network::ATcpSocket* socket,
 		      std::map<std::string, std::string>& params);
-  void	start(Network::ATcpSocket* socket,
-		std::map<std::string,std::string>& params);
+  void	getStreamIpAndPort(Network::ATcpSocket* socket,
+			   std::map<std::string, std::string>& params);
+  void	begin(Network::ATcpSocket* socket,
+	      std::map<std::string,std::string>& params);
+  void	end(Network::ATcpSocket* socket,
+	    std::map<std::string,std::string>& params);
+  void	goFrontwards(Network::ATcpSocket* socket,
+		     std::map<std::string,std::string>& params);
+  void	goBackwards(Network::ATcpSocket* socket,
+		    std::map<std::string,std::string>& params);
+  void	turnLeft(Network::ATcpSocket* socket,
+		 std::map<std::string,std::string>& params);
+  void	turnRight(Network::ATcpSocket* socket,
+		  std::map<std::string,std::string>& params);
+  void	turnFront(Network::ATcpSocket* socket,
+		  std::map<std::string,std::string>& params);
   void	stop(Network::ATcpSocket* socket,
-		std::map<std::string,std::string>& params);
-  void	up(Network::ATcpSocket* socket,
-		std::map<std::string,std::string>& params);
-  void	down(Network::ATcpSocket* socket,
-		std::map<std::string,std::string>& params);
-  void	left(Network::ATcpSocket* socket,
-		std::map<std::string,std::string>& params);
-  void	right(Network::ATcpSocket* socket,
-		std::map<std::string,std::string>& params);
-  void	stopPush(Network::ATcpSocket* socket,
-		std::map<std::string,std::string>& params);
-  void	stopTurn(Network::ATcpSocket* socket,
-		std::map<std::string,std::string>& params);
-  void	takeSteeringWheel(Network::ATcpSocket* socket,
-		std::map<std::string,std::string>& params);
-  void	releaseSteeringWheel(Network::ATcpSocket* socket,
-		std::map<std::string,std::string>& params);
-  void	beginNoHand(Network::ATcpSocket* socket,
-		std::map<std::string,std::string>& params);
-  void	endNoHand(Network::ATcpSocket* socket,
-		std::map<std::string,std::string>& params);
-  void	takeCarembar(Network::ATcpSocket* socket,
-		std::map<std::string,std::string>& params);
-  void	giveCarembar(Network::ATcpSocket* socket,
-		std::map<std::string,std::string>& params);
+	     std::map<std::string,std::string>& params);
+  void	steeringWheelAction(Network::ATcpSocket* socket,
+			    std::map<std::string,std::string>& params);
+  void	funAction(Network::ATcpSocket* socket,
+		  std::map<std::string,std::string>& params);
+  void	carambarAction(Network::ATcpSocket* socket,
+		       std::map<std::string,std::string>& params);
   void	setHead(Network::ATcpSocket* socket,
 		std::map<std::string,std::string>& params);
 
@@ -114,6 +106,8 @@ private:
   static std::map<std::string, GetFunction>	_getFunctions;
   std::list<std::pair<Network::ATcpSocket*, std::stringstream*> > _toWrite;
   DriveProxy	_drive;
+  StreamServer	*_streamServer;
+  int		_streamPort;
 };
 
 #endif

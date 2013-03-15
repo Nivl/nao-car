@@ -5,7 +5,7 @@
 // Login   <olivie_a@epitech.net>
 // 
 // Started on  Fri Sep 28 16:49:09 2012 samuel olivier
-// Last update Wed Feb 20 13:08:25 2013 samuel olivier
+// Last update Fri Mar 15 14:33:41 2013 samuel olivier
 //
 
 #include "DriveProxy.hpp"
@@ -40,9 +40,34 @@ DriveProxy::DriveProxy(int pProxyOption, int pTimeout) :
 {
 }
 
-void	DriveProxy::start()
+void	DriveProxy::begin()
 {
-  callVoid("start");
+  callVoid("begin");
+}
+
+void	DriveProxy::end()
+{
+  callVoid("end");
+}
+
+void	DriveProxy::goFrontwards()
+{
+  callVoid("goFrontwards");
+}
+
+void	DriveProxy::goBackwards()
+{
+  callVoid("goBackwards");
+}
+
+void	DriveProxy::turnLeft()
+{
+  callVoid("turnLeft");
+}
+
+void	DriveProxy::turnRight()
+{
+  callVoid("turnRight");
 }
 
 void	DriveProxy::stop()
@@ -50,74 +75,34 @@ void	DriveProxy::stop()
   callVoid("stop");
 }
 
-void	DriveProxy::up()
+void	DriveProxy::turnFront()
 {
-  callVoid("up");
+  callVoid("turnFront");
 }
 
-void	DriveProxy::down()
+void	DriveProxy::steeringWheelAction()
 {
-  callVoid("down");
+  callVoid("steeringWheelAction");
 }
 
-void	DriveProxy::left()
+void	DriveProxy::funAction()
 {
-  callVoid("left");
+  callVoid("funAction");
 }
 
-void	DriveProxy::right()
+void	DriveProxy::carambarAction()
 {
-  callVoid("right");
+  callVoid("carambarAction");
 }
 
-void	DriveProxy::stopPush()
-{
-  callVoid("stopPush");
-}
-
-void	DriveProxy::stopTurn()
-{
-  callVoid("stopTurn");
-}
-
-void	DriveProxy::takeSteeringWheel()
-{
-  callVoid("takeSteeringWheel");
-}
-
-void	DriveProxy::releaseSteeringWheel()
-{
-  callVoid("releaseSteeringWheel");
-}
-
-void	DriveProxy::beginNoHand()
-{
-  callVoid("beginNoHand");
-}
-
-void	DriveProxy::endNoHand()
-{
-  callVoid("endNoHand");
-}
-
-void	DriveProxy::takeCarembar()
-{
-  callVoid("takeCarembar");
-}
-
-void	DriveProxy::giveCarembar()
-{
-  callVoid("giveCarembar");
-}
-
-void	DriveProxy::setHead(float headYaw, float headPitch, float maxSpeed)
+void	DriveProxy::setHead(float const& headYaw, float const& headPitch, float const& maxSpeed)
 {
   callVoid("setHead", headYaw, headPitch, maxSpeed);
 }
 
-bool			DriveProxy::steeringWheelIsTaken()
+bool			DriveProxy::isSteeringWheelTaken()
 {
-  return (call<bool>("steeringWheelIsTaken"));
+  return (call<bool>("isSteeringWheelITaken"));
 }
 
 bool			DriveProxy::isGasPedalPushed()

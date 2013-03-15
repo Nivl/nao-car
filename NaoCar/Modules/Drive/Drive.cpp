@@ -5,7 +5,7 @@
 // Login   <olivie_a@epitech.net>
 // 
 // Started on  Wed Sep  5 23:47:17 2012 samuel olivier
-// Last update Mon Mar 11 13:14:20 2013 samuel olivier
+// Last update Fri Mar 15 15:22:36 2013 samuel olivier
 //
 
 #include <iostream>
@@ -77,41 +77,35 @@ Drive::Drive(boost::shared_ptr<AL::ALBroker> broker,
   AL::ALModule(broker, name), _poseManager(broker), _animThread(NULL)
 {
   setModuleDescription("The NaoCar Driving Module");
-  functionName("start", getName(), "Set the nao ready for starting");
-  BIND_METHOD(Drive::start)
-  functionName("stop", getName(), "Stop the nao");
+  functionName("begin", getName(), "Set the nao ready for starting");
+  BIND_METHOD(Drive::begin)
+  functionName("end", getName(), "Stop the nao car drive mode");
+  BIND_METHOD(Drive::end);
+  functionName("goFrontwards", getName(), "Move forward");
+  BIND_METHOD(Drive::goFrontwards);
+  functionName("goBackwards", getName(), "Move back");
+  BIND_METHOD(Drive::goBackwards);
+  functionName("turnLeft", getName(), "Move left");
+  BIND_METHOD(Drive::turnLeft);
+  functionName("turnRight", getName(), "Move right");
+  BIND_METHOD(Drive::turnRight);
+  functionName("turnFront", getName(), "Stop turning steering wheel");
+  BIND_METHOD(Drive::turnFront);
+  functionName("stop", getName(), "Stop pushing gas pedal");
   BIND_METHOD(Drive::stop);
-  functionName("up", getName(), "Move forward");
-  BIND_METHOD(Drive::up);
-  functionName("down", getName(), "Move back");
-  BIND_METHOD(Drive::down);
-  functionName("left", getName(), "Move left");
-  BIND_METHOD(Drive::left);
-  functionName("right", getName(), "Move right");
-  BIND_METHOD(Drive::right);
-  functionName("stopPush", getName(), "Stop pushing gas pedal");
-  BIND_METHOD(Drive::stopPush);
-  functionName("stopTurn", getName(), "Stop turning steering wheel");
-  BIND_METHOD(Drive::stopTurn);
-  functionName("takeSteeringWheel", getName(), "Take the steering wheel");
-  BIND_METHOD(Drive::takeSteeringWheel);
-  functionName("releaseSteeringWheel", getName(),
-	       "Release the steering wheel");
-  BIND_METHOD(Drive::releaseSteeringWheel);
-  functionName("beginNoHand", getName(), "Start \"No Hand Driving\"");
-  BIND_METHOD(Drive::beginNoHand);
-  functionName("endNoHand", getName(), "Stop \"No Hand Driving\"");
-  BIND_METHOD(Drive::endNoHand);
-  functionName("takeCarembar", getName(), "Take a carambar");
-  BIND_METHOD(Drive::takeCarembar);
-  functionName("giveCarembar", getName(), "Give the carembar and return to driving position");
-  BIND_METHOD(Drive::giveCarembar);
+  functionName("steeringWheelAction", getName(),
+	       "Take or release the steering wheel");
+  BIND_METHOD(Drive::steeringWheelAction);
+  functionName("funAction", getName(), "Start or finish \"No Hand Driving\"");
+  BIND_METHOD(Drive::funAction);
+  functionName("carambarAction", getName(), "Take or give a carambar");
+  BIND_METHOD(Drive::carambarAction);
   functionName("setHead", getName(), "Set the specified angles "
 	       "to the head");
   BIND_METHOD(Drive::setHead);
-  functionName("steeringWheelIsTaken", getName(),
+  functionName("isSteeringWheelTaken", getName(),
 	       "return steeringWheelIsTaken");
-  BIND_METHOD(Drive::steeringWheelIsTaken);
+  BIND_METHOD(Drive::isSteeringWheelTaken);
   functionName("isGasPedalPushed", getName(),
 	       "return isGasPedalPushed");
   BIND_METHOD(Drive::isGasPedalPushed);
@@ -140,7 +134,7 @@ void	Drive::init()
 {
 }
 
-void	Drive::start()
+void	Drive::begin()
 {
   _steeringWheelIsTaken = true;
   _gasPedalIsPushed = false;
@@ -156,7 +150,7 @@ void	Drive::start()
     _animThread = new std::thread(launchAnimThread, (void*)this);
 }
 
-void	Drive::stop()
+void	Drive::end()
 {
   _stopThread = true;
   if (_animThread)
@@ -168,7 +162,7 @@ void	Drive::stop()
   _poseManager.getProxy().setStiffnesses("Body", 0);
 }
 
-void	Drive::up()
+void	Drive::goFrontwards()
 {
   if (_isAnimating == true || _gasPedalIsPushed == true)
     return ;
@@ -197,7 +191,7 @@ void	Drive::up()
     }
 }
 
-void	Drive::down()
+void	Drive::goBackwards()
 {
   if (_isAnimating == true || _gasPedalIsPushed == true)
     return ;
@@ -226,13 +220,13 @@ void	Drive::down()
     }
 }
 
-void	Drive::left()
+void	Drive::turnLeft()
 {
   if (_isAnimating == true)
     return ;
-  if (_steeringWheelIsTaken == false && _noHand == false)
+  if (_steeringWheelIsTaken == false && _noHand == false && _carembar == false)
     addAnim("TakeSteeringWheel");
-  if (_steeringWheelIsTaken == true && _noHand == false
+  if (_steeringWheelIsTaken == true && _noHand == false && _carembar == false
       && _steeringWheelDirection != Left)
     {
       _animationsMutex.lock();
@@ -243,7 +237,7 @@ void	Drive::left()
     }
 }
 
-void	Drive::right()
+void	Drive::turnRight()
 {
   if (_isAnimating == true)
     return ;
@@ -260,19 +254,7 @@ void	Drive::right()
     }
 }
 
-void	Drive::stopPush()
-{
-  if (_gasPedalIsPushed == true)
-    {
-      _animationsMutex.lock();
-      _poseManager.setPose(_animations["ReleaseGasPedal"]._anim.getPoses()
-			   .front().first, 0.5);
-      _animationsMutex.unlock();
-      _gasPedalIsPushed = false;
-    }
-}
-
-void	Drive::stopTurn()
+void	Drive::turnFront()
 {
   if (_steeringWheelIsTaken == true && _steeringWheelDirection != Front)
     {
@@ -284,40 +266,34 @@ void	Drive::stopTurn()
     }
 }
 
-void	Drive::takeSteeringWheel()
+void	Drive::stop()
 {
-  if (_steeringWheelIsTaken == false)
-    addAnim("TakeSteeringWheel");
+  if (_gasPedalIsPushed == true)
+    {
+      _animationsMutex.lock();
+      _poseManager.setPose(_animations["ReleaseGasPedal"]._anim.getPoses()
+			   .front().first, 0.5);
+      _animationsMutex.unlock();
+      _gasPedalIsPushed = false;
+    }
 }
 
-void	Drive::releaseSteeringWheel()
-{
-  if (_steeringWheelIsTaken == true)
-    addAnim("ReleaseSteeringWheel");
+void	Drive::steeringWheelAction() {
+  addAnim(_steeringWheelIsTaken == false ?
+	  "TakeSteeringWheel" :
+	  "ReleaseSteeringWheel");
 }
 
-void	Drive::beginNoHand()
-{
-  if (_noHand == false)
-    addAnim("BeginNoHand");
+void	Drive::funAction() {
+  addAnim(_noHand == false ?
+	  "BeginNoHand" :
+	  "StopNoHand");
 }
 
-void	Drive::endNoHand()
-{
-  if (_noHand == true)
-    addAnim("StopNoHand");
-}
-
-void	Drive::takeCarembar()
-{
-  if (_carembar == false)
-    addAnim("TakeCarembar");
-}
-
-void	Drive::giveCarembar()
-{
-  if (_carembar == true)
-    addAnim("GiveCarembar");
+void	Drive::carambarAction() {
+  addAnim(_carembar == false ?
+	  "TakeCarembar" :
+	  "GiveCarembar");
 }
 
 void	Drive::setHead(float const& headYaw, float const& headPitch,
@@ -329,7 +305,7 @@ void	Drive::setHead(float const& headYaw, float const& headPitch,
   _poseManager.getProxy().setAngles(names, angles, maxSpeed);
 }
 
-bool	Drive::steeringWheelIsTaken()
+bool	Drive::isSteeringWheelTaken()
 {
   return (_steeringWheelIsTaken);
 }
