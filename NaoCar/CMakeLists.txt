@@ -14,7 +14,7 @@ PROJECT ("NaoCar")
 ###############################################################################
 
 SET (GCC46_PATH
-	"/usr/bin/g++-4.6"
+  "/usr/bin/g++-4.6"
 )
 IF (EXISTS ${GCC46_PATH})
    SET (CMAKE_CXX_COMPILER ${GCC46_PATH})
@@ -77,6 +77,7 @@ FIND_PACKAGE (SFML 2 REQUIRED system window graphics audio network)
 # Find and configure Qt
 FIND_PACKAGE (Qt4 REQUIRED)
 INCLUDE (${QT_USE_FILE})
+
 ADD_DEFINITIONS (${QT_DEFINITIONS})
 INCLUDE_DIRECTORIES (${CMAKE_CURRENT_BINARY_DIR})
 
@@ -260,10 +261,10 @@ QI_USE_LIB (
 
 OPTION (DRIVE_IS_REMOTE
   "module is compiled as a remote module (ON or OFF)"
-  OFF)
+  ON)
 OPTION (NAO_LOCAL_COMPILATION
   "module is compiled as a local module for the nao (ON or OFF)"
-  ON)
+  OFF)
 IF (NAO_LOCAL_COMPILATION)
   ADD_DEFINITIONS ( " -DNAO_LOCAL_COMPILATION ")
 ENDIF ()
@@ -359,6 +360,7 @@ QI_USE_LIB (
 )
 TARGET_LINK_LIBRARIES (
 	RemoteServerModule
+	DriveProxy
 	dns_sd
 )
 

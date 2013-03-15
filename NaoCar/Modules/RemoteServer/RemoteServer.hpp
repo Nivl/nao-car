@@ -8,16 +8,25 @@
 
 # include <alcommon/almodule.h>
 # include <boost/asio.hpp>
+# include <boost/thread/thread.hpp>
 
 # include "Bonjour.hpp"
 # include "BonjourDelegate.hpp"
+# include "Network/BoostTcpServer.h"
+# include "Network/BoostTcpSocket.h"
+# include "Network/ITcpServerDelegate.h"
+# include "Network/ITcpSocketDelegate.h"
+# include "DriveProxy.hpp"
 
 namespace AL
 {
   class ALBroker;
 }
 
-class RemoteServer : public AL::ALModule, public BonjourDelegate
+class RemoteServer : public AL::ALModule,
+		     public BonjourDelegate,
+		     public Network::ITcpServerDelegate,
+		     public Network::ITcpSocketDelegate
 {
 public:
 
@@ -29,9 +38,82 @@ public:
 
   virtual void serviceRegistered(bool error, std::string const& name="");
 
+  void networkThread();
+  void _acceptHandler(const boost::system::error_code& error,
+		      boost::asio::ip::tcp::socket* socket);
+  void _startAccept();
+
+
+  virtual void newConnection(Network::ATcpServer* sender,
+			     Network::ATcpSocket* socket);
+
+  virtual void    connected(Network::ASocket* sender,
+			    Network::ASocket::Error error);
+  virtual void    readFinished(Network::ASocket* sender,
+			       Network::ASocket::Error error,
+			       size_t bytesRead);
+  virtual void    readFinished(Network::ASocket* sender,
+			       Network::ASocket::Error error,
+			       std::string const& buffer);
+  virtual void    writeFinished(Network::ASocket* sender,
+				Network::ASocket::Error error,
+				size_t bytesWritten);
+
 private:
-  boost::asio::io_service		_ioService;
-  Bonjour				_bonjour;
+  void	_writeHttpResponse(Network::ATcpSocket* target,
+			   boost::asio::const_buffer const& buffer,
+			   std::string const& code = "200 OK");
+  void	_parseReceivedData(Network::ATcpSocket* sender,
+			   std::string const& data);
+  void	_writeData(Network::ATcpSocket* target,
+		   std::stringstream *buffer);
+
+
+  void	defaultParams(Network::ATcpSocket* socket,
+		      std::map<std::string, std::string>& params);
+  void	start(Network::ATcpSocket* socket,
+		std::map<std::string,std::string>& params);
+  void	stop(Network::ATcpSocket* socket,
+		std::map<std::string,std::string>& params);
+  void	up(Network::ATcpSocket* socket,
+		std::map<std::string,std::string>& params);
+  void	down(Network::ATcpSocket* socket,
+		std::map<std::string,std::string>& params);
+  void	left(Network::ATcpSocket* socket,
+		std::map<std::string,std::string>& params);
+  void	right(Network::ATcpSocket* socket,
+		std::map<std::string,std::string>& params);
+  void	stopPush(Network::ATcpSocket* socket,
+		std::map<std::string,std::string>& params);
+  void	stopTurn(Network::ATcpSocket* socket,
+		std::map<std::string,std::string>& params);
+  void	takeSteeringWheel(Network::ATcpSocket* socket,
+		std::map<std::string,std::string>& params);
+  void	releaseSteeringWheel(Network::ATcpSocket* socket,
+		std::map<std::string,std::string>& params);
+  void	beginNoHand(Network::ATcpSocket* socket,
+		std::map<std::string,std::string>& params);
+  void	endNoHand(Network::ATcpSocket* socket,
+		std::map<std::string,std::string>& params);
+  void	takeCarembar(Network::ATcpSocket* socket,
+		std::map<std::string,std::string>& params);
+  void	giveCarembar(Network::ATcpSocket* socket,
+		std::map<std::string,std::string>& params);
+  void	setHead(Network::ATcpSocket* socket,
+		std::map<std::string,std::string>& params);
+
+  typedef void (RemoteServer::*GetFunction)
+  (Network::ATcpSocket* socket,
+   std::map<std::string, std::string>&);
+
+  boost::asio::io_service	*_ioService;
+  Bonjour			_bonjour;
+  boost::thread			*_networkThread;
+  Network::BoostTcpServer	*_tcpServer;
+  std::list<Network::ATcpSocket*>	_clients;
+  static std::map<std::string, GetFunction>	_getFunctions;
+  std::list<std::pair<Network::ATcpSocket*, std::stringstream*> > _toWrite;
+  DriveProxy	_drive;
 };
 
 #endif
