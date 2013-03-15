@@ -16,7 +16,14 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
-     <widget class="QGraphicsView" name="graphicsView"/>
+     <widget class="QLabel" name="streamViewLabel">
+      <property name="text">
+       <string/>
+      </property>
+      <property name="scaledContents">
+       <bool>false</bool>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>
@@ -39,7 +46,7 @@
     <enum>TopToolBarArea</enum>
    </attribute>
    <attribute name="toolBarBreak">
-    <bool>true</bool>
+    <bool>false</bool>
    </attribute>
    <addaction name="actionConnect"/>
   </widget>
@@ -101,7 +108,14 @@
       </widget>
      </item>
      <item>
-      <widget class="QSpinBox" name="gamepadID"/>
+      <widget class="QSpinBox" name="gamepadID">
+       <property name="minimum">
+        <number>-1</number>
+       </property>
+       <property name="value">
+        <number>-1</number>
+       </property>
+      </widget>
      </item>
      <item>
       <widget class="QLabel" name="label_2">
@@ -163,7 +177,8 @@
   </widget>
   <action name="actionConnect">
    <property name="icon">
-    <iconset theme="network-wireless"/>
+    <iconset theme="network-wireless">
+     <normaloff>../../../../../.designer/backup</normaloff>../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>Connect</string>

@@ -7,41 +7,70 @@
 # define _REMOTE_HPP_
 
 # include <QApplication>
-# include <QtNetwork/QHostInfo>
 # include <QObject>
+# include <QNetworkAccessManager>
+# include <QNetworkReply>
+# include <QUrl>
+
+# include <map>
 
 # include "MainWindow.hpp"
 # include "MainWindowDelegate.hpp"
+# include "Bonjour.hpp"
+# include "BonjourDelegate.hpp"
 
-class Remote : public QObject, public MainWindowDelegate {
+# define NAOCAR_BONJOUR_SERVICE_NAME "nao-car"
+
+class Remote : public QObject, public MainWindowDelegate, public BonjourDelegate  {
 Q_OBJECT
 public:
+
   Remote(int argc, char** argv);
-  ~Remote(void);
+  virtual ~Remote(void);
 
   int exec(void);
 
-  //! Automatically search for a xbox gamepad
-  void chooseGamepad(void);
+  //! Called when a new Bonjour service is detected
+  virtual void serviceBrowsed(bool error,
+			      Bonjour::BrowsingType browsingType=Bonjour::BrowsingAdd,
+			      std::string const& name="",
+			      std::string const& type="",
+			      std::string const& domain="");
 
+  //! Called when a Bonjour service has been resolved
+  virtual void serviceResolved(bool error,
+			       std::string const& hostname="",
+			       std::string const& ip="",
+			       unsigned short port=0);
+
+  // Main window delegate functions
   void connect(void);
   void disconnect(void);
   void viewChanged(int index);
-  void gamepadIDChanged(int id);
-  void takeCarambar(void);
-  void giveCarambar(void);
+  void carambarAction(void);
   void talk(std::string message);
   void autoDriving(void);
+  void steeringWheelAction(void);
+  void funAction(void);
+  void steeringWheelDirectionChanged(MainWindow::Direction direction);
+  void moveChanged(MainWindow::Move move);
+
+  void sendRequest(std::string request,
+		   std::string paramName="",
+		   std::string paramValue="");
 
 public slots:
-  void bonjourSocketReadyRead(void);
-  void bonjourSocketReadyRead2(void);
-  void finishConnect(const QHostInfo &hostInfo);
+  void networkRequestFinished(QNetworkReply* reply);
 
 private:
-  QApplication	_app;
-  MainWindow	_mainWindow;
-  int		_gamepadId;
+  QApplication		_app;
+  MainWindow		_mainWindow;
+  Bonjour		_bonjour;
+  bool			_naoAvailable;
+  QUrl			_naoUrl;
+  QNetworkAccessManager	_networkManager;
+
+  bool			_connected;
 };
 
 #endif
