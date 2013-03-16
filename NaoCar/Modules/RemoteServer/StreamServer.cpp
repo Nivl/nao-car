@@ -5,15 +5,20 @@
 // Login   <olivie_a@epitech.net>
 // 
 // Started on  Fri Mar 15 16:30:36 2013 samuel olivier
-// Last update Fri Mar 15 18:09:34 2013 samuel olivier
+// Last update Sat Mar 16 21:16:59 2013 samuel olivier
 //
 
 #include "StreamServer.hpp"
+#include <fstream>
+
+static GstFlowReturn appsink_new_preroll(GstAppSink *sink, gpointer user_data);
+static GstFlowReturn appsink_new_buffer(GstAppSink *sink, gpointer user_data);
 
 StreamServer::StreamServer(boost::asio::io_service* service) :
   _ioService(service), _mainThread(NULL), _tcpServer(NULL),
-  _stop(false)
+  _stop(false), _imageData(NULL), _imageChanged(false)
 {
+  gst_init(NULL, NULL);
 }
 
 StreamServer::~StreamServer() {
@@ -35,6 +40,7 @@ int	StreamServer::run() {
 	return (0);
       }
     }
+    std::cout << "Stream: " << _tcpServer->getPort() << std::endl;
     _stop = false;
     _mainThread = new boost::thread(&StreamServer::mainThread, this);
   }
@@ -52,12 +58,20 @@ void	StreamServer::stop() {
 }
 
 void	StreamServer::mainThread() {
+  _setPipeline("v4l2src device=/dev/video0 ! videoscale ! video/x-raw-yuv,width=320,height=340 ! ffmpegcolorspace ! jpegenc");
   while (_stop == false) {
     _clientsMutex.lock();
-    for (auto it = _clients.begin(); it != _clients.end(); ++it) {
-      char	*data = new char[12];
-      memcpy(data, "Yo les mecs\n", 12);
-      _writeData(*it, data, 12);
+    if (_imageChanged) {
+      _imageMutex.lock();
+      _imageChanged = false;
+      for (auto it = _clients.begin(); it != _clients.end(); ++it) {
+	std::cout << "Sending Image: " << _imageSize << " " << (int)_imageData[5598] <<std::endl;
+	size_t *size = new size_t;
+	*size = _imageSize;
+	_writeData(*it, (char*)size, 8);
+	_writeData(*it, _imageData, _imageSize);
+      }
+      _imageMutex.unlock();
     }
     _clientsMutex.unlock();
     usleep(10000);
@@ -124,3 +138,62 @@ void	StreamServer::_writeData(Network::ATcpSocket* target,
     target->write(data, size);
 }
 
+void	StreamServer::_setPipeline(std::string const& pipeline)
+{
+  GError* error = NULL;
+
+  if (_pipeline)
+    {
+      gst_element_set_state (_pipeline, GST_STATE_NULL);
+      gst_object_unref (GST_OBJECT (_pipeline));
+      _pipeline = NULL;
+    }
+  _pipeline = gst_parse_launch((pipeline + " ! appsink").c_str(), &error);
+  if (!_pipeline || error)
+    {
+      std::cerr << "Cannnot create pipeline" << std::endl;
+      _pipeline = 0;
+    }
+  else
+    {
+      GstElement* appsink = gst_bin_get_by_name(GST_BIN(_pipeline),
+						"appsink0");
+      GstAppSinkCallbacks callbacks = {
+	NULL, appsink_new_preroll, appsink_new_buffer, NULL, { NULL }};
+      gst_app_sink_set_callbacks(GST_APP_SINK(appsink), &callbacks,
+				 this, NULL);
+      gst_element_set_state(_pipeline, GST_STATE_PLAYING);
+    }
+}
+
+void	StreamServer::setImageData(char *data, size_t size) {
+  _imageMutex.lock();
+  if (_imageChanged)
+    delete _imageData;
+  _imageChanged = true;
+  _imageData = new char[size];
+  memcpy(_imageData, data, size);
+  _imageSize = size;
+  _imageMutex.unlock();
+}
+
+static GstFlowReturn appsink_new_preroll(GstAppSink *sink, gpointer user_data)
+{
+  (void)user_data;
+  gst_app_sink_pull_preroll(sink);
+  return GST_FLOW_OK;
+}
+
+static GstFlowReturn appsink_new_buffer(GstAppSink *sink, gpointer user_data)
+{
+  (void)user_data;
+  GstBuffer *buffer = gst_app_sink_pull_buffer(sink);
+  GstCaps *caps = gst_buffer_get_caps(buffer);
+  GstStructure *structure = gst_caps_get_structure(caps, 0);
+  unsigned char* data = GST_BUFFER_MALLOCDATA(buffer);
+  ((StreamServer*)user_data)->setImageData((char*)data,
+					   GST_BUFFER_SIZE(buffer));
+  gst_caps_unref(caps);
+  gst_buffer_unref(buffer);
+  return GST_FLOW_OK;
+}

@@ -26,13 +26,11 @@ static GstFlowReturn appsink_new_buffer(GstAppSink *sink, gpointer user_data)
 {
   (void)user_data;
   GstBuffer *buffer = gst_app_sink_pull_buffer(sink);
-
   GstCaps *caps = gst_buffer_get_caps(buffer);
   GstStructure *structure = gst_caps_get_structure(caps, 0);
-
   unsigned char* data = GST_BUFFER_MALLOCDATA(buffer);
-
   gint width = 0, height = 0, bpp = 0;
+
   gst_structure_get_int(structure, "width", &width);
   gst_structure_get_int(structure, "height", &height);
   gst_structure_get_int(structure, "bpp", &bpp);

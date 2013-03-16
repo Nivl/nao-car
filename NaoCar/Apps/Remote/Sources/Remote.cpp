@@ -16,7 +16,8 @@
 Remote::Remote(int argc, char** argv)
   : _app(argc, argv), _mainWindow(this),
     _bonjour(this), _naoAvailable(false), _naoUrl(), _networkManager(),
-    _connected(false) {
+    _connected(false), _streamSocket(new QTcpSocket(this)),
+    _streamImageSize(-1), _streamImage(new QImage()), _streamSizeRead(false) {
   // Launch Bonjour to automatically detect Nao on a local network
   if (!_bonjour.browseServices("_http._tcp")) {
     std::cerr << "Cannot browse Bonjour services" << std::endl;
@@ -25,11 +26,16 @@ Remote::Remote(int argc, char** argv)
   QObject::connect(&_networkManager, SIGNAL(finished(QNetworkReply*)),
 		   this, SLOT(networkRequestFinished(QNetworkReply*)));
   _naoUrl.setScheme("http");
-
+  QObject::connect(_streamSocket, SIGNAL(readyRead()),
+		   this, SLOT(streamDataAvailable()));
+  QPixmap tmp;
+  tmp.load(":/waiting-streaming.png");
+  *_streamImage = tmp.toImage();
+  _mainWindow.setStreamImage(_streamImage);
 }
 
 Remote::~Remote(void) {
-  
+  delete _streamImage;
 }
 
 int Remote::exec(void) {
@@ -69,7 +75,7 @@ void Remote::serviceResolved(bool error, std::string const& hostname,
 void Remote::connect(void) {
   if (_naoAvailable) {
     sendRequest("/begin");
-    sendRequest("/stream-socket");
+    sendRequest("/get-stream-port");
   } else {
     QMessageBox::critical(_mainWindow.getWindow(), "Connect error",
 			  "No available NaoCar server found");
@@ -157,6 +163,31 @@ void Remote::networkRequestFinished(QNetworkReply* reply) {
   if (reply->error() != QNetworkReply::NoError) {
     qDebug() << reply->errorString();
   } else {
-    reply->readAll();
+    QByteArray data = reply->readAll();
+
+    if (reply->request().url().path() == "/get-stream-port") {
+      _streamSocket->connectToHost(_naoUrl.host(), data.toInt());
+    }
+  }
+}
+
+void Remote::streamDataAvailable() {
+  if (_streamSizeRead == false &&
+      (quint64)_streamSocket->bytesAvailable() >= sizeof(_streamImageSize)) {
+    _streamSocket->read((char*)&_streamImageSize, sizeof(_streamImageSize));
+    _streamSizeRead = true;
+  }
+  if (_streamSizeRead == true &&
+      _streamSocket->bytesAvailable() >= _streamImageSize) {
+    QByteArray data = _streamSocket->read(_streamImageSize);
+    {
+      QFile out("img.jpg");
+      out.open(QIODevice::WriteOnly);
+      out.write(data);
+      out.close();
+    }
+    qDebug() << _streamImage->load("img.jpg");
+    _mainWindow.setStreamImage(_streamImage);
+    _streamSizeRead = false;
   }
 }

@@ -27,6 +27,7 @@ RemoteServer::RemoteServer(boost::shared_ptr<AL::ALBroker> broker,
 {
   if (_getFunctions.size() == 0) {
     _getFunctions["/"] = &RemoteServer::defaultParams;
+    _getFunctions["/get-stream-port"] = &RemoteServer::getStreamIpAndPort;
     _getFunctions["/begin"] = &RemoteServer::begin;
     _getFunctions["/end"] = &RemoteServer::end;
 
@@ -73,7 +74,7 @@ void	RemoteServer::init()
   }
   _streamServer = new StreamServer(_ioService);
   _streamPort = _streamServer->run();
-  std::cout << _streamPort << std::endl;
+  std::cout << "Server Port: " << _tcpServer->getPort() << std::endl;
   if (!_bonjour.registerService("nao-car", "_http._tcp",
   				_tcpServer->getPort()))
    std::cerr << "Could not register Bonjour service" << std::endl;

@@ -80,7 +80,7 @@ SET (QT_USE_QTNETWORK TRUE)
 INCLUDE (${QT_USE_FILE})
 
 ADD_DEFINITIONS (${QT_DEFINITIONS})
-INCLUDE_DIRECTORIES (${CMAKE_CURRENT_BINARY_DIR})
+INCLUDE_DIRECTORIES (${CMAKE_CURRENT_BINARY_DIR} Apps/Remote/Sources)
 
 ###############################################################################
 # Include Directories
@@ -176,7 +176,10 @@ FILE (
     REMOTE_APP_HEADERS
     ${NAOCAR_REMOTE_APP_PATH}/Sources/*.hpp
 )
-SET (REMOTE_APP_RESOURCES)
+SET (
+    REMOTE_APP_RESOURCES
+    ${NAOCAR_REMOTE_APP_PATH}/Resources/Ui.qrc
+)
 
 # Remote Control App
 FILE (
@@ -363,6 +366,15 @@ TARGET_LINK_LIBRARIES (
 	RemoteServerModule
 	DriveProxy
 	dns_sd
+	pthread
+	gstreamer-0.10
+	gobject-2.0
+	gmodule-2.0
+	gthread-2.0
+	glib-2.0
+	gstapp-0.10
+	xml2
+	rt
 )
 
 
@@ -421,7 +433,6 @@ QT4_ADD_RESOURCES (
 	REMOTE_APP_RESOURCES_RCC
 	${REMOTE_APP_RESOURCES}
 )
-
 QI_CREATE_BIN (
 	Remote
 	${REMOTE_APP_SOURCES}
@@ -436,13 +447,13 @@ QI_USE_LIB (
 )
 TARGET_LINK_LIBRARIES (
 	Remote
-	dns_sd
-	${QT_QTCORE_LIBRARIES}
-	${QT_QTGUI_LIBRARIES}
-	${QT_QTNETWORK_LIBRARIES}
 	${SFML_LIBRARIES}
 	Pose
 	DriveProxy
+	${QT_QTCORE_LIBRARIES}
+	${QT_QTGUI_LIBRARIES}
+	${QT_QTNETWORK_LIBRARIES}
+	dns_sd
 )
 
 #

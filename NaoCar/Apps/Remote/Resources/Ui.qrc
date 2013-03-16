@@ -1,3 +1,5 @@
 <RCC>
-  <qresource prefix="/"/>
+  <qresource prefix="/">
+    <file>waiting-streaming.png</file>
+  </qresource>
 </RCC>
