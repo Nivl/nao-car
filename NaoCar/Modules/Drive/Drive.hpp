@@ -78,7 +78,9 @@ private:
     Ready,
     DrivingFront,
     DrivingLeft,
-    DrivingRight
+    DrivingRight,
+    NoHand,
+    Carambar
   };
   enum DirectionState {
     Forward,
@@ -87,7 +89,7 @@ private:
   enum PedalState {
     Pushed,
     Released
-  }
+  };
 
   struct State {
     PositionState	position;
