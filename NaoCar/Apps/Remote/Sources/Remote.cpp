@@ -12,6 +12,7 @@
 #include <QMessageBox>
 #include <QNetworkRequest>
 #include <QList>
+#include <QImageReader>
 
 Remote::Remote(int argc, char** argv)
   : _app(argc, argv), _mainWindow(this),
@@ -30,6 +31,7 @@ Remote::Remote(int argc, char** argv)
 		   this, SLOT(streamDataAvailable()));
   QPixmap tmp;
   tmp.load(":/waiting-streaming.png");
+  qDebug() << QImageReader::supportedImageFormats();
   *_streamImage = tmp.toImage();
   _mainWindow.setStreamImage(_streamImage);
 }
