@@ -28,6 +28,7 @@ namespace AL
 class Drive : public AL::ALModule
 {
 public:
+
   enum SteeringWheel
     {
       Left,
@@ -72,14 +73,37 @@ public:
   bool	isCarembar();
 
 private:
+  enum PositionState {
+    Vegetative,
+    Ready,
+    DrivingFront,
+    DrivingLeft,
+    DrivingRight,
+    NoHand,
+    Carambar
+  };
+  enum DirectionState {
+    Forward,
+    Backward
+  };
+  enum PedalState {
+    Pushed,
+    Released
+  };
+
+  struct State {
+    PositionState	position;
+    DirectionState	direction;
+    PedalState		pedal;
+  };
+  State								_currentState;
+
   void	launch(std::string const& name);
   void	addAnim(std::string const& name);
 
   struct Anim
   {
     Animation   _anim;
-    int         _valueToGive;
-    std::atomic<int>    (Drive::*_valueToChange);
   };
 
   static std::map<std::string, Anim>	_animations;
@@ -91,12 +115,6 @@ private:
   std::atomic<bool>			_isAnimating;
   std::atomic<bool>			_stopThread;
 
-  std::atomic<int>			_steeringWheelIsTaken;
-  std::atomic<int>			_gasPedalIsPushed;
-  std::atomic<int>			_steeringWheelDirection;
-  std::atomic<int>			_speed;
-  std::atomic<int>			_noHand;
-  std::atomic<int>			_carembar;
 };
 
 #endif

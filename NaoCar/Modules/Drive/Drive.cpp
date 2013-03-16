@@ -28,48 +28,36 @@
 #endif
 
 static void	launchAnimThread(void *mod);
+//std::map<Drive::State, std::map<Drive::Action, Drive::actionFunction> >     Drive::_fsm;
 
 std::map<std::string, Drive::Anim>	Drive::_animations =
   {
     {"DownShift",
-     Anim{Animation::loadFromFile(POSE_DIR "downshift.anim"), Down,
-	  (std::atomic<int> (Drive::*))&Drive::_speed}},
+     Anim{Animation::loadFromFile(POSE_DIR "downshift.anim")}},
     {"UpShift",
-     Anim{Animation::loadFromFile(POSE_DIR "upshift.anim"), Up,
-	  (std::atomic<int> (Drive::*))&Drive::_speed}},
+     Anim{Animation::loadFromFile(POSE_DIR "upshift.anim")}},
     {"PushGasPedal",
-     Anim{Animation::loadFromFile(POSE_DIR "push-gas-pedal.anim"), true,
-	  (std::atomic<int> (Drive::*))&Drive::_gasPedalIsPushed}},
+     Anim{Animation::loadFromFile(POSE_DIR "push-gas-pedal.anim")}},
     {"ReleaseGasPedal",
-     Anim{Animation::loadFromFile(POSE_DIR "release-gas-pedal.anim"), false,
-	  (std::atomic<int> (Drive::*))&Drive::_gasPedalIsPushed}},
+     Anim{Animation::loadFromFile(POSE_DIR "release-gas-pedal.anim")}},
     {"TakeSteeringWheel",
-     Anim{Animation::loadFromFile(POSE_DIR "take-steering-wheel.anim"), true,
-	  (std::atomic<int> (Drive::*))&Drive::_steeringWheelIsTaken}},
+     Anim{Animation::loadFromFile(POSE_DIR "take-steering-wheel.anim")}},
     {"ReleaseSteeringWheel",
-     Anim{Animation::loadFromFile(POSE_DIR "release-steering-wheel.anim"), false,
-	  (std::atomic<int> (Drive::*))&Drive::_steeringWheelIsTaken}},
+     Anim{Animation::loadFromFile(POSE_DIR "release-steering-wheel.anim")}},
     {"TurnLeft",
-     Anim{Animation::loadFromFile(POSE_DIR "turn-left.anim"), Left,
-	  (std::atomic<int> (Drive::*))&Drive::_steeringWheelDirection}},
+     Anim{Animation::loadFromFile(POSE_DIR "turn-left.anim")}},
     {"TurnFront",
-     Anim{Animation::loadFromFile(POSE_DIR "turn-front.anim"), Front,
-	  (std::atomic<int> (Drive::*))&Drive::_steeringWheelDirection}},
+     Anim{Animation::loadFromFile(POSE_DIR "turn-front.anim")}},
     {"TurnRight",
-     Anim{Animation::loadFromFile(POSE_DIR "turn-right.anim"), Right,
-	  (std::atomic<int> (Drive::*))&Drive::_steeringWheelDirection}},
+     Anim{Animation::loadFromFile(POSE_DIR "turn-right.anim")}},
     {"BeginNoHand",
-     Anim{Animation::loadFromFile(POSE_DIR "begin-no-hand.anim"), true,
-	  (std::atomic<int> (Drive::*))&Drive::_noHand}},
+     Anim{Animation::loadFromFile(POSE_DIR "begin-no-hand.anim")}},
     {"StopNoHand",
-     Anim{Animation::loadFromFile(POSE_DIR "stop-no-hand.anim"), false,
-	  (std::atomic<int> (Drive::*))&Drive::_noHand}},
+     Anim{Animation::loadFromFile(POSE_DIR "stop-no-hand.anim")}},
     {"TakeCarembar",
-     Anim{Animation::loadFromFile(POSE_DIR "take-carembar.anim"), true,
-	  (std::atomic<int> (Drive::*))&Drive::_carembar}},
+     Anim{Animation::loadFromFile(POSE_DIR "take-carembar.anim")}},
     {"GiveCarembar",
-     Anim{Animation::loadFromFile(POSE_DIR "give-carembar.anim"), false,
-	  (std::atomic<int> (Drive::*))&Drive::_carembar}},
+     Anim{Animation::loadFromFile(POSE_DIR "give-carembar.anim")}},
   };
 
 Drive::Drive(boost::shared_ptr<AL::ALBroker> broker,
@@ -124,6 +112,7 @@ Drive::Drive(boost::shared_ptr<AL::ALBroker> broker,
   functionName("isCarembar", getName(),
 	       "return isCarembar");
   BIND_METHOD(Drive::isCarembar);
+
 }
 
 Drive::~Drive()
@@ -132,22 +121,27 @@ Drive::~Drive()
 
 void	Drive::init()
 {
+  _currentState.position = Vegetative;
+  _currentState.direction = Forward;
+  _currentState.pedal = Released;
 }
 
 void	Drive::begin()
 {
-  _steeringWheelIsTaken = true;
-  _gasPedalIsPushed = false;
-  _steeringWheelDirection = Front;
-  _speed = Down;
-  _noHand = false;
-  _carembar = false;
-  _stopThread = false;
-  _poseManager.getProxy().setStiffnesses("Body", 1);
-  addAnim("ReleaseSteeringWheel");
-  addAnim("UpShift");
-  if (_animThread == NULL)
-    _animThread = new std::thread(launchAnimThread, (void*)this);
+  if (_currentState.position == Vegetative) {
+    _stopThread = false;
+
+    // LAUNCH ANIMATION FOR WAKE UP
+    _poseManager.getProxy().setStiffnesses("Body", 1);
+    addAnim("ReleaseSteeringWheel");
+    addAnim("UpShift");
+    if (_animThread == NULL)
+      _animThread = new std::thread(launchAnimThread, (void*)this);
+
+    _currentState.position = Ready;
+    _currentState.direction = Forward;
+    _currentState.pedal = Released;
+  }
 }
 
 void	Drive::end()
@@ -160,140 +154,164 @@ void	Drive::end()
       _animThread = NULL;
     }
   _poseManager.getProxy().setStiffnesses("Body", 0);
+  _currentState.position = Vegetative;
+  _currentState.direction = Forward;
+  _currentState.pedal = Released;
 }
 
 void	Drive::goFrontwards()
 {
-  if (_isAnimating == true || _gasPedalIsPushed == true)
-    return ;
-  if (_speed == Down)
-    {
-      if (_steeringWheelIsTaken == true && _noHand == false && _carembar == false)
-	{
-	  if (_steeringWheelDirection != Front)
-	    addAnim("TurnFront");
-	  addAnim("ReleaseSteeringWheel");
-	}
-      else if (_noHand == true)
-	addAnim("StopNoHand");
+  if (_currentState.position == DrivingFront ||
+      _currentState.position == DrivingLeft ||
+      _currentState.position == DrivingRight) {
+    if (_currentState.direction == Forward && _currentState.pedal == Released) {
+      addAnim("PushGasPedal");
+      _currentState.pedal = Pushed;
+      return;
+    }
+  }
+  if (_currentState.direction == Backward) {
+    if (_currentState.position == DrivingLeft || _currentState.position == DrivingRight) {
+      addAnim("TurnFront");
+      _currentState.position = DrivingFront;
+      return goFrontwards();
+    }
+    if (_currentState.position == DrivingFront) {
+      addAnim("ReleaseSteeringWheel");
+      _currentState.position = Ready;
+      return goFrontwards();
+    }
+    if (_currentState.position == Ready) {
       addAnim("UpShift");
+      addAnim("TakeSteeringWheel");
+      addAnim("PushGasPedal");
+      _currentState.position = DrivingFront;
+      _currentState.direction = Forward;
+      _currentState.pedal = Pushed;
     }
-  if (_steeringWheelIsTaken == false && _noHand == false && _carembar == false)
-    addAnim("TakeSteeringWheel");
-  if (_gasPedalIsPushed == false  && _carembar == false &&
-      (_steeringWheelIsTaken == true || _noHand == true) && _speed == Up)
-    {
-      _animationsMutex.lock();
-      _poseManager.setPose(_animations["PushGasPedal"]._anim.getPoses()
-			   .front().first, 0.5);
-      _animationsMutex.unlock();
-      _gasPedalIsPushed = true;
-    }
+  }
 }
 
 void	Drive::goBackwards()
 {
-  if (_isAnimating == true || _gasPedalIsPushed == true)
-    return ;
-  if (_speed == Up)
-    {
-      if (_steeringWheelIsTaken == true && _noHand == false && _carembar == false)
-	{
-	  if (_steeringWheelDirection != Front)
-	    addAnim("TurnFront");
-	  addAnim("ReleaseSteeringWheel");
-	}
-      else if (_noHand == true)
-	addAnim("StopNoHand");
+  if (_currentState.position == DrivingFront ||
+      _currentState.position == DrivingLeft ||
+      _currentState.position == DrivingRight) {
+    if (_currentState.direction == Backward && _currentState.pedal == Released) {
+      addAnim("PushGasPedal");
+      _currentState.pedal = Pushed;
+      return;
+    }
+  }
+  if (_currentState.direction == Forward) {
+    if (_currentState.position == DrivingLeft || _currentState.position == DrivingRight) {
+      addAnim("TurnFront");
+      _currentState.position = DrivingFront;
+      return goBackwards();
+    }
+    if (_currentState.position == DrivingFront) {
+      addAnim("ReleaseSteeringWheel");
+      _currentState.position = Ready;
+      return goBackwards();
+    }
+    if (_currentState.position == Ready) {
       addAnim("DownShift");
+      addAnim("TakeSteeringWheel");
+      addAnim("PushGasPedal");
+      _currentState.position = DrivingFront;
+      _currentState.direction = Backward;
+      _currentState.pedal = Pushed;
     }
-  if (_steeringWheelIsTaken == false && _noHand == false && _carembar == false)
-    addAnim("TakeSteeringWheel");
-  if (_gasPedalIsPushed == false && _carembar == false &&
-      (_steeringWheelIsTaken == true || _noHand == true) && _speed == Down)
-    {
-      _animationsMutex.lock();
-      _poseManager.setPose(_animations["PushGasPedal"]._anim.getPoses()
-			   .front().first, 0.5);
-      _animationsMutex.unlock();
-      _gasPedalIsPushed = true;
-    }
+  }
+
 }
 
 void	Drive::turnLeft()
 {
-  if (_isAnimating == true)
-    return ;
-  if (_steeringWheelIsTaken == false && _noHand == false && _carembar == false)
-    addAnim("TakeSteeringWheel");
-  if (_steeringWheelIsTaken == true && _noHand == false && _carembar == false
-      && _steeringWheelDirection != Left)
-    {
-      _animationsMutex.lock();
-      _poseManager.setPose(_animations["TurnLeft"]._anim.getPoses()
-			   .front().first, 0.5);
-      _animationsMutex.unlock();
-      _steeringWheelDirection = Left;
-    }
+  if (_currentState.position == DrivingFront ||
+      _currentState.position == DrivingLeft ||
+      _currentState.position == DrivingRight) {
+    addAnim("TurnLeft");
+    _currentState.position = DrivingLeft;
+  }
 }
 
 void	Drive::turnRight()
 {
-  if (_isAnimating == true)
-    return ;
-  if (_steeringWheelIsTaken == false && _noHand == false && _carembar == false)
-    addAnim("TakeSteeringWheel");
-  if (_steeringWheelIsTaken == true && _noHand == false && _carembar == false
-      && _steeringWheelDirection != Right)
-    {
-      _animationsMutex.lock();
-      _poseManager.setPose(_animations["TurnRight"]._anim.getPoses()
-			   .front().first, 0.5);
-      _animationsMutex.unlock();
-      _steeringWheelDirection = Right;
-    }
+  if (_currentState.position == DrivingFront ||
+      _currentState.position == DrivingLeft ||
+      _currentState.position == DrivingRight) {
+    addAnim("TurnRight");
+    _currentState.position = DrivingRight;
+  }
 }
 
 void	Drive::turnFront()
 {
-  if (_steeringWheelIsTaken == true && _steeringWheelDirection != Front)
-    {
-      _animationsMutex.lock();
-      _poseManager.setPose(_animations["TurnFront"]._anim.getPoses()
-			   .front().first, 0.5);
-      _animationsMutex.unlock();
-      _steeringWheelDirection = Front;
-    }
+  if (_currentState.position == DrivingFront ||
+      _currentState.position == DrivingLeft ||
+      _currentState.position == DrivingRight) {
+    addAnim("TurnFront");
+    _currentState.position = DrivingFront;
+  }
 }
 
 void	Drive::stop()
 {
-  if (_gasPedalIsPushed == true)
-    {
-      _animationsMutex.lock();
-      _poseManager.setPose(_animations["ReleaseGasPedal"]._anim.getPoses()
-			   .front().first, 0.5);
-      _animationsMutex.unlock();
-      _gasPedalIsPushed = false;
-    }
+  addAnim("ReleaseGasPedal");
+  _currentState.pedal = Released;
 }
 
 void	Drive::steeringWheelAction() {
-  addAnim(_steeringWheelIsTaken == false ?
-	  "TakeSteeringWheel" :
-	  "ReleaseSteeringWheel");
+  if (_currentState.position == Ready) {
+    addAnim("TakeSteeringWheel");
+    _currentState.position = Ready;
+  }
+  else if (_currentState.position == DrivingFront && _currentState.pedal == Released) {
+    addAnim("ReleaseSteeringWheel");
+    _currentState.position = DrivingFront;
+  }
 }
 
 void	Drive::funAction() {
-  addAnim(_noHand == false ?
-	  "BeginNoHand" :
-	  "StopNoHand");
+  if (_currentState.position == DrivingFront) {
+    addAnim("ReleaseSteeringWheel");
+    addAnim("BeginNoHand");
+    _currentState.position = NoHand;
+  }
+  if (_currentState.position == DrivingFront) {
+    addAnim("StopNoHand");
+    addAnim("TakeSteeringWheel");
+    _currentState.position = DrivingFront;
+  }
 }
 
 void	Drive::carambarAction() {
-  addAnim(_carembar == false ?
-	  "TakeCarembar" :
-	  "GiveCarembar");
+  if (_currentState.pedal == Pushed)
+    return;
+  if (_currentState.position == DrivingFront ||
+      _currentState.position == DrivingLeft ||
+      _currentState.position == DrivingRight) {
+    if (_currentState.position == DrivingLeft || _currentState.position == DrivingRight) {
+      addAnim("TurnFront");
+      _currentState.position = DrivingFront;
+      return carambarAction();
+    }
+    if (_currentState.position == DrivingFront) {
+      addAnim("ReleaseSteeringWheel");
+      _currentState.position = Ready;
+      return carambarAction();
+    }
+  }
+  if (_currentState.position == Ready) {
+    addAnim("TakeCarembar");
+    _currentState.position = Carambar;
+    return;
+  }
+  if (_currentState.position == Carambar) {
+    addAnim("GiveCarembar");
+    addAnim("ReleaseSteeringWheel");
+  }
 }
 
 void	Drive::setHead(float const& headYaw, float const& headPitch,
@@ -307,34 +325,43 @@ void	Drive::setHead(float const& headYaw, float const& headPitch,
 
 bool	Drive::isSteeringWheelTaken()
 {
-  return (_steeringWheelIsTaken);
+  if (_currentState.position == DrivingFront ||
+      _currentState.position == DrivingLeft ||
+      _currentState.position == DrivingRight) {
+    return (true);
+  }
+  return (false);
 }
 
 bool	Drive::isGasPedalPushed()
 {
-  return (_gasPedalIsPushed);
+  return (_currentState.pedal == Pushed);
 }
 
 int	Drive::steeringWheelDirection()
 {
-  int	value = _steeringWheelDirection;
-  return ((SteeringWheel)value);
+  if (_currentState.position == DrivingRight)
+    return (Right);
+  if (_currentState.position == DrivingLeft)
+    return (Left);
+  return (Front);
 }
 
 int	Drive::speed()
 {
-  int	value = _speed;
-  return ((Speed)value);
+  if (_currentState.direction == Forward)
+    return (Up);
+  return (Down);
 }
 
 bool	Drive::isNoHand()
 {
-  return (_noHand);
+  return (_currentState.position == NoHand);
 }
 
 bool	Drive::isCarembar()
 {
-  return (_carembar);
+  return (_currentState.position == Carambar);
 }
 
 bool	Drive::isAnimating()
@@ -361,18 +388,13 @@ void	Drive::animThread()
 	  _isAnimating = true;
 	  current = _animList.front();
 	  _animList.pop_front();
-	  move = ((this->*_animations[current]._valueToChange) !=
-		  _animations[current]._valueToGive);
+	  move = true;
 	}
       _animListMutex.unlock();
       if (move == true)
 	{
 	  std::cout << "Launching : " << current << std::endl;
 	  launch(current);
-	  _animationsMutex.lock();
-	  this->*_animations[current]._valueToChange =
-	    _animations[current]._valueToGive;
-	  _animationsMutex.unlock();
 	}
       else
 	usleep(1000);
@@ -386,6 +408,13 @@ void	Drive::launch(std::string const& name)
       Animation	tmp;
       _animationsMutex.lock();
       tmp = _animations[name]._anim;
+
+      if (name == "PushGasPedal" || name == "ReleaseGasPedal" || name == "TurnRight" || name == "TurnLeft") {
+	_poseManager.setPose(_animations[name]._anim.getPoses()
+			     .front().first, 0.5);
+	_animationsMutex.unlock();
+	return;
+      }
       _animationsMutex.unlock();
       tmp.animate(_poseManager);
     }
