@@ -5,7 +5,7 @@
 // Login   <olivie_a@epitech.net>
 // 
 // Started on  Wed Sep  5 23:47:40 2012 samuel olivier
-// Last update Thu Nov 15 15:59:43 2012 samuel olivier
+// Last update Sat Mar 16 16:50:39 2013 loick michard
 //
 
 #ifndef __DRIVE_HH__
@@ -28,6 +28,7 @@ namespace AL
 class Drive : public AL::ALModule
 {
 public:
+
   enum SteeringWheel
     {
       Left,
@@ -46,27 +47,24 @@ public:
   virtual ~Drive();
 
   virtual void	init();
-
-  void	start();
-  void	stop();
   void	animThread();
 
-  void	up();
-  void	down();
-  void	left();
-  void	right();
-  void	stopPush();
-  void	stopTurn();
-  void	takeSteeringWheel();
-  void	releaseSteeringWheel();
-  void	beginNoHand();
-  void	endNoHand();
-  void	takeCarembar();
-  void	giveCarembar();
+  void	begin();
+  void	end();
+
+  void	goFrontwards();
+  void	goBackwards();
+  void	turnLeft();
+  void	turnRight();
+  void	turnFront();
+  void	stop();
+  void	steeringWheelAction();
+  void	funAction();
+  void	carambarAction();
   void	setHead(float const& headYaw, float const& headPitch,
 		float const& maxSpeed);
 
-  bool	steeringWheelIsTaken();
+  bool	isSteeringWheelTaken();
   bool	isGasPedalPushed();
   int	steeringWheelDirection();
   int	speed();
@@ -75,14 +73,35 @@ public:
   bool	isCarembar();
 
 private:
+  enum PositionState {
+    Vegetative,
+    Ready,
+    DrivingFront,
+    DrivingLeft,
+    DrivingRight
+  };
+  enum DirectionState {
+    Forward,
+    Backward
+  };
+  enum PedalState {
+    Pushed,
+    Released
+  }
+
+  struct State {
+    PositionState	position;
+    DirectionState	direction;
+    PedalState		pedal;
+  };
+  State								_currentState;
+
   void	launch(std::string const& name);
   void	addAnim(std::string const& name);
 
   struct Anim
   {
     Animation   _anim;
-    int         _valueToGive;
-    std::atomic<int>    (Drive::*_valueToChange);
   };
 
   static std::map<std::string, Anim>	_animations;
@@ -94,12 +113,6 @@ private:
   std::atomic<bool>			_isAnimating;
   std::atomic<bool>			_stopThread;
 
-  std::atomic<int>			_steeringWheelIsTaken;
-  std::atomic<int>			_gasPedalIsPushed;
-  std::atomic<int>			_steeringWheelDirection;
-  std::atomic<int>			_speed;
-  std::atomic<int>			_noHand;
-  std::atomic<int>			_carembar;
 };
 
 #endif
