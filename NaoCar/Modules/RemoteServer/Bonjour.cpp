@@ -51,7 +51,7 @@ bool Bonjour::registerService(std::string const& name,
 }
 
 void Bonjour::readHandler(const boost::system::error_code& error,
-			  boost::asio::ip::tcp::socket* socket) {
+			  boost::asio::ip::tcp::socket*) {
   if (error) {
     if (_delegate) {
       _delegate->serviceRegistered(true);
@@ -70,8 +70,8 @@ void Bonjour::readHandler(const boost::system::error_code& error,
 }
 
 void Bonjour::registerCallback(DNSServiceRef, DNSServiceFlags,
-			       DNSServiceErrorType errorCode, const char *name,
-			       const char *regType, const char *domain, void *context) {
+			       DNSServiceErrorType, const char *name,
+			       const char *, const char *, void *context) {
   Bonjour* bonjour = static_cast<Bonjour*>(context);
   if (bonjour->_delegate) {
     bonjour->_delegate->serviceRegistered(false, name);

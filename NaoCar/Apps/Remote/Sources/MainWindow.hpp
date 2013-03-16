@@ -9,6 +9,7 @@
 # include <QObject>
 # include <QMainWindow>
 # include <QTimer>
+# include <QPixmap>
 
 # include <vector>
 
@@ -89,6 +90,7 @@ public:
   void setGamepadId(int id);
   void gamepadButtonPressed(unsigned int button);
   void gamepadButtonReleased(unsigned int button);
+  void setStreamImage(QImage* image);
 
   QMainWindow* getWindow(void);
 

@@ -5,7 +5,7 @@
 // Login   <jochau_g@epitech.net>
 // 
 // Started on  Fri Sep 28 13:59:38 2012 gael jochaud-du-plessix
-// Last update Wed Feb 20 19:42:05 2013 samuel olivier
+// Last update Fri Mar 15 14:37:47 2013 samuel olivier
 //
 
 #include <alcommon/almodulecore.h>
@@ -128,7 +128,7 @@ void	getNextState(State &state, Direction &direction, double value)
     {
       if (!isStart)
 	{
-	  proxy->stopPush();
+	  proxy->stop();
 	  isStart = true;
 	  start = clock();
 	}
@@ -138,7 +138,7 @@ void	getNextState(State &state, Direction &direction, double value)
 	  if (((double)end - start) / CLOCKS_PER_SEC > 1.0)
 	    {
 	      isStart = false;
-	      proxy->stopPush();
+	      proxy->stop();
 	      direction = Front;
 	      state = Up;
 	    }
@@ -166,8 +166,8 @@ int main(int, char **av)
     }
 
   proxy = new DriveProxy(broker);
-  proxy->start();
-  proxy->takeSteeringWheel();
+  proxy->begin();
+  proxy->steeringWheelAction();
   signal(SIGINT, catchSig);
   // Create the gstreamer pipeline
   gst_init(0, NULL);
@@ -460,17 +460,17 @@ int main(int, char **av)
     std::cout << direction << std::endl;
 
     if (direction == Right)
-      proxy->right();
+      proxy->turnRight();
     else if (direction == Left)
-      proxy->left();
+      proxy->turnLeft();
     else
-      proxy->stopTurn();
+      proxy->turnFront();
     if (state == Up)
-      proxy->up();
+      proxy->goFrontwards();
     else if (state == Down)
-      proxy->down();
+      proxy->goBackwards();
     else
-      proxy->stopPush();
+      proxy->stop();
 
     // bool recule = false;
     // if (sum == 0) {}

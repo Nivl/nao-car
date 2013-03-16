@@ -39,8 +39,6 @@ MainWindow::MainWindow(MainWindowDelegate* delegate)
   _gamepadTimer.setInterval(1.0 / 10.0);
   _gamepadTimer.start();
 
-  _windowUi.streamViewLabel;
-
   _window.show();
 }
 
@@ -184,4 +182,8 @@ void MainWindow::gamepadButtonPressed(unsigned int button) {
 
 void MainWindow::gamepadButtonReleased(unsigned int button) {
   (void)button;
+}
+
+void MainWindow::setStreamImage(QImage* image) {
+  _windowUi.streamView->setStreamImage(image);
 }

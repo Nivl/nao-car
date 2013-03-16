@@ -11,6 +11,7 @@
 # include <QNetworkAccessManager>
 # include <QNetworkReply>
 # include <QUrl>
+# include <QTcpSocket>
 
 # include <map>
 
@@ -62,6 +63,9 @@ public:
 public slots:
   void networkRequestFinished(QNetworkReply* reply);
 
+private slots:
+  void streamDataAvailable();
+
 private:
   QApplication		_app;
   MainWindow		_mainWindow;
@@ -69,8 +73,11 @@ private:
   bool			_naoAvailable;
   QUrl			_naoUrl;
   QNetworkAccessManager	_networkManager;
-
   bool			_connected;
+  QTcpSocket		*_streamSocket;
+  qint64		_streamImageSize;
+  QImage		*_streamImage;
+  bool			_streamSizeRead;
 };
 
 #endif

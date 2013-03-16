@@ -16,14 +16,7 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
-     <widget class="QLabel" name="streamViewLabel">
-      <property name="text">
-       <string/>
-      </property>
-      <property name="scaledContents">
-       <bool>false</bool>
-      </property>
-     </widget>
+     <widget class="StreamDisplay" name="streamView" native="true"/>
     </item>
    </layout>
   </widget>
@@ -33,7 +26,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>25</height>
+     <height>29</height>
     </rect>
    </property>
   </widget>
@@ -54,7 +47,7 @@
    <property name="minimumSize">
     <size>
      <width>215</width>
-     <height>323</height>
+     <height>362</height>
     </size>
    </property>
    <property name="allowedAreas">
@@ -185,6 +178,14 @@
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>StreamDisplay</class>
+   <extends>QWidget</extends>
+   <header location="global">StreamDisplay.hpp</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../Resources/Ui.qrc"/>
  </resources>

@@ -14,7 +14,7 @@ PROJECT ("NaoCar")
 ###############################################################################
 
 SET (GCC46_PATH
-	"/usr/bin/g++-4.6"
+  "/usr/bin/g++-4.6"
 )
 IF (EXISTS ${GCC46_PATH})
    SET (CMAKE_CXX_COMPILER ${GCC46_PATH})
@@ -78,8 +78,9 @@ FIND_PACKAGE (SFML 2 REQUIRED system window graphics audio network)
 FIND_PACKAGE (Qt4 REQUIRED)
 SET (QT_USE_QTNETWORK TRUE)
 INCLUDE (${QT_USE_FILE})
+
 ADD_DEFINITIONS (${QT_DEFINITIONS})
-INCLUDE_DIRECTORIES (${CMAKE_CURRENT_BINARY_DIR})
+INCLUDE_DIRECTORIES (${CMAKE_CURRENT_BINARY_DIR} Apps/Remote/Sources)
 
 ###############################################################################
 # Include Directories
@@ -175,7 +176,10 @@ FILE (
     REMOTE_APP_HEADERS
     ${NAOCAR_REMOTE_APP_PATH}/Sources/*.hpp
 )
-SET (REMOTE_APP_RESOURCES)
+SET (
+    REMOTE_APP_RESOURCES
+    ${NAOCAR_REMOTE_APP_PATH}/Resources/Ui.qrc
+)
 
 # Remote Control App
 FILE (
@@ -261,10 +265,10 @@ QI_USE_LIB (
 
 OPTION (DRIVE_IS_REMOTE
   "module is compiled as a remote module (ON or OFF)"
-  OFF)
+  ON)
 OPTION (NAO_LOCAL_COMPILATION
   "module is compiled as a local module for the nao (ON or OFF)"
-  ON)
+  OFF)
 IF (NAO_LOCAL_COMPILATION)
   ADD_DEFINITIONS ( " -DNAO_LOCAL_COMPILATION ")
 ENDIF ()
@@ -360,7 +364,17 @@ QI_USE_LIB (
 )
 TARGET_LINK_LIBRARIES (
 	RemoteServerModule
+	DriveProxy
 	dns_sd
+	pthread
+	gstreamer-0.10
+	gobject-2.0
+	gmodule-2.0
+	gthread-2.0
+	glib-2.0
+	gstapp-0.10
+	xml2
+	rt
 )
 
 
@@ -419,7 +433,6 @@ QT4_ADD_RESOURCES (
 	REMOTE_APP_RESOURCES_RCC
 	${REMOTE_APP_RESOURCES}
 )
-
 QI_CREATE_BIN (
 	Remote
 	${REMOTE_APP_SOURCES}
@@ -434,12 +447,12 @@ QI_USE_LIB (
 )
 TARGET_LINK_LIBRARIES (
 	Remote
-	${QT_QTCORE_LIBRARIES}
-	${QT_QTGUI_LIBRARIES}
-	${QT_QTNETWORK_LIBRARIES}
 	${SFML_LIBRARIES}
 	Pose
 	DriveProxy
+	${QT_QTCORE_LIBRARIES}
+	${QT_QTGUI_LIBRARIES}
+	${QT_QTNETWORK_LIBRARIES}
 	dns_sd
 )
 
