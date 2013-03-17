@@ -86,24 +86,6 @@
 
             <div class="row">
 
-                <h2>Auto</h2>
-
-                <a data-nao-action='1' href="/start-auto-driving" class="btn btn-primary">
-                    <i class="icon-play icon-white"></i>
-                    Start Auto drive
-                </a>
-
-                <a data-nao-action='1' href="/stop-auto-driving" class="btn btn-danger">
-                    <i class="icon-stop icon-white"></i>
-                    Stop Auto drive
-                </a>
-
-            </div>
-
-            <hr />
-
-            <div class="row">
-
                 <h2>Actions</h2>
 
                 <form id="set-head-form" class="form-inline" action="/setHead">
@@ -118,6 +100,19 @@
                     <button type="submit" class="btn">Talk</button>
                     <input type="text" name="message" placeholder="Message">
                 </form>
+
+                <a id="auto-drive-on" data-nao-action='1' data-toggle-visibility='#auto-drive-off' href="/auto-driving" class="btn btn-primary">
+                    <i class="icon-play icon-white"></i>
+                    Start Auto driving mode
+                </a>
+
+                <a id="auto-drive-off" data-nao-action='1' data-toggle-visibility='#auto-drive-on' href="/auto-driving" class="btn btn-danger" style="display:none">
+                    <i class="icon-stop icon-white"></i>
+                    Stop Auto driving mode
+                </a>
+
+                <br />
+                <br />
 
                 <a data-nao-action='1' href="/steeringwheel-action" class="btn">
                     steeringwheel-action
@@ -180,8 +175,19 @@ return(!i||i!==r&&!b.contains(r,i))&&(e.type=o.origType,n=o.handler.apply(this,a
     $(document).on('click', '[data-nao-action]', function(e){
         e.preventDefault();
         var url = $(this).attr('href');
+        var $that = $(this);
+
         $.get(url, function(reponse) {
             console.log(url + ' response: ' + response);
+
+            if ($that.data('toggle-visibility')) {
+                var target = $that.data('toggle-visibility');
+
+                $that.toggle();
+                $(target).toggle();
+            } else {
+                console.log('no');
+            }
         });
     });
 
