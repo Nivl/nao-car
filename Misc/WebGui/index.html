@@ -104,7 +104,7 @@
 
             <div class="row">
 
-                <h2>Head</h2>
+                <h2>Actions</h2>
 
                 <form id="set-head-form" class="form-inline" action="/setHead">
                     <button type="submit" class="btn">Set head</button>
@@ -112,13 +112,12 @@
                     <input type="number" step="any" class="input-small" placeholder="Pitch" name="pitch">
                     <input type="number" step="any" class="input-small" placeholder="Speed" name="speed">
                 </form>
-            </div>
 
-            <hr />
 
-            <div class="row">
-
-                <h2>Actions</h2>
+                <form id="set-head-form" class="form-inline" action="/setHead">
+                    <button type="submit" class="btn">Talk</button>
+                    <input type="text" name="message" placeholder="Message">
+                </form>
 
                 <a data-nao-action='1' href="/turn-front" class="btn">
                     Turn Front
@@ -196,10 +195,10 @@ return(!i||i!==r&&!b.contains(r,i))&&(e.type=o.origType,n=o.handler.apply(this,a
 
 
 
-    $(document).on('submit', '#set-head-form', function(e) {
+    $(document).on('submit', 'form', function(e) {
         e.preventDefault();
         $.get($(this).attr('action'), $(this).serialize(), function(reponse) {
-            console.log('set-head-form response: ' + response);
+            console.log($(this).prop('id') + ' response: ' + response);
         });
     });
 
