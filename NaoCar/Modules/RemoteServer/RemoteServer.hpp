@@ -19,6 +19,7 @@
 # include "DriveProxy.hpp"
 # include "StreamServer.hpp"
 # include "AutoDriving.hpp"
+# include "VoiceSpeaker.hpp"
 
 namespace AL
 {
@@ -98,8 +99,6 @@ private:
 	     std::map<std::string, std::string>& params);
   void	autoDriving(Network::ATcpSocket* socket,
 		    std::map<std::string,std::string>& params);
-  void	stopAutoDriving(Network::ATcpSocket* socket,
-		    std::map<std::string,std::string>& params);
   void	upShift(Network::ATcpSocket* socket,
 		std::map<std::string,std::string>& params);
   void	downShift(Network::ATcpSocket* socket,
@@ -124,6 +123,8 @@ private:
   StreamServer	*_streamServer;
   int		_streamPort;
   AutoDriving*	_autoDriving;
+
+  VoiceSpeaker	_voiceSpeaker;
 };
 
 #endif
