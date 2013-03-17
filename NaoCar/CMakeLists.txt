@@ -7,7 +7,30 @@ CMAKE_POLICY (SET CMP0015 NEW)
 
 PROJECT ("NaoCar")
 
+# Modules options
+OPTION (
+	DRIVE_IS_REMOTE
+	"module is compiled as a remote module (ON or OFF)"
+	ON
+)
 
+OPTION (
+	NAO_LOCAL_COMPILATION
+	"module is compiled as a local module for the nao (ON or OFF)"
+	ON
+)
+
+OPTION (
+	AUTODRIVE_IS_REMOTE
+  	"module is compiled as a remote module (ON or OFF)"
+  	OFF
+)
+
+OPTION (
+	REMOTE_SERVER_IS_REMOTE
+  	"module is compiled as a remote module (ON or OFF)"
+  	ON
+)
 
 ###############################################################################
 # Compiler
@@ -263,12 +286,6 @@ QI_USE_LIB (
 # Drive Module
 #
 
-OPTION (DRIVE_IS_REMOTE
-  "module is compiled as a remote module (ON or OFF)"
-  ON)
-OPTION (NAO_LOCAL_COMPILATION
-  "module is compiled as a local module for the nao (ON or OFF)"
-  ON)
 IF (NAO_LOCAL_COMPILATION)
   ADD_DEFINITIONS ( " -DNAO_LOCAL_COMPILATION ")
 ENDIF ()
@@ -300,11 +317,6 @@ TARGET_LINK_LIBRARIES (
 # AutoDrive Module
 #
 
-OPTION (
-	AUTODRIVE_IS_REMOTE
-  	"module is compiled as a remote module (ON or OFF)"
-  	OFF
-)
 IF (AUTODRIVE_IS_REMOTE)
   ADD_DEFINITIONS (" -DAUTODRIVE_IS_REMOTE ")
   QI_CREATE_BIN (
@@ -337,11 +349,6 @@ TARGET_LINK_LIBRARIES (
 # RemoteServer Module
 #
 
-OPTION (
-	REMOTE_SERVER_IS_REMOTE
-  	"module is compiled as a remote module (ON or OFF)"
-  	ON
-)
 IF (REMOTE_SERVER_IS_REMOTE)
   ADD_DEFINITIONS (" -DREMOTE_SERVER_IS_REMOTE ")
   QI_CREATE_BIN (
