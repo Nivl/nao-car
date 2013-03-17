@@ -268,7 +268,7 @@ OPTION (DRIVE_IS_REMOTE
   ON)
 OPTION (NAO_LOCAL_COMPILATION
   "module is compiled as a local module for the nao (ON or OFF)"
-  OFF)
+  ON)
 IF (NAO_LOCAL_COMPILATION)
   ADD_DEFINITIONS ( " -DNAO_LOCAL_COMPILATION ")
 ENDIF ()
@@ -365,7 +365,6 @@ QI_USE_LIB (
 TARGET_LINK_LIBRARIES (
 	RemoteServerModule
 	DriveProxy
-	dns_sd
 	pthread
 	gstreamer-0.10
 	gobject-2.0
@@ -375,6 +374,7 @@ TARGET_LINK_LIBRARIES (
 	gstapp-0.10
 	xml2
 	rt
+	freenect
 )
 
 

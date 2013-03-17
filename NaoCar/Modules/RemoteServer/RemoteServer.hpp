@@ -18,6 +18,7 @@
 # include "Network/ITcpSocketDelegate.h"
 # include "DriveProxy.hpp"
 # include "StreamServer.hpp"
+# include "AutoDriving.hpp"
 
 namespace AL
 {
@@ -91,6 +92,10 @@ private:
 		  std::map<std::string,std::string>& params);
   void	carambarAction(Network::ATcpSocket* socket,
 		       std::map<std::string,std::string>& params);
+  void	autoDriving(Network::ATcpSocket* socket,
+		    std::map<std::string,std::string>& params);
+  void	stopAutoDriving(Network::ATcpSocket* socket,
+		    std::map<std::string,std::string>& params);
   void	setHead(Network::ATcpSocket* socket,
 		std::map<std::string,std::string>& params);
 
@@ -108,6 +113,7 @@ private:
   DriveProxy	_drive;
   StreamServer	*_streamServer;
   int		_streamPort;
+  AutoDriving	_autoDriving;
 };
 
 #endif
