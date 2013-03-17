@@ -25,7 +25,7 @@ RemoteServer::RemoteServer(boost::shared_ptr<AL::ALBroker> broker,
 			   const std::string &name) :
   AL::ALModule(broker, name), _ioService(new boost::asio::io_service()),
   _bonjour(*_ioService, this), _networkThread(NULL), _tcpServer(NULL),
-  _drive(broker)
+  _drive(broker), _voiceSpeaker(broker)
 {
   if (_getFunctions.size() == 0) {
     _getFunctions["/"] = &RemoteServer::defaultParams;
@@ -45,8 +45,7 @@ RemoteServer::RemoteServer(boost::shared_ptr<AL::ALBroker> broker,
     _getFunctions["/carambar-action"] = &RemoteServer::carambarAction;
     _getFunctions["/setHead"] = &RemoteServer::setHead;
     _getFunctions["/talk"] = &RemoteServer::talk;
-    _getFunctions["/start-auto-driving"] = &RemoteServer::autoDriving;
-    _getFunctions["/stop-auto-driving"] = &RemoteServer::stopAutoDriving;
+    _getFunctions["/auto-driving"] = &RemoteServer::autoDriving;
 
     _getFunctions["/upshift"] = &RemoteServer::upShift;
     _getFunctions["/downshift"] = &RemoteServer::downShift;
@@ -345,9 +344,7 @@ void	RemoteServer::setHead(Network::ATcpSocket* sender,
 
 void	RemoteServer::talk(Network::ATcpSocket* sender,
 				    std::map<std::string, std::string> & params) {
-  for (auto it = params.begin(); it != params.end(); ++it)
-    std::cout << "\tkey='" << it->first << "' value='"
-	      << it->second << "'" << std::endl;
+  _voiceSpeaker.say(params["message"]);
   _writeHttpResponse(sender, boost::asio::const_buffer("", 0));
 }
 
@@ -361,14 +358,8 @@ void	RemoteServer::autoDriving(Network::ATcpSocket* sender,
       _autoDriving = NULL;
     }    
   }
-  if (_autoDriving)
+  if (_autoDriving && !_autoDriving->isStart())
     _autoDriving->start();
-  _writeHttpResponse(sender, boost::asio::const_buffer("", 0));  
-}
-
-void	RemoteServer::stopAutoDriving(Network::ATcpSocket* sender,
-				  std::map<std::string,
-					   std::string>&) {
   if (_autoDriving)
     _autoDriving->stop();
   _writeHttpResponse(sender, boost::asio::const_buffer("", 0));  
