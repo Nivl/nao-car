@@ -21,3 +21,5 @@ Thumbs.db
 *.dvi
 *.log
 *.toc
+
+*.DS_Store

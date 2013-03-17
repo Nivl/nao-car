@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="2.0" toolsVersion="3084" systemVersion="12D78" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" useAutolayout="YES" initialViewController="2">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="2083"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="4">
+            <objects>
+                <viewController id="2" customClass="ViewController" sceneMemberID="viewController">
+                    <view key="view" multipleTouchEnabled="YES" contentMode="scaleToFill" id="5">
+                        <rect key="frame" x="0.0" y="20" width="1024" height="748"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="background.png" translatesAutoresizingMaskIntoConstraints="NO" id="aoK-xD-aDG"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" adjustsImageWhenHighlighted="NO" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="t2U-T8-5NN">
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="287" id="EX6-rP-8QP"/>
+                                    <constraint firstAttribute="width" constant="132" id="zoO-bU-74J"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                <state key="normal" backgroundImage="shift-frontwards.png">
+                                    <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <state key="highlighted">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="toggleShift:" destination="2" eventType="touchUpInside" id="hEh-0A-owa"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" adjustsImageWhenHighlighted="NO" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OJG-Ya-Wba">
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="179" id="FqB-dU-i3g"/>
+                                    <constraint firstAttribute="width" constant="129" id="vnd-G4-Lev"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                <state key="normal" backgroundImage="pedal.png">
+                                    <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <state key="highlighted">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="pushPedal:" destination="2" eventType="touchDown" id="dBi-nh-S0K"/>
+                                    <action selector="releasePedal:" destination="2" eventType="touchUpOutside" id="0zd-rp-Cls"/>
+                                    <action selector="releasePedal:" destination="2" eventType="touchUpInside" id="f7f-RV-Kbz"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="En attente de connection avec Nao..." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dfK-RA-uMa">
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="54" id="6sv-Ca-LmE"/>
+                                    <constraint firstAttribute="width" constant="473" id="mqx-ef-7RC"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="22"/>
+                                <color key="textColor" red="0.96970533288043481" green="0.96970533288043481" blue="0.96970533288043481" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                                <color key="shadowColor" red="0.39060377038043481" green="0.39060377038043481" blue="0.39060377038043481" alpha="1" colorSpace="calibratedRGB"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" red="0.78681216032608692" green="0.78681216032608692" blue="0.78681216032608692" alpha="1" colorSpace="calibratedRGB"/>
+                        <constraints>
+                            <constraint firstItem="dfK-RA-uMa" firstAttribute="top" secondItem="5" secondAttribute="top" constant="58" id="0ab-dD-XUF"/>
+                            <constraint firstAttribute="trailing" secondItem="t2U-T8-5NN" secondAttribute="trailing" constant="20" symbolic="YES" type="default" id="5DN-fk-4Hw"/>
+                            <constraint firstItem="dfK-RA-uMa" firstAttribute="centerX" secondItem="aoK-xD-aDG" secondAttribute="centerX" type="default" id="5i3-NC-N3K"/>
+                            <constraint firstItem="aoK-xD-aDG" firstAttribute="bottom" secondItem="5" secondAttribute="bottom" type="default" id="DVs-3z-tIR"/>
+                            <constraint firstAttribute="bottom" secondItem="OJG-Ya-Wba" secondAttribute="bottom" constant="20" symbolic="YES" type="default" id="GTJ-ga-TN5"/>
+                            <constraint firstItem="t2U-T8-5NN" firstAttribute="top" secondItem="5" secondAttribute="top" constant="255" id="Vkf-LL-kLo"/>
+                            <constraint firstItem="aoK-xD-aDG" firstAttribute="leading" secondItem="5" secondAttribute="leading" type="default" id="YER-0o-val"/>
+                            <constraint firstItem="aoK-xD-aDG" firstAttribute="trailing" secondItem="5" secondAttribute="trailing" type="default" id="oeK-2g-er4"/>
+                            <constraint firstItem="OJG-Ya-Wba" firstAttribute="centerX" secondItem="t2U-T8-5NN" secondAttribute="centerX" type="default" id="tWP-7X-CcA"/>
+                            <constraint firstItem="aoK-xD-aDG" firstAttribute="top" secondItem="5" secondAttribute="top" type="default" id="w0v-Mk-mcY"/>
+                        </constraints>
+                        <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
+                    </view>
+                    <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
+                    <connections>
+                        <outlet property="pedalButton" destination="OJG-Ya-Wba" id="1k3-Ds-JPE"/>
+                        <outlet property="shiftButton" destination="t2U-T8-5NN" id="fg2-TQ-MHQ"/>
+                        <outlet property="streamImageView" destination="aoK-xD-aDG" id="mDU-s2-tAQ"/>
+                        <outlet property="waitingLabel" destination="dfK-RA-uMa" id="rAK-db-9IT"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="3" sceneMemberID="firstResponder"/>
+            </objects>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="background.png" width="2048" height="1536"/>
+        <image name="pedal.png" width="258" height="358"/>
+        <image name="shift-frontwards.png" width="265" height="575"/>
+    </resources>
+    <classes>
+        <class className="NSLayoutConstraint" superclassName="NSObject">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/NSLayoutConstraint.h"/>
+        </class>
+        <class className="ViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/ViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="pushPedal:"/>
+                <relationship kind="action" name="releasePedal:"/>
+                <relationship kind="action" name="toggleShift:"/>
+                <relationship kind="outlet" name="pedalButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="shiftButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="streamImageView" candidateClass="UIImageView"/>
+                <relationship kind="outlet" name="waitingLabel" candidateClass="UILabel"/>
+            </relationships>
+        </class>
+    </classes>
+    <simulatedMetricsContainer key="defaultSimulatedMetrics">
+        <simulatedStatusBarMetrics key="statusBar" statusBarStyle="blackTranslucent"/>
+        <simulatedOrientationMetrics key="orientation"/>
+        <simulatedScreenMetrics key="destination"/>
+    </simulatedMetricsContainer>
+</document>
