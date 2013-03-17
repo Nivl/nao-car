@@ -152,8 +152,8 @@ void Remote::sendRequest(std::string requestStr,
     if (!paramName.empty() && !paramValue.empty()) {
       QList<QPair<QString, QString> >
 	params;
-      params.append({QPair<QString, QString>(paramName.c_str(),
-					     paramValue.c_str())});
+      params.append(QPair<QString, QString>(paramName.c_str(),
+					    paramValue.c_str()));
       newUrl.setQueryItems(params);
     }
     request.setUrl(newUrl);
