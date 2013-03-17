@@ -21,6 +21,7 @@ Bonjour::Bonjour(boost::asio::io_service& ioService, BonjourDelegate* delegate)
 Bonjour::~Bonjour(void) {
   if (_avahiPid != -1) {
     kill(_avahiPid, SIGINT);
+    std::cout << "Unregistered Bonjour service" << std::endl;
   }
 }
 

@@ -67,6 +67,7 @@ private:
 class AutoDriving {
 public:
   AutoDriving();
+  ~AutoDriving();
 
   void start();
   void stop();
@@ -76,6 +77,8 @@ private:
 
   bool	_stop;
   std::thread*	_thread;
+  Freenect::Freenect _freenect;
+  MyFreenectDevice& _device;
 };
 
 #endif
