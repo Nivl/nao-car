@@ -375,6 +375,7 @@ TARGET_LINK_LIBRARIES (
 	gstapp-0.10
 	xml2
 	rt
+	freenect
 )
 
 

@@ -15,6 +15,8 @@
 #include <boost/algorithm/string/classification.hpp>
 #include <sstream>
 
+#include "AutoDriving.hpp"
+
 std::map<std::string, RemoteServer::GetFunction> RemoteServer::_getFunctions;
 
 bool url_decode(const std::string& in, std::string& out);
@@ -42,6 +44,8 @@ RemoteServer::RemoteServer(boost::shared_ptr<AL::ALBroker> broker,
     _getFunctions["/fun-action"] = &RemoteServer::funAction;
     _getFunctions["/carambar-action"] = &RemoteServer::carambarAction;
     _getFunctions["/setHead"] = &RemoteServer::setHead;
+    _getFunctions["/start-auto-driving"] = &RemoteServer::autoDriving;
+    _getFunctions["/stop-auto-driving"] = &RemoteServer::stopAutoDriving;
 
     
   }
@@ -324,6 +328,21 @@ void	RemoteServer::setHead(Network::ATcpSocket* sender,
     speed = atof(params["maxSpeed"].c_str());
   _drive.setHead(yaw, pitch, speed);
   _writeHttpResponse(sender, boost::asio::const_buffer("", 0));
+}
+
+void	RemoteServer::autoDriving(Network::ATcpSocket* sender,
+				  std::map<std::string,
+					   std::string>&) {
+  _autoDriving.start();
+  _writeHttpResponse(sender, boost::asio::const_buffer("", 0));  
+}
+
+
+void	RemoteServer::stopAutoDriving(Network::ATcpSocket* sender,
+				  std::map<std::string,
+					   std::string>&) {
+  _autoDriving.stop();
+  _writeHttpResponse(sender, boost::asio::const_buffer("", 0));  
 }
 
 //! Naoqi module registration
