@@ -137,7 +137,6 @@ void	Drive::begin()
     addAnim("UpShift");
     if (_animThread == NULL)
       _animThread = new std::thread(launchAnimThread, (void*)this);
-
     _currentState.position = Ready;
     _currentState.direction = Forward;
     _currentState.pedal = Released;
