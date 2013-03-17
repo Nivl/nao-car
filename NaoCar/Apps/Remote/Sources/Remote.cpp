@@ -12,6 +12,7 @@
 #include <QMessageBox>
 #include <QNetworkRequest>
 #include <QList>
+#include <QImageReader>
 
 Remote::Remote(int argc, char** argv)
   : _app(argc, argv), _mainWindow(this),
