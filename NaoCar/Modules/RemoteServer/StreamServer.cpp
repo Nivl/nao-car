@@ -58,14 +58,13 @@ void	StreamServer::stop() {
 }
 
 void	StreamServer::mainThread() {
-  _setPipeline("v4l2src device=/dev/video0 ! videoscale ! video/x-raw-yuv,width=320,height=340 ! ffmpegcolorspace ! jpegenc");
+  _setPipeline("v4l2src device=/dev/video0 ! videoscale ! video/x-raw-yuv,width=320,height=240 ! ffmpegcolorspace ! jpegenc");
   while (_stop == false) {
     _clientsMutex.lock();
     if (_imageChanged) {
       _imageMutex.lock();
       _imageChanged = false;
       for (auto it = _clients.begin(); it != _clients.end(); ++it) {
-	std::cout << "Sending Image: " << _imageSize << " " << (int)_imageData[5598] <<std::endl;	
 	uint64_t *size = new uint64_t;
 	*size = _imageSize;
 	_writeData(*it, (char*)size, sizeof(uint64_t));
@@ -120,12 +119,14 @@ void	StreamServer::readFinished(Network::ASocket* sender,
 void	StreamServer::writeFinished(Network::ASocket*,
 				    Network::ASocket::Error,
 				    size_t) {
-  delete []_toWrite.front().second->data;
+  _imageMutex.lock();
+  delete[] _toWrite.front().second->data;
   delete _toWrite.front().second;
   _toWrite.pop_front();
   if (_toWrite.size() >= 1)
     _toWrite.front().first->write(_toWrite.front().second->data,
 				  _toWrite.front().second->size);
+  _imageMutex.unlock();
 }
 
 void	StreamServer::_writeData(Network::ATcpSocket* target,
@@ -189,7 +190,6 @@ static GstFlowReturn appsink_new_buffer(GstAppSink *sink, gpointer user_data)
   (void)user_data;
   GstBuffer *buffer = gst_app_sink_pull_buffer(sink);
   GstCaps *caps = gst_buffer_get_caps(buffer);
-  GstStructure *structure = gst_caps_get_structure(caps, 0);
   unsigned char* data = GST_BUFFER_MALLOCDATA(buffer);
   ((StreamServer*)user_data)->setImageData((char*)data,
 					   GST_BUFFER_SIZE(buffer));
