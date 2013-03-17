@@ -72,12 +72,12 @@
       <widget class="QComboBox" name="viewComboBox">
        <item>
         <property name="text">
-         <string>Bottom camera</string>
+         <string>Camera 1</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Front camera</string>
+         <string>Camera 2</string>
         </property>
        </item>
        <item>
