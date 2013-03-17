@@ -78,8 +78,8 @@ FIND_PACKAGE (SFML 2 REQUIRED system window graphics audio network)
 FIND_PACKAGE (Qt4 REQUIRED)
 SET (QT_USE_QTNETWORK TRUE)
 INCLUDE (${QT_USE_FILE})
-
 ADD_DEFINITIONS (${QT_DEFINITIONS})
+
 INCLUDE_DIRECTORIES (${CMAKE_CURRENT_BINARY_DIR} Apps/Remote/Sources)
 
 ###############################################################################

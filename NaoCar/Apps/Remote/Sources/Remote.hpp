@@ -6,7 +6,6 @@
 #ifndef _REMOTE_HPP_
 # define _REMOTE_HPP_
 
-# include <QApplication>
 # include <QObject>
 # include <QNetworkAccessManager>
 # include <QNetworkReply>
@@ -26,7 +25,7 @@ class Remote : public QObject, public MainWindowDelegate, public BonjourDelegate
 Q_OBJECT
 public:
 
-  Remote(int argc, char** argv);
+  Remote();
   virtual ~Remote(void);
 
   int exec(void);
@@ -67,7 +66,6 @@ private slots:
   void streamDataAvailable();
 
 private:
-  QApplication		_app;
   MainWindow		_mainWindow;
   Bonjour		_bonjour;
   bool			_naoAvailable;

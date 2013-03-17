@@ -13,9 +13,10 @@
 #include <QNetworkRequest>
 #include <QList>
 #include <QImageReader>
+#include <QApplication>
 
-Remote::Remote(int argc, char** argv)
-  : _app(argc, argv), _mainWindow(this),
+Remote::Remote()
+  : _mainWindow(this),
     _bonjour(this), _naoAvailable(false), _naoUrl(), _networkManager(),
     _connected(false), _streamSocket(new QTcpSocket(this)),
     _streamImageSize(-1), _streamImage(new QImage()), _streamSizeRead(false) {
@@ -39,7 +40,7 @@ Remote::~Remote(void) {
 }
 
 int Remote::exec(void) {
-  return (_app.exec());
+  return (qApp->exec());
 }
 
 void Remote::serviceBrowsed(bool error,
