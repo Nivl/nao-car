@@ -170,7 +170,7 @@
   </widget>
   <action name="actionConnect">
    <property name="icon">
-    <iconset theme="network-wireless">
+    <iconset>
      <normaloff>../../../../../.designer/backup</normaloff>../../../../../.designer/backup</iconset>
    </property>
    <property name="text">

@@ -5,7 +5,7 @@
 // Login   <olivie_a@epitech.net>
 // 
 // Started on  Wed Sep  5 23:47:17 2012 samuel olivier
-// Last update Fri Mar 15 15:22:36 2013 samuel olivier
+// Last update Sun Mar 17 04:06:40 2013 samuel olivier
 //
 
 #include <iostream>
@@ -161,6 +161,14 @@ void	Drive::end()
 
 void	Drive::goFrontwards()
 {
+  if (_currentState.position == Ready && 
+      _currentState.direction == Forward) {
+    addAnim("TakeSteeringWheel");
+    addAnim("PushGasPedal");
+    _currentState.position = DrivingFront;
+    _currentState.pedal = Pushed;
+    return;
+  }
   if (_currentState.position == DrivingFront ||
       _currentState.position == DrivingLeft ||
       _currentState.position == DrivingRight) {
@@ -171,6 +179,8 @@ void	Drive::goFrontwards()
     }
   }
   if (_currentState.direction == Backward) {
+    addAnim("ReleaseGasPedal");
+    _currentState.pedal = Released;
     if (_currentState.position == DrivingLeft || _currentState.position == DrivingRight) {
       addAnim("TurnFront");
       _currentState.position = DrivingFront;
@@ -184,9 +194,9 @@ void	Drive::goFrontwards()
     if (_currentState.position == Ready) {
       addAnim("UpShift");
       addAnim("TakeSteeringWheel");
-      addAnim("PushGasPedal");
       _currentState.position = DrivingFront;
       _currentState.direction = Forward;
+      addAnim("PushGasPedal");
       _currentState.pedal = Pushed;
     }
   }
@@ -194,6 +204,14 @@ void	Drive::goFrontwards()
 
 void	Drive::goBackwards()
 {
+  if (_currentState.position == Ready && 
+      _currentState.direction == Backward) {
+    addAnim("TakeSteeringWheel");
+    addAnim("PushGasPedal");
+    _currentState.position = DrivingFront;
+    _currentState.pedal = Pushed;
+    return;
+  }
   if (_currentState.position == DrivingFront ||
       _currentState.position == DrivingLeft ||
       _currentState.position == DrivingRight) {
@@ -204,6 +222,8 @@ void	Drive::goBackwards()
     }
   }
   if (_currentState.direction == Forward) {
+    addAnim("ReleaseGasPedal");
+    _currentState.pedal = Released;
     if (_currentState.position == DrivingLeft || _currentState.position == DrivingRight) {
       addAnim("TurnFront");
       _currentState.position = DrivingFront;
@@ -217,17 +237,22 @@ void	Drive::goBackwards()
     if (_currentState.position == Ready) {
       addAnim("DownShift");
       addAnim("TakeSteeringWheel");
-      addAnim("PushGasPedal");
       _currentState.position = DrivingFront;
       _currentState.direction = Backward;
+      addAnim("PushGasPedal");
       _currentState.pedal = Pushed;
     }
   }
-
 }
 
 void	Drive::turnLeft()
 {
+  if (_currentState.position == Ready) {
+    addAnim("TakeSteeringWheel");
+    addAnim("TurnLeft");
+    _currentState.position = DrivingLeft;
+    return;
+  }
   if (_currentState.position == DrivingFront ||
       _currentState.position == DrivingLeft ||
       _currentState.position == DrivingRight) {
@@ -238,6 +263,13 @@ void	Drive::turnLeft()
 
 void	Drive::turnRight()
 {
+  if (_currentState.position == Ready
+) {
+    addAnim("TakeSteeringWheel");
+    addAnim("TurnRight");
+    _currentState.position = DrivingRight;
+    return;
+  }
   if (_currentState.position == DrivingFront ||
       _currentState.position == DrivingLeft ||
       _currentState.position == DrivingRight) {
@@ -248,6 +280,12 @@ void	Drive::turnRight()
 
 void	Drive::turnFront()
 {
+  if (_currentState.position == Ready) {
+    addAnim("TakeSteeringWheel");
+    addAnim("TurnFront");
+    _currentState.position = DrivingFront;
+    return;
+  }
   if (_currentState.position == DrivingFront ||
       _currentState.position == DrivingLeft ||
       _currentState.position == DrivingRight) {
@@ -265,11 +303,11 @@ void	Drive::stop()
 void	Drive::steeringWheelAction() {
   if (_currentState.position == Ready) {
     addAnim("TakeSteeringWheel");
-    _currentState.position = Ready;
+    _currentState.position = DrivingFront;
   }
   else if (_currentState.position == DrivingFront && _currentState.pedal == Released) {
     addAnim("ReleaseSteeringWheel");
-    _currentState.position = DrivingFront;
+    _currentState.position = Ready;
   }
 }
 
@@ -278,8 +316,9 @@ void	Drive::funAction() {
     addAnim("ReleaseSteeringWheel");
     addAnim("BeginNoHand");
     _currentState.position = NoHand;
+    return;
   }
-  if (_currentState.position == DrivingFront) {
+  if (_currentState.position == NoHand) {
     addAnim("StopNoHand");
     addAnim("TakeSteeringWheel");
     _currentState.position = DrivingFront;
@@ -311,6 +350,7 @@ void	Drive::carambarAction() {
   if (_currentState.position == Carambar) {
     addAnim("GiveCarembar");
     addAnim("ReleaseSteeringWheel");
+    _currentState.position = Ready;
   }
 }
 
@@ -388,6 +428,13 @@ void	Drive::animThread()
 	  _isAnimating = true;
 	  current = _animList.front();
 	  _animList.pop_front();
+	  while (_animList.size() > 0 && ((current == "ReleaseGasPedal" && 
+	      _animList.front() == "PushGasPedal") ||
+	      (current == "PushGasPedal" &&
+	       _animList.front() == "ReleaseGasPedal"))) {
+	    current = _animList.front();
+	    _animList.pop_front();
+	  }
 	  move = true;
 	}
       _animListMutex.unlock();
@@ -412,6 +459,10 @@ void	Drive::launch(std::string const& name)
       if (name == "PushGasPedal" || name == "ReleaseGasPedal" || name == "TurnRight" || name == "TurnLeft") {
 	_poseManager.setPose(_animations[name]._anim.getPoses()
 			     .front().first, 0.5);
+	if (name == "PushGasPedal")
+	  _currentState.pedal = Pushed;
+	if (name == "ReleaseGasPedal")
+	  _currentState.pedal = Released;
 	_animationsMutex.unlock();
 	return;
       }
