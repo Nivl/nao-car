@@ -103,7 +103,6 @@ void Bonjour::browseCallback(DNSServiceRef ,
     return ;
   }
   if (bonjour->_delegate) {
-    std::cout << flags << std::endl;
     BrowsingType type = (flags & kDNSServiceFlagsAdd) ? BrowsingAdd : BrowsingRemove;
     bonjour->_delegate->serviceBrowsed(false, type, serviceName, regType, replyDomain);
   }  

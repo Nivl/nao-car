@@ -92,12 +92,14 @@ private:
 		  std::map<std::string,std::string>& params);
   void	carambarAction(Network::ATcpSocket* socket,
 		       std::map<std::string,std::string>& params);
+  void	setHead(Network::ATcpSocket* socket,
+		std::map<std::string,std::string>& params);
+  void	talk(Network::ATcpSocket* socket,
+	     std::map<std::string, std::string>& params);
   void	autoDriving(Network::ATcpSocket* socket,
 		    std::map<std::string,std::string>& params);
   void	stopAutoDriving(Network::ATcpSocket* socket,
 		    std::map<std::string,std::string>& params);
-  void	setHead(Network::ATcpSocket* socket,
-		std::map<std::string,std::string>& params);
 
   typedef void (RemoteServer::*GetFunction)
   (Network::ATcpSocket* socket,
