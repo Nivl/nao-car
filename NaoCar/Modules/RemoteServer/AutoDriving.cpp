@@ -80,7 +80,7 @@ void MyFreenectDevice::DepthCallback(void* _depth, uint32_t) {
     file.write((char*)ecart, sizeof(ecart));
     _initialize = false;
   }
-  
+
   // DETECT OBJECT
   for (int i=0; i<480; i++) {
     for (int j=0; j<640; j++) {
@@ -104,7 +104,9 @@ void MyFreenectDevice::DepthCallback(void* _depth, uint32_t) {
 	if (depth[i * 640 + j] != (uint16_t)-1) {
 	  int minx=i, maxx=i, miny=j, maxy=j;
 	  double average = 0.0, nb = 0;
+
 	  _checkObject(depth, i, j, minx, maxx, miny, maxy, 0, average, nb);
+
 	  
 	  bool colapse = false;
 	  for (unsigned int kk=0;kk < _objects.size();++kk) {
@@ -112,11 +114,13 @@ void MyFreenectDevice::DepthCallback(void* _depth, uint32_t) {
 		_objects[kk].first.first.y <= minx && _objects[kk].first.second.y >= maxx)
 	      colapse = true;
 	  }
+
 	  if (!colapse && (maxx - minx) * (maxy - miny) > 10)
 	    {
 	      //std::cout << average << std::endl;;
 	      _objects.push_back(std::pair<std::pair<Point, Point>, double>(std::pair<Point, Point>(Point(miny, minx), Point(maxy, maxx)), average));
 	    }
+
 	}
       }
     }
@@ -124,7 +128,7 @@ void MyFreenectDevice::DepthCallback(void* _depth, uint32_t) {
   _objectsMutex.unlock();
   
   //_objects.push_back(std::pair<std::pair<Point, Point>, double>(std::pair<Point, Point>(Point(200, 200), Point(50, 50)), 1000.));
-  
+
   for (int i=0; i<640*480; i++) {
     if (depth[i] == (uint16_t)-1) {
       depthMat.data[3*i+0] = 0;
@@ -232,12 +236,12 @@ void MyFreenectDevice::getObjects(std::vector<std::pair<std::pair<Point, Point>,
 }
 
 void MyFreenectDevice::_checkObject(uint16_t* depth, int x, int y, int &minx, int &maxx, int &miny, int &maxy, int d, double &average, double& nb) {
-  if (x < 0 || y < 0 || x > 480 || y > 640 || _dones[x * 640 + y] != 0 || depth[x * 640 + y] == (uint16_t)-1 || d > 20000)
+  if (x < 0 || y < 0 || x >= 480 || y >= 640 || _dones[x * 640 + y] != 0 || depth[x * 640 + y] == (uint16_t)-1 || d > 20000)
     return;
   
   _dones[x * 640 + y] = 1;
   average *= nb;
-  
+
   average += depth[x * 640 + y];
   nb += 1;
   average /= nb;
@@ -250,7 +254,6 @@ void MyFreenectDevice::_checkObject(uint16_t* depth, int x, int y, int &minx, in
     miny = y;
   if (y > maxy)
     maxy = y;
-  
   _checkObject(depth, x + 1, y, minx, maxx, miny, maxy, d+1, average, nb);
   _checkObject(depth, x - 1, y, minx, maxx, miny, maxy, d+1, average, nb);
   _checkObject(depth, x + 1, y + 1, minx, maxx, miny, maxy, d+1, average, nb);
@@ -262,14 +265,19 @@ void MyFreenectDevice::_checkObject(uint16_t* depth, int x, int y, int &minx, in
   
 }
 
-AutoDriving::AutoDriving() {
+AutoDriving::AutoDriving() : _thread(NULL), _freenect(), _device(_freenect.createDevice<MyFreenectDevice>(0)) {
+  _thread = NULL;
+}
+
+AutoDriving::~AutoDriving() {
 
 }
 
 void AutoDriving::start() {
-  _stop = false;
-
-  _thread = new std::thread(&AutoDriving::loop, this);
+  if (_thread == NULL) {
+    _stop = false;
+    _thread = new std::thread(&AutoDriving::loop, this);
+  }
 }
 
 void AutoDriving::loop() {
@@ -281,22 +289,20 @@ void AutoDriving::loop() {
 
   int tilt = -20;
 
-  Freenect::Freenect freenect;
-  MyFreenectDevice& device = freenect.createDevice<MyFreenectDevice>(0);
 
-  device.setTiltDegrees(tilt);
-  device.startVideo();
-  device.startDepth();
+  _device.setTiltDegrees(tilt);
+  _device.startVideo();
+  _device.startDepth();
   while (!_stop) {
-    device.getVideo(rgbMat);
-    device.getDepth(depthMat);
+    _device.getVideo(rgbMat);
+    _device.getDepth(depthMat);
     //depthMat.convertTo(depthf, CV_8UC1, 255.0/2048.0);
 
     // DRAW SQUARES AROUND OBJECTS
     std::vector<std::pair<std::pair<Point, Point>, double> > objects;
-    device.getObjects(objects);
+    _device.getObjects(objects);
     
-    std::cout << "----BEGIN----" << std::endl;
+
     for (unsigned int k = 0; k < objects.size(); ++k)
       {
 	rectangle(rgbMat, objects[k].first.first, objects[k].first.second, Scalar(10, 10, 163), 2);
@@ -306,7 +312,7 @@ void AutoDriving::loop() {
 	putText(depthMat, ss.str(), Point(objects[k].first.first.x + 2, objects[k].first.first.y + 10), FONT_HERSHEY_SIMPLEX, 0.3, Scalar(10, 10, 163));
 	std::cout << objects[k].first.first << " " << objects[k].first.second << " " << ss.str() << std::endl;
       }
-    std::cout << "----END----" << std::endl;
+
 
     //cv::imshow("rgb", rgbMat);
     //cv::imshow("depth",depthMat);
@@ -335,13 +341,18 @@ void AutoDriving::loop() {
     // }
   }
 
-  device.stopVideo();
-  device.stopDepth();
+  _device.stopVideo();
+  _device.stopDepth();
+  return;
 }
 
 void AutoDriving::stop() {
   _stop = true;
- 
-  _thread->join();
-  delete _thread;
+
+  if (_thread) { 
+    _thread->join();
+    delete _thread;
+    _thread = NULL;
+  }
 }
+

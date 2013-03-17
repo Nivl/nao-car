@@ -100,22 +100,30 @@ private:
 		    std::map<std::string,std::string>& params);
   void	stopAutoDriving(Network::ATcpSocket* socket,
 		    std::map<std::string,std::string>& params);
+  void	upShift(Network::ATcpSocket* socket,
+		std::map<std::string,std::string>& params);
+  void	downShift(Network::ATcpSocket* socket,
+		std::map<std::string,std::string>& params);
+  void	releasePedal(Network::ATcpSocket* socket,
+		     std::map<std::string,std::string>& params);
+  void	pushPedal(Network::ATcpSocket* socket,
+		  std::map<std::string,std::string>& params);
 
   typedef void (RemoteServer::*GetFunction)
   (Network::ATcpSocket* socket,
    std::map<std::string, std::string>&);
 
-  boost::asio::io_service	*_ioService;
-  Bonjour			_bonjour;
-  boost::thread			*_networkThread;
-  Network::BoostTcpServer	*_tcpServer;
+  boost::asio::io_service		*_ioService;
+  Bonjour				_bonjour;
+  boost::thread				*_networkThread;
+  Network::BoostTcpServer		*_tcpServer;
   std::list<Network::ATcpSocket*>	_clients;
-  static std::map<std::string, GetFunction>	_getFunctions;
+  static std::map<std::string, GetFunction>			  _getFunctions;
   std::list<std::pair<Network::ATcpSocket*, std::stringstream*> > _toWrite;
   DriveProxy	_drive;
   StreamServer	*_streamServer;
   int		_streamPort;
-  AutoDriving	_autoDriving;
+  AutoDriving*	_autoDriving;
 };
 
 #endif

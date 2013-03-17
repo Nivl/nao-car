@@ -19,7 +19,7 @@
 
 std::map<std::string, RemoteServer::GetFunction> RemoteServer::_getFunctions;
 
-bool url_decode(const std::string& in, std::string& out);
+static bool urlDecode(const std::string& in, std::string& out);
 
 RemoteServer::RemoteServer(boost::shared_ptr<AL::ALBroker> broker,
 			   const std::string &name) :
@@ -48,9 +48,15 @@ RemoteServer::RemoteServer(boost::shared_ptr<AL::ALBroker> broker,
     _getFunctions["/start-auto-driving"] = &RemoteServer::autoDriving;
     _getFunctions["/stop-auto-driving"] = &RemoteServer::stopAutoDriving;
 
+    _getFunctions["/upshift"] = &RemoteServer::upShift;
+    _getFunctions["/downshift"] = &RemoteServer::downShift;
+    _getFunctions["/push-pedal"] = &RemoteServer::pushPedal;
+    _getFunctions["/release-pedal"] = &RemoteServer::releasePedal;
     
   }
   setModuleDescription("NaoCar Remote server");
+  
+  _autoDriving = NULL;
 }
 
 RemoteServer::~RemoteServer()
@@ -178,10 +184,10 @@ void	RemoteServer::_parseReceivedData(Network::ATcpSocket* sender,
 
 	idx = it->find("=");
 	if (idx == std::string::npos) {
-	  url_decode(*it, key);
+	  urlDecode(*it, key);
 	} else {
-	  url_decode(it->substr(0, idx), key);
-	  url_decode(it->substr(idx + 1), value);
+	  urlDecode(it->substr(0, idx), key);
+	  urlDecode(it->substr(idx + 1), value);
 	}
 	params[key] = value;
       }
@@ -190,15 +196,17 @@ void	RemoteServer::_parseReceivedData(Network::ATcpSocket* sender,
     std::cout << funcName;
     if (func != NULL)
       try {
-	std::cout << funcName;
 	(this->*func)(sender, params);
 	std::cout << " => OK" << std::endl;
+      } catch (std::exception e) {
+	std::cout << " => " << e.what() << std::endl;
+	_writeHttpResponse(sender, boost::asio::const_buffer("An error occured", 15), "404 Not Found");
       } catch (...) {
-	std::cout << " => FAILED" << std::endl;
+	std::cout << " => An error occured" << std::endl;
 	_writeHttpResponse(sender, boost::asio::const_buffer("An error occured", 15), "404 Not Found");
       }
     else {
-	std::cout << " => FAILED" << std::endl;
+	std::cout << " => Unknown command" << std::endl;
       _writeHttpResponse(sender, boost::asio::const_buffer("Unknown Command", 15), "404 Not Found");
     }
   }
@@ -346,14 +354,51 @@ void	RemoteServer::talk(Network::ATcpSocket* sender,
 void	RemoteServer::autoDriving(Network::ATcpSocket* sender,
 				  std::map<std::string,
 					   std::string>&) {
-  _autoDriving.start();
+  if (!_autoDriving) {
+    try {
+      _autoDriving = new AutoDriving;
+    } catch(...) {
+      _autoDriving = NULL;
+    }    
+  }
+  if (_autoDriving)
+    _autoDriving->start();
   _writeHttpResponse(sender, boost::asio::const_buffer("", 0));  
 }
 
 void	RemoteServer::stopAutoDriving(Network::ATcpSocket* sender,
 				  std::map<std::string,
 					   std::string>&) {
-  _autoDriving.stop();
+  if (_autoDriving)
+    _autoDriving->stop();
+  _writeHttpResponse(sender, boost::asio::const_buffer("", 0));  
+}
+
+void	RemoteServer::upShift(Network::ATcpSocket* sender,
+				  std::map<std::string,
+					   std::string>&) {
+  _drive.upShift();
+  _writeHttpResponse(sender, boost::asio::const_buffer("", 0));  
+}
+
+void	RemoteServer::downShift(Network::ATcpSocket* sender,
+				  std::map<std::string,
+					   std::string>&) {
+  _drive.downShift();
+  _writeHttpResponse(sender, boost::asio::const_buffer("", 0));  
+}
+
+void	RemoteServer::pushPedal(Network::ATcpSocket* sender,
+				  std::map<std::string,
+					   std::string>&) {
+  _drive.pushPedal();
+  _writeHttpResponse(sender, boost::asio::const_buffer("", 0));  
+}
+
+void	RemoteServer::releasePedal(Network::ATcpSocket* sender,
+				  std::map<std::string,
+					   std::string>&) {
+  _drive.releasePedal();
   _writeHttpResponse(sender, boost::asio::const_buffer("", 0));  
 }
 
@@ -392,7 +437,7 @@ int main(int argc, char* argv[])
 }
 #endif
 
-bool url_decode(const std::string& in, std::string& out)
+static bool urlDecode(const std::string& in, std::string& out)
 {
   out.clear();
   out.reserve(in.size());
