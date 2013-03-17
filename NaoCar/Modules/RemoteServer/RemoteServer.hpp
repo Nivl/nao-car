@@ -19,6 +19,7 @@
 # include "DriveProxy.hpp"
 # include "StreamServer.hpp"
 # include "AutoDriving.hpp"
+# include "VoiceSpeaker.hpp"
 
 namespace AL
 {
@@ -92,12 +93,20 @@ private:
 		  std::map<std::string,std::string>& params);
   void	carambarAction(Network::ATcpSocket* socket,
 		       std::map<std::string,std::string>& params);
-  void	autoDriving(Network::ATcpSocket* socket,
-		    std::map<std::string,std::string>& params);
-  void	stopAutoDriving(Network::ATcpSocket* socket,
-		    std::map<std::string,std::string>& params);
   void	setHead(Network::ATcpSocket* socket,
 		std::map<std::string,std::string>& params);
+  void	talk(Network::ATcpSocket* socket,
+	     std::map<std::string, std::string>& params);
+  void	autoDriving(Network::ATcpSocket* socket,
+		    std::map<std::string,std::string>& params);
+  void	upShift(Network::ATcpSocket* socket,
+		std::map<std::string,std::string>& params);
+  void	downShift(Network::ATcpSocket* socket,
+		std::map<std::string,std::string>& params);
+  void	releasePedal(Network::ATcpSocket* socket,
+		     std::map<std::string,std::string>& params);
+  void	pushPedal(Network::ATcpSocket* socket,
+		  std::map<std::string,std::string>& params);
 
   typedef void (RemoteServer::*GetFunction)
   (Network::ATcpSocket* socket,
@@ -114,6 +123,8 @@ private:
   StreamServer	*_streamServer;
   int		_streamPort;
   AutoDriving*	_autoDriving;
+
+  VoiceSpeaker	_voiceSpeaker;
 };
 
 #endif

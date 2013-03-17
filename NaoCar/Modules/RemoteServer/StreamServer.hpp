@@ -5,7 +5,7 @@
 // Login   <olivie_a@epitech.net>
 // 
 // Started on  Fri Mar 15 16:21:34 2013 samuel olivier
-// Last update Sun Mar 17 21:46:42 2013 samuel olivier
+// Last update Sun Mar 17 23:44:54 2013 samuel olivier
 //
 
 #ifndef __STREAM_SERVER_HPP__

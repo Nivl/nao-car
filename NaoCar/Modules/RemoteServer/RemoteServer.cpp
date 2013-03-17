@@ -25,7 +25,7 @@ RemoteServer::RemoteServer(boost::shared_ptr<AL::ALBroker> broker,
 			   const std::string &name) :
   AL::ALModule(broker, name), _ioService(new boost::asio::io_service()),
   _bonjour(*_ioService, this), _networkThread(NULL), _tcpServer(NULL),
-  _drive(broker)
+  _drive(broker), _voiceSpeaker(broker)
 {
   if (_getFunctions.size() == 0) {
     _getFunctions["/"] = &RemoteServer::defaultParams;
@@ -44,18 +44,18 @@ RemoteServer::RemoteServer(boost::shared_ptr<AL::ALBroker> broker,
     _getFunctions["/fun-action"] = &RemoteServer::funAction;
     _getFunctions["/carambar-action"] = &RemoteServer::carambarAction;
     _getFunctions["/setHead"] = &RemoteServer::setHead;
-    _getFunctions["/start-auto-driving"] = &RemoteServer::autoDriving;
-    _getFunctions["/stop-auto-driving"] = &RemoteServer::stopAutoDriving;
+    _getFunctions["/talk"] = &RemoteServer::talk;
+    _getFunctions["/auto-driving"] = &RemoteServer::autoDriving;
 
+    _getFunctions["/upshift"] = &RemoteServer::upShift;
+    _getFunctions["/downshift"] = &RemoteServer::downShift;
+    _getFunctions["/push-pedal"] = &RemoteServer::pushPedal;
+    _getFunctions["/release-pedal"] = &RemoteServer::releasePedal;
     
   }
   setModuleDescription("NaoCar Remote server");
   
-  try {
-    _autoDriving = new AutoDriving;
-  } catch(...) {
-    _autoDriving = NULL;
-  }
+  _autoDriving = NULL;
 }
 
 RemoteServer::~RemoteServer()
@@ -341,20 +341,55 @@ void	RemoteServer::setHead(Network::ATcpSocket* sender,
   _writeHttpResponse(sender, boost::asio::const_buffer("", 0));
 }
 
+
+void	RemoteServer::talk(Network::ATcpSocket* sender,
+				    std::map<std::string, std::string> & params) {
+  _voiceSpeaker.say(params["message"]);
+  _writeHttpResponse(sender, boost::asio::const_buffer("", 0));
+}
+
 void	RemoteServer::autoDriving(Network::ATcpSocket* sender,
 				  std::map<std::string,
 					   std::string>&) {
-  if (_autoDriving)
+  if (!_autoDriving) {
+    try {
+      _autoDriving = new AutoDriving;
+    } catch(...) {
+      _autoDriving = NULL;
+    }    
+  }
+  if (_autoDriving && !_autoDriving->isStart())
     _autoDriving->start();
+  if (_autoDriving)
+    _autoDriving->stop();
   _writeHttpResponse(sender, boost::asio::const_buffer("", 0));  
 }
 
-
-void	RemoteServer::stopAutoDriving(Network::ATcpSocket* sender,
+void	RemoteServer::upShift(Network::ATcpSocket* sender,
 				  std::map<std::string,
 					   std::string>&) {
-  if (_autoDriving)
-    _autoDriving->stop();
+  _drive.upShift();
+  _writeHttpResponse(sender, boost::asio::const_buffer("", 0));  
+}
+
+void	RemoteServer::downShift(Network::ATcpSocket* sender,
+				  std::map<std::string,
+					   std::string>&) {
+  _drive.downShift();
+  _writeHttpResponse(sender, boost::asio::const_buffer("", 0));  
+}
+
+void	RemoteServer::pushPedal(Network::ATcpSocket* sender,
+				  std::map<std::string,
+					   std::string>&) {
+  _drive.pushPedal();
+  _writeHttpResponse(sender, boost::asio::const_buffer("", 0));  
+}
+
+void	RemoteServer::releasePedal(Network::ATcpSocket* sender,
+				  std::map<std::string,
+					   std::string>&) {
+  _drive.releasePedal();
   _writeHttpResponse(sender, boost::asio::const_buffer("", 0));  
 }
 

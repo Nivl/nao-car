@@ -267,6 +267,7 @@ void MyFreenectDevice::_checkObject(uint16_t* depth, int x, int y, int &minx, in
 
 AutoDriving::AutoDriving() : _thread(NULL), _freenect(), _device(_freenect.createDevice<MyFreenectDevice>(0)) {
   _thread = NULL;
+  _stop = true;
 }
 
 AutoDriving::~AutoDriving() {
@@ -356,3 +357,6 @@ void AutoDriving::stop() {
   }
 }
 
+bool AutoDriving::isStart() {
+  return (!_stop);
+}

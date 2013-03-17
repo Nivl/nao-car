@@ -5,7 +5,7 @@
 // Login   <olivie_a@epitech.net>
 // 
 // Started on  Wed Sep  5 23:47:17 2012 samuel olivier
-// Last update Sun Mar 17 04:06:40 2013 samuel olivier
+// Last update Mon Mar 18 00:09:10 2013 gael jochaud-du-plessix
 //
 
 #include <iostream>
@@ -112,6 +112,18 @@ Drive::Drive(boost::shared_ptr<AL::ALBroker> broker,
   functionName("isCarembar", getName(),
 	       "return isCarembar");
   BIND_METHOD(Drive::isCarembar);
+  functionName("upShift", getName(),
+	       "Up shift");
+  BIND_METHOD(Drive::upShift);
+  functionName("downShift", getName(),
+	       "Down shift");
+  BIND_METHOD(Drive::downShift);
+  functionName("pushPedal", getName(),
+	       "Push pedal");
+  BIND_METHOD(Drive::pushPedal);
+  functionName("releasePedal", getName(),
+	       "Release pedal");
+  BIND_METHOD(Drive::releasePedal);
 
 }
 
@@ -351,6 +363,72 @@ void	Drive::carambarAction() {
     addAnim("ReleaseSteeringWheel");
     _currentState.position = Ready;
   }
+}
+
+void	Drive::upShift() {
+  if (_currentState.direction == Forward)
+    return;
+
+  if (_currentState.direction == Backward) {
+    addAnim("ReleaseGasPedal");
+    _currentState.pedal = Released;
+    if (_currentState.position == DrivingLeft || _currentState.position == DrivingRight) {
+      addAnim("TurnFront");
+      _currentState.position = DrivingFront;
+      return upShift();
+    }
+    if (_currentState.position == DrivingFront) {
+      addAnim("ReleaseSteeringWheel");
+      _currentState.position = Ready;
+      return upShift();
+    }
+    if (_currentState.position == Ready) {
+      addAnim("UpShift");
+      addAnim("TakeSteeringWheel");
+      _currentState.position = DrivingFront;
+      _currentState.direction = Forward;
+    }
+  }
+}
+
+void	Drive::downShift() {
+  if (_currentState.direction == Backward)
+    return;
+
+  if (_currentState.direction == Forward) {
+    addAnim("ReleaseGasPedal");
+    _currentState.pedal = Released;
+    if (_currentState.position == DrivingLeft || _currentState.position == DrivingRight) {
+      addAnim("TurnFront");
+      _currentState.position = DrivingFront;
+      return downShift();
+    }
+    if (_currentState.position == DrivingFront) {
+      addAnim("ReleaseSteeringWheel");
+      _currentState.position = Ready;
+      return downShift();
+    }
+    if (_currentState.position == Ready) {
+      addAnim("DownShift");
+      addAnim("TakeSteeringWheel");
+      _currentState.position = DrivingFront;
+      _currentState.direction = Backward;
+    }
+  }
+}
+
+void	Drive::pushPedal() {
+  if (_currentState.position == Vegetative)
+    return;
+  addAnim("PushGasPedal");
+  _currentState.pedal = Pushed;
+}
+
+void	Drive::releasePedal() {
+  if (_currentState.position == Vegetative)
+    return;
+  addAnim("ReleaseGasPedal");
+  _currentState.pedal = Released;
 }
 
 void	Drive::setHead(float const& headYaw, float const& headPitch,

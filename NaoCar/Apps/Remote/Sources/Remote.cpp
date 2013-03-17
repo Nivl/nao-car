@@ -52,11 +52,9 @@ void Remote::serviceBrowsed(bool error,
   }
   else if (name == NAOCAR_BONJOUR_SERVICE_NAME) {
     if (browsingType == Bonjour::BrowsingAdd) {
-      qDebug() << "YES";
       _naoAvailable = true;
       _bonjour.resolveService(name, type, domain);
     } else if (browsingType == Bonjour::BrowsingRemove) {
-      qDebug() << "NOOOOOOO";
       _naoAvailable = false;
     }
   }

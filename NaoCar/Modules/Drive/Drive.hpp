@@ -5,7 +5,7 @@
 // Login   <olivie_a@epitech.net>
 // 
 // Started on  Wed Sep  5 23:47:40 2012 samuel olivier
-// Last update Sun Mar 17 03:11:49 2013 samuel olivier
+// Last update Sun Mar 17 23:29:47 2013 gael jochaud-du-plessix
 //
 
 #ifndef __DRIVE_HH__
@@ -63,6 +63,10 @@ public:
   void	carambarAction();
   void	setHead(float const& headYaw, float const& headPitch,
 		float const& maxSpeed);
+  void	upShift();
+  void	downShift();
+  void	pushPedal();
+  void	releasePedal();
 
   bool	isSteeringWheelTaken();
   bool	isGasPedalPushed();

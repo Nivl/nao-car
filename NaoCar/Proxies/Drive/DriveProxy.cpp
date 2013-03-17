@@ -5,7 +5,7 @@
 // Login   <olivie_a@epitech.net>
 // 
 // Started on  Fri Sep 28 16:49:09 2012 samuel olivier
-// Last update Fri Mar 15 14:33:41 2013 samuel olivier
+// Last update Sun Mar 17 23:40:02 2013 gael jochaud-du-plessix
 //
 
 #include "DriveProxy.hpp"
@@ -93,6 +93,26 @@ void	DriveProxy::funAction()
 void	DriveProxy::carambarAction()
 {
   callVoid("carambarAction");
+}
+
+void	DriveProxy::upShift()
+{
+  callVoid("upShift");
+}
+
+void	DriveProxy::downShift()
+{
+  callVoid("downShift");
+}
+
+void	DriveProxy::pushPedal()
+{
+  callVoid("pushPedal");
+}
+
+void	DriveProxy::releasePedal()
+{
+  callVoid("releasePedal");
 }
 
 void	DriveProxy::setHead(float const& headYaw, float const& headPitch, float const& maxSpeed)

@@ -5,7 +5,7 @@
 // Login   <olivie_a@epitech.net>
 // 
 // Started on  Fri Mar 15 16:30:36 2013 samuel olivier
-// Last update Sun Mar 17 21:35:40 2013 samuel olivier
+// Last update Sun Mar 17 23:54:28 2013 samuel olivier
 //
 
 #include "StreamServer.hpp"
@@ -106,9 +106,32 @@ void	StreamServer::_stopPipeline() {
   if (_pipeline)
     {
       gst_element_set_state (_pipeline, GST_STATE_NULL);
-      gst_object_unref (GST_OBJECT (_pipeline));
+      gst_object_unref(GST_OBJECT(_pipeline));
       _pipeline = NULL;
     }  
+}
+
+void	StreamServer::_setPipeline(std::string const& pipeline)
+{
+  GError* error = NULL;
+
+  _stopPipeline();
+  _pipeline = gst_parse_launch((pipeline + " ! appsink").c_str(), &error);
+  if (!_pipeline || error)
+    {
+      std::cerr << "Cannnot create pipeline" << std::endl;
+      _pipeline = 0;
+    }
+  else
+    {
+      GstAppSinkCallbacks gstCallbacks = {
+	NULL, appsink_new_preroll, appsink_new_buffer, NULL, { NULL }};
+      GstElement* appsink = gst_bin_get_by_name(GST_BIN(_pipeline),
+						"appsink0");
+      gst_app_sink_set_callbacks(GST_APP_SINK(appsink), &gstCallbacks,
+				 this, NULL);
+      gst_element_set_state(_pipeline, GST_STATE_PLAYING);
+    }
 }
 
 void	StreamServer::setCamera(Camera type) {
@@ -185,29 +208,6 @@ void	StreamServer::_writeData(Network::ATcpSocket* target,
   _toWrite.push_back(std::pair<Network::ATcpSocket*, Packet*>(target, packet));
   if (_toWrite.size() == 1)
     target->write(data, size);
-}
-
-void	StreamServer::_setPipeline(std::string const& pipeline)
-{
-  GError* error = NULL;
-
-  _stopPipeline();
-  _pipeline = gst_parse_launch((pipeline + " ! appsink").c_str(), &error);
-  if (!_pipeline || error)
-    {
-      std::cerr << "Cannnot create pipeline" << std::endl;
-      _pipeline = 0;
-    }
-  else
-    {
-      GstElement* appsink = gst_bin_get_by_name(GST_BIN(_pipeline),
-						"appsink0");
-      GstAppSinkCallbacks callbacks = {
-	NULL, appsink_new_preroll, appsink_new_buffer, NULL, { NULL }};
-      gst_app_sink_set_callbacks(GST_APP_SINK(appsink), &callbacks,
-				 this, NULL);
-      gst_element_set_state(_pipeline, GST_STATE_PLAYING);
-    }
 }
 
 void	StreamServer::setImageData(char *data, size_t size) {
