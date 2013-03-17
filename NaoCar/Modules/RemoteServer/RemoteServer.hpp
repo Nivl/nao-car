@@ -98,6 +98,14 @@ private:
 		    std::map<std::string,std::string>& params);
   void	setHead(Network::ATcpSocket* socket,
 		std::map<std::string,std::string>& params);
+  void	upShift(Network::ATcpSocket* socket,
+		std::map<std::string,std::string>& params);
+  void	downShift(Network::ATcpSocket* socket,
+		std::map<std::string,std::string>& params);
+  void	releasePedal(Network::ATcpSocket* socket,
+		     std::map<std::string,std::string>& params);
+  void	pushPedal(Network::ATcpSocket* socket,
+		  std::map<std::string,std::string>& params);
 
   typedef void (RemoteServer::*GetFunction)
   (Network::ATcpSocket* socket,

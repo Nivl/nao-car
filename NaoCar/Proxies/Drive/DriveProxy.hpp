@@ -5,7 +5,7 @@
 // Login   <olivie_a@epitech.net>
 // 
 // Started on  Fri Sep 28 16:49:12 2012 samuel olivier
-// Last update Fri Mar 15 14:32:15 2013 samuel olivier
+// Last update Sun Mar 17 23:38:51 2013 gael jochaud-du-plessix
 //
 
 #ifndef __DRIVE_PROXY__
@@ -52,6 +52,10 @@ public:
   void  steeringWheelAction();
   void  funAction();
   void  carambarAction();
+  void  upShift();
+  void  downShift();
+  void  pushPedal();
+  void  releasePedal();
   void  setHead(float const& headYaw, float const& headPitch,
                 float const& maxSpeed);
 
