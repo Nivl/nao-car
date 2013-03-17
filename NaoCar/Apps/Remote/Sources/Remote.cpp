@@ -28,9 +28,7 @@ Remote::Remote(int argc, char** argv)
   _naoUrl.setScheme("http");
   QObject::connect(_streamSocket, SIGNAL(readyRead()),
 		   this, SLOT(streamDataAvailable()));
-  QPixmap tmp;
-  tmp.load(":/waiting-streaming.png");
-  *_streamImage = tmp.toImage();
+  _streamImage->load(":/waiting-streaming.png");
   _mainWindow.setStreamImage(_streamImage);
 }
 
@@ -165,8 +163,8 @@ void Remote::networkRequestFinished(QNetworkReply* reply) {
   } else {
     QByteArray data = reply->readAll();
 
-    if (reply->request().url().path() == "/get-stream-port") {
-      _streamSocket->connectToHost(_naoUrl.host(), data.toInt());
+    if (data.startsWith("stream-port:")) {
+	_streamSocket->connectToHost(_naoUrl.host(), data.mid(12).toInt());
     }
   }
 }
@@ -180,13 +178,7 @@ void Remote::streamDataAvailable() {
   if (_streamSizeRead == true &&
       _streamSocket->bytesAvailable() >= _streamImageSize) {
     QByteArray data = _streamSocket->read(_streamImageSize);
-    {
-      QFile out("img.jpg");
-      out.open(QIODevice::WriteOnly);
-      out.write(data);
-      out.close();
-    }
-    qDebug() << _streamImage->load("img.jpg");
+    _streamImage->loadFromData(data);
     _mainWindow.setStreamImage(_streamImage);
     _streamSizeRead = false;
   }

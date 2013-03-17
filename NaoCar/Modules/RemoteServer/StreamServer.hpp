@@ -77,7 +77,7 @@ private:
   std::atomic<bool>		_stop;
   GstElement			*_pipeline;
   char				*_imageData;
-  size_t			_imageSize;
+  uint64_t			_imageSize;
   std::atomic<bool>		_imageChanged;
   std::mutex			_imageMutex;
 };

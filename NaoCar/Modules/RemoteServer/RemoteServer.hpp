@@ -67,8 +67,8 @@ private:
 
   void	defaultParams(Network::ATcpSocket* socket,
 		      std::map<std::string, std::string>& params);
-  void	getStreamIpAndPort(Network::ATcpSocket* socket,
-			   std::map<std::string, std::string>& params);
+  void	getStreamPort(Network::ATcpSocket* socket,
+		      std::map<std::string, std::string>& params);
   void	begin(Network::ATcpSocket* socket,
 	      std::map<std::string,std::string>& params);
   void	end(Network::ATcpSocket* socket,

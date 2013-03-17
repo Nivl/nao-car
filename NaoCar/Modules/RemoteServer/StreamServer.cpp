@@ -65,10 +65,10 @@ void	StreamServer::mainThread() {
       _imageMutex.lock();
       _imageChanged = false;
       for (auto it = _clients.begin(); it != _clients.end(); ++it) {
-	std::cout << "Sending Image: " << _imageSize << " " << (int)_imageData[5598] <<std::endl;
-	size_t *size = new size_t;
+	std::cout << "Sending Image: " << _imageSize << " " << (int)_imageData[5598] <<std::endl;	
+	uint64_t *size = new uint64_t;
 	*size = _imageSize;
-	_writeData(*it, (char*)size, 8);
+	_writeData(*it, (char*)size, sizeof(uint64_t));
 	_writeData(*it, _imageData, _imageSize);
       }
       _imageMutex.unlock();

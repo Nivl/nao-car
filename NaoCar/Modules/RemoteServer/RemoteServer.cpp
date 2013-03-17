@@ -27,7 +27,7 @@ RemoteServer::RemoteServer(boost::shared_ptr<AL::ALBroker> broker,
 {
   if (_getFunctions.size() == 0) {
     _getFunctions["/"] = &RemoteServer::defaultParams;
-    _getFunctions["/get-stream-port"] = &RemoteServer::getStreamIpAndPort;
+    _getFunctions["/get-stream-port"] = &RemoteServer::getStreamPort;
     _getFunctions["/begin"] = &RemoteServer::begin;
     _getFunctions["/end"] = &RemoteServer::end;
 
@@ -231,9 +231,11 @@ void	RemoteServer::defaultParams(Network::ATcpSocket* sender,
   _writeHttpResponse(sender, boost::asio::const_buffer("", 0));
 }
 
-void	RemoteServer::getStreamIpAndPort(Network::ATcpSocket* sender,
-					 std::map<std::string, std::string>& params) {
+void	RemoteServer::getStreamPort(Network::ATcpSocket* sender,
+				    std::map<std::string, std::string>& params) {
+  (void)params;
   std::stringstream tmp(std::ios_base::in | std::ios_base::out);
+  tmp << "stream-port:";
   tmp << _streamPort;
   _writeHttpResponse(sender, boost::asio::const_buffer(tmp.str().c_str(),
 						       tmp.str().size()));
