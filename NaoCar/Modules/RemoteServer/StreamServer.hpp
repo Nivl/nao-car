@@ -5,7 +5,7 @@
 // Login   <olivie_a@epitech.net>
 // 
 // Started on  Fri Mar 15 16:21:34 2013 samuel olivier
-// Last update Sat Mar 16 20:20:21 2013 samuel olivier
+// Last update Sun Mar 17 21:46:42 2013 samuel olivier
 //
 
 #ifndef __STREAM_SERVER_HPP__
@@ -34,6 +34,11 @@ class StreamServer : public Network::ITcpServerDelegate,
 		     public Network::ITcpSocketDelegate
 {
 public:
+  enum Camera {
+    Front,
+    Bottom,
+    Opencv
+  };
 
   StreamServer(boost::asio::io_service* ioService);
   virtual ~StreamServer();
@@ -55,6 +60,7 @@ public:
 				Network::ASocket::Error error,
 				size_t bytesWritten);
   void	setImageData(char *data, size_t size);
+  void	setCamera(Camera type);
 
 private:
   struct Packet {
@@ -65,7 +71,8 @@ private:
   void	_writeData(Network::ATcpSocket* target,
 		   char* data, size_t size);
   void	_setPipeline(std::string const& pipeline);
-
+  void	_startPipeline();
+  void	_stopPipeline();
   void	mainThread();
 
   boost::asio::io_service	*_ioService;
@@ -80,6 +87,7 @@ private:
   uint64_t			_imageSize;
   std::atomic<bool>		_imageChanged;
   std::mutex			_imageMutex;
+  std::atomic<char>		_currentCamera;
 };
 
 #endif

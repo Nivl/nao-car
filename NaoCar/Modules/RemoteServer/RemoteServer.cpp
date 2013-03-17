@@ -186,6 +186,7 @@ void	RemoteServer::_parseReceivedData(Network::ATcpSocket* sender,
       }
     }
     GetFunction func = _getFunctions[funcName];
+    std::cout << funcName;
     if (func != NULL)
       try {
 	std::cout << funcName;
@@ -195,8 +196,10 @@ void	RemoteServer::_parseReceivedData(Network::ATcpSocket* sender,
 	std::cout << " => FAILED" << std::endl;
 	_writeHttpResponse(sender, boost::asio::const_buffer("An error occured", 15), "404 Not Found");
       }
-    else
+    else {
+	std::cout << " => FAILED" << std::endl;
       _writeHttpResponse(sender, boost::asio::const_buffer("Unknown Command", 15), "404 Not Found");
+    }
   }
 }
 

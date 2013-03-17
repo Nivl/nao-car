@@ -32,7 +32,6 @@ Remote::Remote()
 		   this, SLOT(streamDataAvailable()));
   _streamImage->load(":/waiting-streaming.png");
   _mainWindow.setStreamImage(_streamImage);
-  qDebug() << QImageReader::supportedImageFormats();
 }
 
 Remote::~Remote(void) {
@@ -51,11 +50,13 @@ void Remote::serviceBrowsed(bool error,
   if (error) {
     std::cerr << "Error browsing Bonjour services" << std::endl;
   }
-  else if (name == NAOCAR_BONJOUR_SERVICE_NAME || 1) {
+  else if (name == NAOCAR_BONJOUR_SERVICE_NAME) {
     if (browsingType == Bonjour::BrowsingAdd) {
+      qDebug() << "YES";
       _naoAvailable = true;
       _bonjour.resolveService(name, type, domain);
     } else if (browsingType == Bonjour::BrowsingRemove) {
+      qDebug() << "NOOOOOOO";
       _naoAvailable = false;
     }
   }
@@ -68,6 +69,7 @@ void Remote::serviceResolved(bool error, std::string const& hostname,
   if (error) {
     std::cerr << "Error resolving Bonjour service address" << std::endl;
   } else if (_naoAvailable) {
+    qDebug() << QString::fromStdString(ip) << port;
     _naoUrl.setHost(QString(ip.c_str()));
     _naoUrl.setPort(port);
   }

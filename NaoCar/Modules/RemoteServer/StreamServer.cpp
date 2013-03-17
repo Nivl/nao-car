@@ -5,7 +5,7 @@
 // Login   <olivie_a@epitech.net>
 // 
 // Started on  Fri Mar 15 16:30:36 2013 samuel olivier
-// Last update Sat Mar 16 21:16:59 2013 samuel olivier
+// Last update Sun Mar 17 21:35:40 2013 samuel olivier
 //
 
 #include "StreamServer.hpp"
@@ -16,7 +16,8 @@ static GstFlowReturn appsink_new_buffer(GstAppSink *sink, gpointer user_data);
 
 StreamServer::StreamServer(boost::asio::io_service* service) :
   _ioService(service), _mainThread(NULL), _tcpServer(NULL),
-  _stop(false), _imageData(NULL), _imageChanged(false)
+  _stop(false), _pipeline(NULL), _imageData(NULL), _imageChanged(false),
+  _currentCamera(Bottom)
 {
   gst_init(NULL, NULL);
 }
@@ -58,7 +59,7 @@ void	StreamServer::stop() {
 }
 
 void	StreamServer::mainThread() {
-  _setPipeline("v4l2src device=/dev/video0 ! videoscale ! video/x-raw-yuv,width=320,height=240 ! ffmpegcolorspace ! jpegenc");
+  _startPipeline();
   while (_stop == false) {
     _clientsMutex.lock();
     if (_imageChanged) {
@@ -66,14 +67,54 @@ void	StreamServer::mainThread() {
       _imageChanged = false;
       for (auto it = _clients.begin(); it != _clients.end(); ++it) {
 	uint64_t *size = new uint64_t;
+	char *data = new char[_imageSize];
+
+	memcpy(data, _imageData, _imageSize);
 	*size = _imageSize;
 	_writeData(*it, (char*)size, sizeof(uint64_t));
-	_writeData(*it, _imageData, _imageSize);
+	_writeData(*it, data, _imageSize);
       }
       _imageMutex.unlock();
     }
     _clientsMutex.unlock();
     usleep(10000);
+  }
+  _stopPipeline();
+}
+
+void	StreamServer::_startPipeline() {
+  _clientsMutex.lock();
+  if (_clients.size() > 0) {
+    std::stringstream	tmp;
+  
+    tmp << "v4l2src device=";
+    if (_currentCamera == (char)Bottom)
+      tmp << "/dev/video0";
+    else if (_currentCamera == (char)Opencv)
+      tmp << "TODO";
+    else
+      tmp << "/dev/video1";
+    tmp << " ! videoscale ! video/x-raw-yuv,width=320,height=240 "
+      "! ffmpegcolorspace ! jpegenc";
+    
+    _setPipeline(tmp.str());
+  }
+  _clientsMutex.unlock();
+}
+
+void	StreamServer::_stopPipeline() {
+  if (_pipeline)
+    {
+      gst_element_set_state (_pipeline, GST_STATE_NULL);
+      gst_object_unref (GST_OBJECT (_pipeline));
+      _pipeline = NULL;
+    }  
+}
+
+void	StreamServer::setCamera(Camera type) {
+  if (type != _currentCamera) {
+    _currentCamera = type;
+    _startPipeline();
   }
 }
 
@@ -84,7 +125,12 @@ void	StreamServer::newConnection(Network::ATcpServer* sender,
   socket->setDelegate(this);
   _clientsMutex.lock();
   _clients.push_back(socket);
-  _clientsMutex.unlock();
+  if (_clients.size() == 1) {
+    _clientsMutex.unlock();
+    _startPipeline();
+  } else {
+    _clientsMutex.unlock();
+  }
   socket->readUntil("\n");
   std::cout << "Stream Connection " << _clients.size() << std::endl;
 }
@@ -108,6 +154,8 @@ void	StreamServer::readFinished(Network::ASocket* sender,
   if (error) {
     _clientsMutex.lock();
     _clients.remove(socket);
+    if (_clients.size() == 0)
+      _stopPipeline();
     _clientsMutex.unlock();
     delete socket;
     std::cout << "Stream Deconnection " << _clients.size() << std::endl;
@@ -143,12 +191,7 @@ void	StreamServer::_setPipeline(std::string const& pipeline)
 {
   GError* error = NULL;
 
-  if (_pipeline)
-    {
-      gst_element_set_state (_pipeline, GST_STATE_NULL);
-      gst_object_unref (GST_OBJECT (_pipeline));
-      _pipeline = NULL;
-    }
+  _stopPipeline();
   _pipeline = gst_parse_launch((pipeline + " ! appsink").c_str(), &error);
   if (!_pipeline || error)
     {
@@ -169,8 +212,7 @@ void	StreamServer::_setPipeline(std::string const& pipeline)
 
 void	StreamServer::setImageData(char *data, size_t size) {
   _imageMutex.lock();
-  if (_imageChanged)
-    delete _imageData;
+  delete _imageData;
   _imageChanged = true;
   _imageData = new char[size];
   memcpy(_imageData, data, size);
