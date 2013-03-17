@@ -31,6 +31,7 @@ Remote::Remote(int argc, char** argv)
 		   this, SLOT(streamDataAvailable()));
   _streamImage->load(":/waiting-streaming.png");
   _mainWindow.setStreamImage(_streamImage);
+  qDebug() << QImageReader::supportedImageFormats();
 }
 
 Remote::~Remote(void) {
@@ -150,7 +151,9 @@ void Remote::sendRequest(std::string requestStr,
     newUrl.setPath(requestStr.c_str());
     if (!paramName.empty() && !paramValue.empty()) {
       QList<QPair<QString, QString> >
-	params({QPair<QString, QString>(paramName.c_str(), paramValue.c_str())});
+	params;
+      params.append({QPair<QString, QString>(paramName.c_str(),
+					     paramValue.c_str())});
       newUrl.setQueryItems(params);
     }
     request.setUrl(newUrl);
