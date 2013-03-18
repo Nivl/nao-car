@@ -17,10 +17,11 @@ void VoiceSpeaker::loop() {
   while (!_stop) {    
     _mutex.lock();
     if (_messages.size() > 0) {
-      std::string message = _messages.front();
+      std::pair<std::string, std::string> message = _messages.front();
       _messages.pop_front();
       _mutex.unlock();
-      _t2p.say(message);
+      _t2p.setLanguage(message.second);
+      _t2p.say(message.first);
     }
     else {
       _mutex.unlock();
@@ -29,8 +30,8 @@ void VoiceSpeaker::loop() {
   }
 }
 
-void VoiceSpeaker::say(const std::string& message) {
+void VoiceSpeaker::say(const std::string& message, const std::string& language) {
   _mutex.lock();
-  _messages.push_back(message);
+  _messages.push_back(std::pair<std::string, std::string>(message, language));
   _mutex.unlock();
 }

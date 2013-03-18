@@ -12,6 +12,8 @@
 #include <iomanip>
 #include <thread>
 
+#include "DriveProxy.hpp"
+
 namespace std {
   template <class T1, class T2>
   pair<T1,T2> make_pair (T1 x, T2 y) {
@@ -67,10 +69,15 @@ private:
 
 class AutoDriving {
 public:
-  AutoDriving(StreamServer* ss);
+  enum Mode {
+    Safe,
+    Auto
+  };
+
+  AutoDriving(StreamServer* ss, DriveProxy* driveProxy);
   ~AutoDriving();
 
-  void start();
+  void start(Mode mode);
   void stop();
   void loop();
 
@@ -83,6 +90,8 @@ private:
   Freenect::Freenect	_freenect;
   MyFreenectDevice&	_device;
   StreamServer		*_ss;
+  DriveProxy		*_driveProxy;
+  Mode			_mode;
 };
 
 #endif

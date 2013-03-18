@@ -392,16 +392,22 @@ void	RemoteServer::changeView(Network::ATcpSocket* sender,
 
 void	RemoteServer::autoDriving(Network::ATcpSocket* sender,
 				  std::map<std::string,
-					   std::string>&) {
+					   std::string>& params) {
   if (!_autoDriving) {
     try {
-      _autoDriving = new AutoDriving(_streamServer);
+      _autoDriving = new AutoDriving(_streamServer, &_drive);
     } catch(...) {
       _autoDriving = NULL;
     }    
   }
-  if (_autoDriving && !_autoDriving->isStart())
-    _autoDriving->start();
+  if (_autoDriving && !_autoDriving->isStart()) {
+    if (params["mode"] == "safe")
+      _autoDriving->start(AutoDriving::Safe);
+    else {
+      _voiceSpeaker.say("auto driving", "English");
+      _autoDriving->start(AutoDriving::Safe);
+    }
+  }
   else if (_autoDriving)
     _autoDriving->stop();
   _writeHttpResponse(sender, boost::asio::const_buffer("", 0));  

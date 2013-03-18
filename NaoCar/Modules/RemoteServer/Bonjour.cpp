@@ -57,8 +57,8 @@ bool Bonjour::registerService(std::string const& name,
   return (true);
 }
 
-void Bonjour::pipeReadHandler(const boost::system::error_code& error,
-			      std::size_t size) {
+void Bonjour::pipeReadHandler(const boost::system::error_code&,
+			      std::size_t) {
   if (!_delegate)
     return ;
   std::istream is(&_pipeBuffer);

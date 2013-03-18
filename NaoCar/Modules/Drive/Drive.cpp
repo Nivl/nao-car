@@ -62,7 +62,7 @@ std::map<std::string, Drive::Anim>	Drive::_animations =
 
 Drive::Drive(boost::shared_ptr<AL::ALBroker> broker,
 	     const std::string &name) :
-  AL::ALModule(broker, name), _poseManager(broker), _animThread(NULL)
+  AL::ALModule(broker, name), _poseManager(broker), _animThread(NULL), _voiceSpeaker(broker)
 {
   setModuleDescription("The NaoCar Driving Module");
   functionName("begin", getName(), "Set the nao ready for starting");

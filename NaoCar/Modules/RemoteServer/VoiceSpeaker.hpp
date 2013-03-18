@@ -15,10 +15,10 @@ public:
   ~VoiceSpeaker();
 
   void loop();
-  void say(const std::string& message);
+  void say(const std::string& message, const std::string& language="French");
 private:
   AL::ALTextToSpeechProxy       _t2p;
-  std::list<std::string>	_messages;
+  std::list<std::pair<std::string, std::string> >	_messages;
   std::mutex			_mutex;
   std::thread*			_thread;
   bool				_stop;

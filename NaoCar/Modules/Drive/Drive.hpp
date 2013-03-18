@@ -20,6 +20,8 @@
 # include <thread>
 # include <mutex>
 
+# include "VoiceSpeaker.hpp"
+
 namespace AL
 {
   class ALBroker;
@@ -119,6 +121,7 @@ private:
   std::atomic<bool>			_isAnimating;
   std::atomic<bool>			_stopThread;
 
+  VoiceSpeaker				_voiceSpeaker;
 };
 
 #endif

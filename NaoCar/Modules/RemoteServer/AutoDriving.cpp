@@ -265,8 +265,8 @@ void MyFreenectDevice::_checkObject(uint16_t* depth, int x, int y, int &minx, in
   
 }
 
-AutoDriving::AutoDriving(StreamServer* ss) : 
-  _thread(NULL), _freenect(), _device(_freenect.createDevice<MyFreenectDevice>(0)), _ss(ss) {
+AutoDriving::AutoDriving(StreamServer* ss, DriveProxy* driveProxy) : 
+  _thread(NULL), _freenect(), _device(_freenect.createDevice<MyFreenectDevice>(0)), _ss(ss), _driveProxy(driveProxy) {
   _thread = NULL;
   _stop = true;
 }
@@ -275,8 +275,9 @@ AutoDriving::~AutoDriving() {
 
 }
 
-void AutoDriving::start() {
+void AutoDriving::start(Mode mode) {
   if (_thread == NULL) {
+    _mode = mode;
     _stop = false;
     _thread = new std::thread(&AutoDriving::loop, this);
   }
@@ -305,7 +306,7 @@ void AutoDriving::loop() {
     std::vector<std::pair<std::pair<Point, Point>, double> > objects;
     _device.getObjects(objects);
     
-
+    bool canDrive = true;
     for (unsigned int k = 0; k < objects.size(); ++k)
       {
 	rectangle(rgbMat, objects[k].first.first, objects[k].first.second, Scalar(10, 10, 163), 2);
@@ -314,7 +315,19 @@ void AutoDriving::loop() {
 	ss << std::setprecision(3) << objects[k].second * 2. / 1000. << "m";
 	putText(depthMat, ss.str(), Point(objects[k].first.first.x + 2, objects[k].first.first.y + 10), FONT_HERSHEY_SIMPLEX, 0.3, Scalar(10, 10, 163));
 	std::cout << objects[k].first.first << " " << objects[k].first.second << " " << ss.str() << std::endl;
+	if (objects[k].second * 2. / 1000. < 0.8 &&
+	    objects[k].first.first.x < 640. / 2. + 40 && objects[k].first.second.x > 640. / 2. - 40) {
+	  canDrive = false;
+	}
       }
+    if (_mode == Safe && !canDrive) {
+      if (_driveProxy->speed() == DriveProxy::Up)
+	_driveProxy->releasePedal();
+    }
+    if (_mode == Auto && !canDrive)
+      _driveProxy->releasePedal();
+    else if (_mode == Auto)
+      _driveProxy->pushPedal();
     if (_ss) {
       vector<unsigned char> buf;
       imencode(".jpg", depthMat, buf);
