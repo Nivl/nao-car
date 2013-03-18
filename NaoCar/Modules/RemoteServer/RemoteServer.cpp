@@ -45,6 +45,7 @@ RemoteServer::RemoteServer(boost::shared_ptr<AL::ALBroker> broker,
     _getFunctions["/carambar-action"] = &RemoteServer::carambarAction;
     _getFunctions["/setHead"] = &RemoteServer::setHead;
     _getFunctions["/talk"] = &RemoteServer::talk;
+    _getFunctions["/change-view"] = &RemoteServer::changeView;
     _getFunctions["/start-auto-driving"] = &RemoteServer::autoDriving;
     _getFunctions["/stop-auto-driving"] = &RemoteServer::stopAutoDriving;
 
@@ -348,6 +349,22 @@ void	RemoteServer::talk(Network::ATcpSocket* sender,
   for (auto it = params.begin(); it != params.end(); ++it)
     std::cout << "\tkey='" << it->first << "' value='"
 	      << it->second << "'" << std::endl;
+  _writeHttpResponse(sender, boost::asio::const_buffer("", 0));
+}
+
+void	RemoteServer::changeView(Network::ATcpSocket* sender,
+				    std::map<std::string, std::string> & params) {
+  std::string view = params["view"];
+  if (view != "") {
+    StreamServer::Camera c;
+    if (view == "1")
+      c = StreamServer::Front;
+    else if (view == "2")
+      c = StreamServer::Opencv;
+    else
+      c = StreamServer::Bottom;
+    _streamServer->setCamera(c);
+  }    
   _writeHttpResponse(sender, boost::asio::const_buffer("", 0));
 }
 

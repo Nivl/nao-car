@@ -5,7 +5,7 @@
 // Login   <olivie_a@epitech.net>
 // 
 // Started on  Fri Mar 15 16:30:36 2013 samuel olivier
-// Last update Sun Mar 17 23:54:28 2013 samuel olivier
+// Last update Mon Mar 18 00:59:52 2013 samuel olivier
 //
 
 #include "StreamServer.hpp"
@@ -107,6 +107,7 @@ void	StreamServer::_stopPipeline() {
     {
       gst_element_set_state (_pipeline, GST_STATE_NULL);
       gst_object_unref(GST_OBJECT(_pipeline));
+      gst_object_unref(GST_OBJECT(_gstAppsink));
       _pipeline = NULL;
     }  
 }
@@ -124,11 +125,14 @@ void	StreamServer::_setPipeline(std::string const& pipeline)
     }
   else
     {
+      static int idx = 0;
+      std::stringstream tmp;
+      tmp << "appsink" << idx++;
       GstAppSinkCallbacks gstCallbacks = {
 	NULL, appsink_new_preroll, appsink_new_buffer, NULL, { NULL }};
-      GstElement* appsink = gst_bin_get_by_name(GST_BIN(_pipeline),
-						"appsink0");
-      gst_app_sink_set_callbacks(GST_APP_SINK(appsink), &gstCallbacks,
+      _gstAppsink = gst_bin_get_by_name(GST_BIN(_pipeline),
+					tmp.str().c_str());
+      gst_app_sink_set_callbacks(GST_APP_SINK(_gstAppsink), &gstCallbacks,
 				 this, NULL);
       gst_element_set_state(_pipeline, GST_STATE_PLAYING);
     }
@@ -231,11 +235,9 @@ static GstFlowReturn appsink_new_buffer(GstAppSink *sink, gpointer user_data)
 {
   (void)user_data;
   GstBuffer *buffer = gst_app_sink_pull_buffer(sink);
-  GstCaps *caps = gst_buffer_get_caps(buffer);
   unsigned char* data = GST_BUFFER_MALLOCDATA(buffer);
   ((StreamServer*)user_data)->setImageData((char*)data,
 					   GST_BUFFER_SIZE(buffer));
-  gst_caps_unref(caps);
   gst_buffer_unref(buffer);
   return GST_FLOW_OK;
 }

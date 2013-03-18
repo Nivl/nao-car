@@ -17,7 +17,7 @@ OPTION (
 OPTION (
 	NAO_LOCAL_COMPILATION
 	"module is compiled as a local module for the nao (ON or OFF)"
-	ON
+	OFF
 )
 
 OPTION (

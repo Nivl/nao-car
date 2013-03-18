@@ -5,7 +5,7 @@
 // Login   <olivie_a@epitech.net>
 // 
 // Started on  Fri Mar 15 16:21:34 2013 samuel olivier
-// Last update Sun Mar 17 23:44:54 2013 samuel olivier
+// Last update Mon Mar 18 00:30:16 2013 samuel olivier
 //
 
 #ifndef __STREAM_SERVER_HPP__
@@ -88,6 +88,7 @@ private:
   std::atomic<bool>		_imageChanged;
   std::mutex			_imageMutex;
   std::atomic<char>		_currentCamera;
+  GstElement			*_gstAppsink;
 };
 
 #endif
