@@ -73,12 +73,15 @@ public:
   void stop();
   void loop();
 
+  bool isStart();
+
 private:
 
   bool	_stop;
   std::thread*	_thread;
   Freenect::Freenect _freenect;
   MyFreenectDevice& _device;
+
 };
 
 #endif

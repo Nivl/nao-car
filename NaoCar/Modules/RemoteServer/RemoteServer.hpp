@@ -19,6 +19,7 @@
 # include "DriveProxy.hpp"
 # include "StreamServer.hpp"
 # include "AutoDriving.hpp"
+# include "VoiceSpeaker.hpp"
 
 namespace AL
 {
@@ -126,6 +127,8 @@ private:
   StreamServer	*_streamServer;
   int		_streamPort;
   AutoDriving*	_autoDriving;
+
+  VoiceSpeaker	_voiceSpeaker;
 };
 
 #endif
