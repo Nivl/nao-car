@@ -17,6 +17,8 @@
 @interface JoystickViewController : UIViewController
 
 -(void)updateJoystick;
+-(void)hide;
+-(void)show;
 
 @property (weak, nonatomic) id<JoystickViewControllerDelegate> delegate;
 

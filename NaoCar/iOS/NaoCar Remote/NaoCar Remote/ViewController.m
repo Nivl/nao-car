@@ -12,6 +12,8 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
+#import "ActionsViewController.h"
+
 @interface ViewController ()
 
 @end
@@ -27,10 +29,15 @@
     self.directionController.delegate = self;
     [self.view addSubview: self.directionController.view];
     
+    self.motionManager = [[CMMotionManager alloc] init];
+    [self.motionManager setAccelerometerUpdateInterval:1.0/30.0];
+    
     // Init application states
     self.naoAvailable = false;
     self.direction = Front;
     self.shift = Frontwards;
+    self.controlMode = ControlJoystick;
+    self.viewMode = ViewCamera1;
 
     // Init Bonjour to retrieve the Remote server
     self.bonjourServiceBrowser = [[NSNetServiceBrowser alloc] init];
@@ -49,6 +56,13 @@
 
 -(void)dealloc {
     [self sendCommand:@"/end"];
+}
+
+-(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    ActionsViewController* controller = segue.destinationViewController;
+    controller.mainController = self;
+    controller.controlMode = _controlMode;
+    controller.viewMode = _viewMode;
 }
 
 #pragma mark Bonjour relative functions to retrieve server IP and port
@@ -91,8 +105,6 @@
     for (UITouch* touch in touches) {
         if ([touch locationInView:self.view].x < self.view.frame.size.width / 2) {
             [self.directionController touchesBegan:touches withEvent:event];
-        } else {
-            [self.speedController touchesBegan:touches withEvent:event];
         }
     }
 }
@@ -100,7 +112,6 @@
 -(void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
     for (UITouch* touch in touches) {
         [self.directionController touchesMoved:touches withEvent:event];
-        [self.speedController touchesMoved:touches withEvent:event];
     }
 
 }
@@ -108,12 +119,42 @@
 -(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
     for (UITouch* touch in touches) {
         [self.directionController touchesEnded:touches withEvent:event];
-        [self.speedController touchesEnded:touches withEvent:event];
     }
 
 }
 
 #pragma mark User input
+
+-(void)setControlMode:(ControlMode)controlMode {
+    if (controlMode == ControlJoystick) {
+        [self.directionController show];
+        [self.motionManager stopAccelerometerUpdates];
+    } else {
+        [self.directionController hide];
+        [self.motionManager startAccelerometerUpdatesToQueue:[NSOperationQueue mainQueue] withHandler:^(CMAccelerometerData *accelerometerData, NSError *error) {
+            [self accelerometerValueChanged:accelerometerData];
+        }];
+    }
+    _controlMode = controlMode;
+}
+
+-(void)accelerometerValueChanged:(CMAccelerometerData *)accelerometerData {
+    double value = -accelerometerData.acceleration.y;
+    if (value > DIRECTION_ACCELEROMETER_TESHOLD
+        && _direction != Right) {
+        _direction = Right;
+        [self sendCommand:@"/turn-right"];
+        
+    } else if (value < -DIRECTION_ACCELEROMETER_TESHOLD
+               && _direction != Left) {
+        _direction = Left;
+        [self sendCommand:@"/turn-left"];
+    } else if (ABS(value) < DIRECTION_ACCELEROMETER_TESHOLD
+               && _direction != Front) {
+        _direction = Front;
+        [self sendCommand:@"/turn-front"];
+    }
+}
 
 -(void)joystick:(id)joystick valueChanged:(CGPoint)value {
     if (value.x > DIRECTION_JOYSTICK_TESHOLD
@@ -136,11 +177,11 @@
     if (_shift == Frontwards) {
         [self.shiftButton setBackgroundImage:[UIImage imageNamed:@"shift-backwards.png"] forState:UIControlStateNormal];
         _shift = Backwards;
-        [self sendCommand:@"/upshift"];
+        [self sendCommand:@"/downshift"];
     } else {
         [self.shiftButton setBackgroundImage:[UIImage imageNamed:@"shift-frontwards.png"] forState:UIControlStateNormal];
         _shift = Frontwards;
-        [self sendCommand:@"/downshift"];
+        [self sendCommand:@"/upshift"];
     }
 }
 
@@ -154,12 +195,15 @@
     [self sendCommand:@"/release-pedal"];
 }
 
+
+
 #pragma mark Network handling
 
 -(void)sendCommand:(NSString *)command {
     if (!self.naoAvailable)
         return ;
-    NSURL* commandUrl = [self.naoUrl URLByAppendingPathComponent:command];
+    NSLog(@"Sending command %@", command);
+    NSURL* commandUrl = [NSURL URLWithString:command relativeToURL:self.naoUrl];
     NSURLRequest* request = [NSURLRequest requestWithURL:commandUrl];
     // Execute request
     NSURLConnection* connection = [NSURLConnection connectionWithRequest:request delegate:self];

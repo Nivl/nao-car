@@ -35,6 +35,16 @@
     // Dispose of any resources that can be recreated.
 }
 
+-(void)hide {
+    self.background.hidden = YES;
+    self.button.hidden = YES;
+}
+
+-(void)show {
+    self.background.hidden = NO;
+    self.button.hidden = NO;
+}
+
 -(void)updateJoystick {
     self.button.center = [self.touch locationInView:self.view];
     

@@ -31,6 +31,8 @@
 		9311EBAD16F5512900663825 /* Default-Landscape~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 9311EBAC16F5512900663825 /* Default-Landscape~ipad.png */; };
 		9311EBB116F5515600663825 /* Default-Landscape@2x~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 9311EBB016F5515600663825 /* Default-Landscape@2x~ipad.png */; };
 		9311EBB316F551B800663825 /* background.png in Resources */ = {isa = PBXBuildFile; fileRef = 9311EBB216F551B800663825 /* background.png */; };
+		9311EBB616F670A300663825 /* ActionsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9311EBB516F670A300663825 /* ActionsViewController.m */; };
+		9311EBB816F6812D00663825 /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9311EBB716F6812D00663825 /* CoreMotion.framework */; };
 		939F91D616F387640096A56A /* pedal-pushed.png in Resources */ = {isa = PBXBuildFile; fileRef = 939F91D216F387640096A56A /* pedal-pushed.png */; };
 		939F91D716F387640096A56A /* pedal.png in Resources */ = {isa = PBXBuildFile; fileRef = 939F91D316F387640096A56A /* pedal.png */; };
 		939F91D816F387640096A56A /* shift-backwards.png in Resources */ = {isa = PBXBuildFile; fileRef = 939F91D416F387640096A56A /* shift-backwards.png */; };
@@ -69,6 +71,9 @@
 		9311EBAC16F5512900663825 /* Default-Landscape~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-Landscape~ipad.png"; path = "../Default-Landscape~ipad.png"; sourceTree = "<group>"; };
 		9311EBB016F5515600663825 /* Default-Landscape@2x~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-Landscape@2x~ipad.png"; path = "../Default-Landscape@2x~ipad.png"; sourceTree = "<group>"; };
 		9311EBB216F551B800663825 /* background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = background.png; sourceTree = "<group>"; };
+		9311EBB416F670A300663825 /* ActionsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ActionsViewController.h; path = ../ActionsViewController.h; sourceTree = "<group>"; };
+		9311EBB516F670A300663825 /* ActionsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ActionsViewController.m; path = ../ActionsViewController.m; sourceTree = "<group>"; };
+		9311EBB716F6812D00663825 /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
 		939F91D216F387640096A56A /* pedal-pushed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "pedal-pushed.png"; sourceTree = "<group>"; };
 		939F91D316F387640096A56A /* pedal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pedal.png; sourceTree = "<group>"; };
 		939F91D416F387640096A56A /* shift-backwards.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "shift-backwards.png"; sourceTree = "<group>"; };
@@ -80,6 +85,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9311EBB816F6812D00663825 /* CoreMotion.framework in Frameworks */,
 				9311EBA516F53E4E00663825 /* CFNetwork.framework in Frameworks */,
 				9311EBA316F53E3700663825 /* Security.framework in Frameworks */,
 				930AAE7416F34E22006D56A9 /* UIKit.framework in Frameworks */,
@@ -94,6 +100,7 @@
 		930AAE6716F34E22006D56A9 = {
 			isa = PBXGroup;
 			children = (
+				9311EBB716F6812D00663825 /* CoreMotion.framework */,
 				9311EBA416F53E4E00663825 /* CFNetwork.framework */,
 				9311EBA216F53E3700663825 /* Security.framework */,
 				930AAE7916F34E22006D56A9 /* NaoCar Remote */,
@@ -131,6 +138,8 @@
 				930AAE8E16F34E22006D56A9 /* MainStoryboard_iPad.storyboard */,
 				930AAE9116F34E22006D56A9 /* ViewController.h */,
 				930AAE9216F34E22006D56A9 /* ViewController.m */,
+				9311EBB416F670A300663825 /* ActionsViewController.h */,
+				9311EBB516F670A300663825 /* ActionsViewController.m */,
 				930AAEA016F35941006D56A9 /* JoystickViewController.h */,
 				930AAEA116F35941006D56A9 /* JoystickViewController.m */,
 				930AAEA216F35941006D56A9 /* JoystickViewController.xib */,
@@ -256,6 +265,7 @@
 				930AAE9316F34E22006D56A9 /* ViewController.m in Sources */,
 				930AAEA316F35941006D56A9 /* JoystickViewController.m in Sources */,
 				9311EBA116F53D9B00663825 /* GCDAsyncSocket.m in Sources */,
+				9311EBB616F670A300663825 /* ActionsViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
