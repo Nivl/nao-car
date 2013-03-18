@@ -17,6 +17,12 @@
 
 #include "AutoDriving.hpp"
 
+#ifdef NAO_LOCAL_COMPILATION
+# define WEB_FILE "/home/nao/modules/RemoteServer/index.html"
+#else
+# define WEB_FILE "Modules/RemoteServer/Resources/index.html"
+#endif
+
 std::map<std::string, RemoteServer::GetFunction> RemoteServer::_getFunctions;
 
 static bool urlDecode(const std::string& in, std::string& out);
@@ -146,8 +152,9 @@ void    RemoteServer::readFinished(Network::ASocket* sender,
 }
 
 void    RemoteServer::writeFinished(Network::ASocket*,
-				    Network::ASocket::Error,
-				    size_t) {
+				    Network::ASocket::Error error,
+				    size_t len) {
+  std::cout << error << " " << len << std::endl;
   delete _toWrite.front().second;
   _toWrite.pop_front();
    if (_toWrite.size() >= 1)
@@ -209,22 +216,34 @@ void	RemoteServer::_parseReceivedData(Network::ATcpSocket* sender,
 
 void	RemoteServer::_writeHttpResponse(Network::ATcpSocket* target,
 					 boost::asio::const_buffer const& buffer,
-					 std::string const& code) {
+					 std::string const& code, const std::string& contentType) {
   std::stringstream size(std::ios_base::in |
 			 std::ios_base::out);
   std::stringstream *data = new std::stringstream(std::ios_base::in |
 						  std::ios_base::out |
 						  std::ios_base::binary);
 
-  size << boost::asio::buffer_size(buffer);
+  size << int(boost::asio::buffer_size(buffer));
   std::string header;
   header += "HTTP/1.1 " + code + "\r\n";
-  header += "Content-Type: text/plain; charset=utf-8\r\n";
+  header += "Content-Type: "+contentType+"; charset=utf-8\r\n";
   header += "Content-Length: " + std::string(size.str()) + "\r\n";
   (*data) << header << "\r\n";
-  data->write(boost::asio::buffer_cast<const char*>(buffer),
-  	     boost::asio::buffer_size(buffer));
   _writeData(target, data);
+  const char* tmpBuf = boost::asio::buffer_cast<const char*>(buffer);
+  int len = boost::asio::buffer_size(buffer);
+  int index = 0;
+  while (len > 0) {
+    std::stringstream *tmp = new std::stringstream(std::ios_base::in |
+						   std::ios_base::out |
+						   std::ios_base::binary);
+    tmp->write(&tmpBuf[index],
+	       (len > 65000) ? 65000 : len);
+    len -= 65000;
+    index += 65000;
+
+    _writeData(target, tmp);
+  }
 }
 
 void	RemoteServer::_writeData(Network::ATcpSocket* target,
@@ -239,7 +258,18 @@ void	RemoteServer::defaultParams(Network::ATcpSocket* sender,
   for (auto it = params.begin(); it != params.end(); ++it)
     std::cout << "\tkey='" << it->first << "' value='"
 	      << it->second << "'" << std::endl;
-  _writeHttpResponse(sender, boost::asio::const_buffer("", 0));
+  
+  std::ifstream file(WEB_FILE, std::ios::in | std::ios::binary);
+
+  file.seekg (0, file.end);
+  int length = file.tellg();
+  file.seekg (0, file.beg);
+  char * buffer = new char [length];
+  file.read(buffer,length);
+
+  _writeHttpResponse(sender, boost::asio::const_buffer(buffer, length), "200 OK", "text/html");
+  delete [] buffer;
+  file.close();
 }
 
 void	RemoteServer::getStreamPort(Network::ATcpSocket* sender,
