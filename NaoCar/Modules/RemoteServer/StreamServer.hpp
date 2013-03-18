@@ -5,7 +5,7 @@
 // Login   <olivie_a@epitech.net>
 // 
 // Started on  Fri Mar 15 16:21:34 2013 samuel olivier
-// Last update Sun Mar 17 23:44:54 2013 samuel olivier
+// Last update Mon Mar 18 02:28:52 2013 samuel olivier
 //
 
 #ifndef __STREAM_SERVER_HPP__
@@ -60,6 +60,7 @@ public:
 				Network::ASocket::Error error,
 				size_t bytesWritten);
   void	setImageData(char *data, size_t size);
+  void	setOpencvData(char *data, size_t size);
   void	setCamera(Camera type);
 
 private:
@@ -88,6 +89,7 @@ private:
   std::atomic<bool>		_imageChanged;
   std::mutex			_imageMutex;
   std::atomic<char>		_currentCamera;
+  GstElement			*_gstAppsink;
 };
 
 #endif

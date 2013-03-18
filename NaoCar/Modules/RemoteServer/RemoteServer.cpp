@@ -51,6 +51,7 @@ RemoteServer::RemoteServer(boost::shared_ptr<AL::ALBroker> broker,
     _getFunctions["/carambar-action"] = &RemoteServer::carambarAction;
     _getFunctions["/setHead"] = &RemoteServer::setHead;
     _getFunctions["/talk"] = &RemoteServer::talk;
+    _getFunctions["/change-view"] = &RemoteServer::changeView;
     _getFunctions["/auto-driving"] = &RemoteServer::autoDriving;
 
     _getFunctions["/upshift"] = &RemoteServer::upShift;
@@ -67,11 +68,6 @@ RemoteServer::RemoteServer(boost::shared_ptr<AL::ALBroker> broker,
 RemoteServer::~RemoteServer()
 {
   delete _streamServer;
-  for (std::list<Network::ATcpSocket*>::iterator it =
-	 _clients.begin(); it != _clients.end(); ++it) {
-    (*it)->close();
-    delete *it;
-  }
   _ioService->stop();
   if (_networkThread != NULL) {
     _networkThread->join();
@@ -375,6 +371,22 @@ void	RemoteServer::setHead(Network::ATcpSocket* sender,
 void	RemoteServer::talk(Network::ATcpSocket* sender,
 				    std::map<std::string, std::string> & params) {
   _voiceSpeaker.say(params["message"]);
+  _writeHttpResponse(sender, boost::asio::const_buffer("", 0));
+}
+
+void	RemoteServer::changeView(Network::ATcpSocket* sender,
+				    std::map<std::string, std::string> & params) {
+  std::string view = params["view"];
+  if (view != "") {
+    StreamServer::Camera c;
+    if (view == "1")
+      c = StreamServer::Front;
+    else if (view == "2")
+      c = StreamServer::Opencv;
+    else
+      c = StreamServer::Bottom;
+    _streamServer->setCamera(c);
+  }    
   _writeHttpResponse(sender, boost::asio::const_buffer("", 0));
 }
 

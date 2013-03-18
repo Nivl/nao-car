@@ -97,12 +97,16 @@ private:
 		std::map<std::string,std::string>& params);
   void	talk(Network::ATcpSocket* socket,
 	     std::map<std::string, std::string>& params);
+  void	changeView(Network::ATcpSocket* socket,
+		   std::map<std::string, std::string>& params);
   void	autoDriving(Network::ATcpSocket* socket,
 		    std::map<std::string,std::string>& params);
+  void	stopAutoDriving(Network::ATcpSocket* socket,
+			std::map<std::string,std::string>& params);
   void	upShift(Network::ATcpSocket* socket,
 		std::map<std::string,std::string>& params);
   void	downShift(Network::ATcpSocket* socket,
-		std::map<std::string,std::string>& params);
+		  std::map<std::string,std::string>& params);
   void	releasePedal(Network::ATcpSocket* socket,
 		     std::map<std::string,std::string>& params);
   void	pushPedal(Network::ATcpSocket* socket,
