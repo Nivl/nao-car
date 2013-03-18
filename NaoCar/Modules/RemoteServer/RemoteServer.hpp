@@ -61,7 +61,7 @@ public:
 private:
   void	_writeHttpResponse(Network::ATcpSocket* target,
 			   boost::asio::const_buffer const& buffer,
-			   std::string const& code = "200 OK");
+			   std::string const& code = "200 OK", const std::string& contentType = "text/plain");
   void	_parseReceivedData(Network::ATcpSocket* sender,
 			   std::string const& data);
   void	_writeData(Network::ATcpSocket* target,
