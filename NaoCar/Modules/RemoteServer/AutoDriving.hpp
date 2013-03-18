@@ -22,6 +22,7 @@ namespace std {
 #include "opencv2/opencv.hpp"
 #include "libfreenect.hpp"
 #include "libfreenect_sync.h"
+#include "StreamServer.hpp"
 
 using namespace cv;
 
@@ -66,7 +67,7 @@ private:
 
 class AutoDriving {
 public:
-  AutoDriving();
+  AutoDriving(StreamServer* ss);
   ~AutoDriving();
 
   void start();
@@ -77,11 +78,11 @@ public:
 
 private:
 
-  bool	_stop;
-  std::thread*	_thread;
-  Freenect::Freenect _freenect;
-  MyFreenectDevice& _device;
-
+  bool			_stop;
+  std::thread*		_thread;
+  Freenect::Freenect	_freenect;
+  MyFreenectDevice&	_device;
+  StreamServer		*_ss;
 };
 
 #endif

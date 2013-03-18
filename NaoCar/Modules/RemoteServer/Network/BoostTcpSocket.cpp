@@ -139,7 +139,6 @@ void Network::BoostTcpSocket::write(const void* buffer, uint32_t size)
 void Network::BoostTcpSocket::_writeHandler(const boost::system::error_code& ec,
                                             std::size_t bytesTransfered)
 {
-  std::cout << ec << std::endl;
     if (!ec)
         _writeFinished(ASocket::NoError, bytesTransfered);
     else

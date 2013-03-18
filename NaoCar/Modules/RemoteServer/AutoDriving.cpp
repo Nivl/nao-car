@@ -265,7 +265,8 @@ void MyFreenectDevice::_checkObject(uint16_t* depth, int x, int y, int &minx, in
   
 }
 
-AutoDriving::AutoDriving() : _thread(NULL), _freenect(), _device(_freenect.createDevice<MyFreenectDevice>(0)) {
+AutoDriving::AutoDriving(StreamServer* ss) : 
+  _thread(NULL), _freenect(), _device(_freenect.createDevice<MyFreenectDevice>(0)), _ss(ss) {
   _thread = NULL;
   _stop = true;
 }
@@ -295,6 +296,7 @@ void AutoDriving::loop() {
   _device.startVideo();
   _device.startDepth();
   while (!_stop) {
+    std::cout << "START WHILE" << std::endl;
     _device.getVideo(rgbMat);
     _device.getDepth(depthMat);
     //depthMat.convertTo(depthf, CV_8UC1, 255.0/2048.0);
@@ -313,7 +315,13 @@ void AutoDriving::loop() {
 	putText(depthMat, ss.str(), Point(objects[k].first.first.x + 2, objects[k].first.first.y + 10), FONT_HERSHEY_SIMPLEX, 0.3, Scalar(10, 10, 163));
 	std::cout << objects[k].first.first << " " << objects[k].first.second << " " << ss.str() << std::endl;
       }
-
+    if (_ss) {
+      vector<unsigned char> buf;
+      imencode(".jpg", depthMat, buf);
+      _ss->setOpencvData((char*)(&buf[0]), buf.size());
+    }
+    
+    usleep(50000);
 
     //cv::imshow("rgb", rgbMat);
     //cv::imshow("depth",depthMat);

@@ -395,14 +395,14 @@ void	RemoteServer::autoDriving(Network::ATcpSocket* sender,
 					   std::string>&) {
   if (!_autoDriving) {
     try {
-      _autoDriving = new AutoDriving;
+      _autoDriving = new AutoDriving(_streamServer);
     } catch(...) {
       _autoDriving = NULL;
     }    
   }
   if (_autoDriving && !_autoDriving->isStart())
     _autoDriving->start();
-  if (_autoDriving)
+  else if (_autoDriving)
     _autoDriving->stop();
   _writeHttpResponse(sender, boost::asio::const_buffer("", 0));  
 }
