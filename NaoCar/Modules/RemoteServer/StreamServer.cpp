@@ -5,7 +5,7 @@
 // Login   <olivie_a@epitech.net>
 // 
 // Started on  Fri Mar 15 16:30:36 2013 samuel olivier
-// Last update Mon Mar 18 00:59:52 2013 samuel olivier
+// Last update Mon Mar 18 02:31:55 2013 samuel olivier
 //
 
 #include "StreamServer.hpp"
@@ -23,10 +23,6 @@ StreamServer::StreamServer(boost::asio::io_service* service) :
 }
 
 StreamServer::~StreamServer() {
-  for (auto it = _clients.begin(); it != _clients.end(); ++it) {
-    (*it)->close();
-    delete *it;
-  }
   stop();
   delete _tcpServer;
 }
@@ -66,12 +62,9 @@ void	StreamServer::mainThread() {
       _imageMutex.lock();
       _imageChanged = false;
       for (auto it = _clients.begin(); it != _clients.end(); ++it) {
-	uint64_t *size = new uint64_t;
 	char *data = new char[_imageSize];
 
 	memcpy(data, _imageData, _imageSize);
-	*size = _imageSize;
-	_writeData(*it, (char*)size, sizeof(uint64_t));
 	_writeData(*it, data, _imageSize);
       }
       _imageMutex.unlock();
@@ -86,17 +79,19 @@ void	StreamServer::_startPipeline() {
   _clientsMutex.lock();
   if (_clients.size() > 0) {
     std::stringstream	tmp;
-  
+
     tmp << "v4l2src device=";
-    if (_currentCamera == (char)Bottom)
+    if (_currentCamera == (char)Bottom) {
       tmp << "/dev/video0";
-    else if (_currentCamera == (char)Opencv)
-      tmp << "TODO";
-    else
+    } else if (_currentCamera == (char)Opencv) {
+      _stopPipeline();
+      _clientsMutex.unlock();
+      return ;
+    } else {
       tmp << "/dev/video1";
+    }
     tmp << " ! videoscale ! video/x-raw-yuv,width=320,height=240 "
-      "! ffmpegcolorspace ! jpegenc";
-    
+      "! ffmpegcolorspace ! jpegenc";    
     _setPipeline(tmp.str());
   }
   _clientsMutex.unlock();
@@ -218,10 +213,24 @@ void	StreamServer::setImageData(char *data, size_t size) {
   _imageMutex.lock();
   delete _imageData;
   _imageChanged = true;
-  _imageData = new char[size];
-  memcpy(_imageData, data, size);
-  _imageSize = size;
+  _imageData = new char[size + 8];
+  memcpy(_imageData, &size, 8);
+  memcpy(_imageData + 8, data, size);
+  _imageSize = size + 8;
   _imageMutex.unlock();
+}
+
+void	StreamServer::setOpencvData(char *data, size_t size) {
+  if (_currentCamera == Opencv) {
+    _imageMutex.lock();
+    delete _imageData;
+    _imageChanged = true;
+    _imageData = new char[size + 8];
+    memcpy(_imageData, &size, 8);
+    memcpy(_imageData + 8, data, size);
+    _imageSize = size + 8;
+    _imageMutex.unlock();
+  }
 }
 
 static GstFlowReturn appsink_new_preroll(GstAppSink *sink, gpointer user_data)

@@ -62,11 +62,6 @@ RemoteServer::RemoteServer(boost::shared_ptr<AL::ALBroker> broker,
 RemoteServer::~RemoteServer()
 {
   delete _streamServer;
-  for (std::list<Network::ATcpSocket*>::iterator it =
-	 _clients.begin(); it != _clients.end(); ++it) {
-    (*it)->close();
-    delete *it;
-  }
   _ioService->stop();
   if (_networkThread != NULL) {
     _networkThread->join();
