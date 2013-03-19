@@ -38,10 +38,12 @@ public:
   bool	getDepth(Mat& output);
   void	initializeFloor();
   void	getObjects(std::vector<std::pair<std::pair<Point, Point>, double> > &to);
+  int getWayToGo();
+  int getDepthToGo();
 
 private:
   void  _checkObject(uint16_t* depth, int x, int y, int &minx, int &maxx, 
-		     int &miny, int &maxy, int d, double &average, double& nb);
+		     int &miny, int &maxy, int d, std::vector<double>&, double prev=-1);
 
   std::vector<uint8_t> _buffer_depth;
   std::vector<uint8_t> _buffer_rgb;
@@ -65,6 +67,8 @@ private:
   std::vector<std::pair<std::pair<Point, Point>, double> > _objects;
 
   char _dones[307200];
+  int _wayToGo;
+  int _depthToGo;
 };
 
 class AutoDriving {

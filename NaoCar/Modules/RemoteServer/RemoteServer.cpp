@@ -405,7 +405,7 @@ void	RemoteServer::autoDriving(Network::ATcpSocket* sender,
       _autoDriving->start(AutoDriving::Safe);
     else {
       _voiceSpeaker.say("auto driving", "English");
-      _autoDriving->start(AutoDriving::Safe);
+      _autoDriving->start(AutoDriving::Auto);
     }
   }
   else if (_autoDriving)

@@ -3,6 +3,7 @@
 // for NaoCar Remote Server
 //
 
+#include <algorithm>
 #include "AutoDriving.hpp"
 
 using namespace cv;
@@ -103,19 +104,30 @@ void MyFreenectDevice::DepthCallback(void* _depth, uint32_t) {
       if (_dones[i * 640 + j] == 0) {
 	if (depth[i * 640 + j] != (uint16_t)-1) {
 	  int minx=i, maxx=i, miny=j, maxy=j;
-	  double average = 0.0, nb = 0;
+	  std::vector<double> values;
+	  double average = 0.;
 
-	  _checkObject(depth, i, j, minx, maxx, miny, maxy, 0, average, nb);
+	  _checkObject(depth, i, j, minx, maxx, miny, maxy, 0, values);
 
+	  std::sort(values.begin(), values.end());
+
+	  if (values.size() > 5) {
+	    int nb = values.size() / 5;
+	    while (nb > 0) {
+	      average += values[values.size() - nb];
+	      nb -= 1;
+	    }
+	    average /= double(values.size() / 5);
+	  }
 	  
 	  bool colapse = false;
-	  for (unsigned int kk=0;kk < _objects.size();++kk) {
-	    if (_objects[kk].first.first.x <= miny && _objects[kk].first.second.x >= maxy &&
-		_objects[kk].first.first.y <= minx && _objects[kk].first.second.y >= maxx)
-	      colapse = true;
-	  }
+	  // for (unsigned int kk=0;kk < _objects.size();++kk) {
+	  //   if (_objects[kk].first.first.x <= miny && _objects[kk].first.second.x >= maxy &&
+	  // 	_objects[kk].first.first.y <= minx && _objects[kk].first.second.y >= maxx)
+	  //     colapse = true;
+	  // }
 
-	  if (!colapse && (maxx - minx) * (maxy - miny) > 10)
+	  if (!colapse && (maxx - minx) * (maxy - miny) > 20)
 	    {
 	      //std::cout << average << std::endl;;
 	      _objects.push_back(std::pair<std::pair<Point, Point>, double>(std::pair<Point, Point>(Point(miny, minx), Point(maxy, maxx)), average));
@@ -126,6 +138,27 @@ void MyFreenectDevice::DepthCallback(void* _depth, uint32_t) {
     }
   }
   _objectsMutex.unlock();
+
+  // DETECT BEST PATH TO GO
+  double best = 0.;
+  int bestv = 320;
+  for (int j=0; j<640 - 140; j++) {
+    double moyenne = 0;
+    for (int k = 0; k < 140; ++k) {
+      int i = 0;
+      while (i < 480 && depth[(479 - i) * 640 + j + k] == (uint16_t)-1)
+	++i;
+      moyenne += i;
+    }
+    moyenne /= 140.;
+    if (moyenne > best) {
+      best = moyenne;
+      bestv = j + 70;
+    }
+  }
+  _wayToGo = bestv;
+  _depthToGo = best;
+  
   
   //_objects.push_back(std::pair<std::pair<Point, Point>, double>(std::pair<Point, Point>(Point(200, 200), Point(50, 50)), 1000.));
 
@@ -225,6 +258,14 @@ bool MyFreenectDevice::getDepth(Mat& output) {
   }
 }
 
+int MyFreenectDevice::getWayToGo() {
+  return (_wayToGo);
+}
+
+int MyFreenectDevice::getDepthToGo() {
+  return (_depthToGo);
+}
+
 void MyFreenectDevice::initializeFloor() {
   _initialize = true;
 }
@@ -235,16 +276,15 @@ void MyFreenectDevice::getObjects(std::vector<std::pair<std::pair<Point, Point>,
   _objectsMutex.unlock();
 }
 
-void MyFreenectDevice::_checkObject(uint16_t* depth, int x, int y, int &minx, int &maxx, int &miny, int &maxy, int d, double &average, double& nb) {
+void MyFreenectDevice::_checkObject(uint16_t* depth, int x, int y, int &minx, int &maxx, int &miny, int &maxy, int d, std::vector<double>& values, double prev) {
   if (x < 0 || y < 0 || x >= 480 || y >= 640 || _dones[x * 640 + y] != 0 || depth[x * 640 + y] == (uint16_t)-1 || d > 20000)
     return;
-  
-  _dones[x * 640 + y] = 1;
-  average *= nb;
 
-  average += depth[x * 640 + y];
-  nb += 1;
-  average /= nb;
+  if (prev != -1 && (prev - depth[x * 640 + y]) * (prev - depth[x * 640 + y]) > 60)
+    return;
+  _dones[x * 640 + y] = 1;
+
+  values.push_back(depth[x * 640 + y]);
   
   if (x < minx)
     minx = x;
@@ -254,14 +294,14 @@ void MyFreenectDevice::_checkObject(uint16_t* depth, int x, int y, int &minx, in
     miny = y;
   if (y > maxy)
     maxy = y;
-  _checkObject(depth, x + 1, y, minx, maxx, miny, maxy, d+1, average, nb);
-  _checkObject(depth, x - 1, y, minx, maxx, miny, maxy, d+1, average, nb);
-  _checkObject(depth, x + 1, y + 1, minx, maxx, miny, maxy, d+1, average, nb);
-  _checkObject(depth, x + 1, y - 1, minx, maxx, miny, maxy, d+1, average, nb);
-  _checkObject(depth, x - 1, y + 1, minx, maxx, miny, maxy, d+1, average, nb);
-  _checkObject(depth, x - 1, y - 1, minx, maxx, miny, maxy, d+1, average, nb);
-  _checkObject(depth, x, y - 1, minx, maxx, miny, maxy, d+1, average, nb);
-  _checkObject(depth, x, y + 1, minx, maxx, miny, maxy, d+1, average, nb);
+  _checkObject(depth, x + 1, y, minx, maxx, miny, maxy, d+1, values, depth[x * 640 + y]);
+  _checkObject(depth, x - 1, y, minx, maxx, miny, maxy, d+1, values, depth[x * 640 + y]);
+  _checkObject(depth, x + 1, y + 1, minx, maxx, miny, maxy, d+1, values, depth[x * 640 + y]);
+  _checkObject(depth, x + 1, y - 1, minx, maxx, miny, maxy, d+1, values, depth[x * 640 + y]);
+  _checkObject(depth, x - 1, y + 1, minx, maxx, miny, maxy, d+1, values, depth[x * 640 + y]);
+  _checkObject(depth, x - 1, y - 1, minx, maxx, miny, maxy, d+1, values, depth[x * 640 + y]);
+  _checkObject(depth, x, y - 1, minx, maxx, miny, maxy, d+1, values, depth[x * 640 + y]);
+  _checkObject(depth, x, y + 1, minx, maxx, miny, maxy, d+1, values, depth[x * 640 + y]);
   
 }
 
@@ -305,7 +345,9 @@ void AutoDriving::loop() {
     // DRAW SQUARES AROUND OBJECTS
     std::vector<std::pair<std::pair<Point, Point>, double> > objects;
     _device.getObjects(objects);
-    
+    int way = _device.getWayToGo();
+    rectangle(depthMat, Point(way, 0), Point(way, 480), Scalar(100, 10, 163), 2);
+
     bool canDrive = true;
     for (unsigned int k = 0; k < objects.size(); ++k)
       {
@@ -315,8 +357,8 @@ void AutoDriving::loop() {
 	ss << std::setprecision(3) << objects[k].second * 2. / 1000. << "m";
 	putText(depthMat, ss.str(), Point(objects[k].first.first.x + 2, objects[k].first.first.y + 10), FONT_HERSHEY_SIMPLEX, 0.3, Scalar(10, 10, 163));
 	std::cout << objects[k].first.first << " " << objects[k].first.second << " " << ss.str() << std::endl;
-	if (objects[k].second * 2. / 1000. < 0.8 &&
-	    objects[k].first.first.x < 640. / 2. + 40 && objects[k].first.second.x > 640. / 2. - 40) {
+	if (objects[k].second * 2. / 1000. < 1.7 &&
+	    objects[k].first.first.x < 640. / 2. + 70 && objects[k].first.second.x > 640. / 2. - 70) {
 	  canDrive = false;
 	}
       }
@@ -332,6 +374,15 @@ void AutoDriving::loop() {
       vector<unsigned char> buf;
       imencode(".jpg", depthMat, buf);
       _ss->setOpencvData((char*)(&buf[0]), buf.size());
+    }
+
+    if (_mode == Auto) {
+      if (way > 320 + 25 || _device.getDepthToGo() < 200)
+	_driveProxy->turnRight();
+      else if (way < 320 - 25)
+	_driveProxy->turnLeft();
+      else
+	_driveProxy->turnFront();
     }
     
     usleep(50000);
