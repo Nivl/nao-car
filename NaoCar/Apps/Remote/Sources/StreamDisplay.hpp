@@ -5,7 +5,7 @@
 // Login   <olivie_a@epitech.net>
 // 
 // Started on  Fri Mar 15 20:31:08 2013 samuel olivier
-// Last update Fri Mar 15 22:07:27 2013 samuel olivier
+// Last update Fri May 24 12:41:00 2013 samuel olivier
 //
 
 #ifndef __STREAM_DISPLAY_HPP__
@@ -23,7 +23,7 @@ public:
   void setStreamImage(QImage *image);
 
 protected:
-  void paintEvent(QPaintEvent *event);
+  virtual void paintEvent(QPaintEvent *event);
 
 private:
   QImage	*_image;

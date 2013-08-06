@@ -5,7 +5,7 @@
 // Login   <olivie_a@epitech.net>
 // 
 // Started on  Fri Mar 15 21:16:34 2013 samuel olivier
-// Last update Sat Mar 16 02:05:04 2013 samuel olivier
+// Last update Fri May 24 12:41:11 2013 samuel olivier
 //
 
 #include <QPainter>
@@ -33,4 +33,3 @@ void	StreamDisplay::paintEvent(QPaintEvent *event) {
   if (_image)
     painter.drawImage(rect(), *_image);
 }
-

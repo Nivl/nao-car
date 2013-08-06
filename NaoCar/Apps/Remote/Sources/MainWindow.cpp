@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <SFML/Window/Joystick.hpp>
+#include <QDebug>
 
 #include "ui_MainWindow.h"
 #include "MainWindowDelegate.hpp"
@@ -38,12 +39,55 @@ MainWindow::MainWindow(MainWindowDelegate* delegate)
 	  this, SLOT(gamepadUpdate()));
   _gamepadTimer.setInterval(1.0 / 10.0);
   _gamepadTimer.start();
+  _windowUi.centralwidget->installEventFilter(this);
 
   _window.show();
 }
 
 MainWindow::~MainWindow(void) {
   _gamepadTimer.stop();
+}
+
+bool MainWindow::eventFilter(QObject* obj, QEvent* event) {
+  if (event->type() == QEvent::KeyPress)
+    keyPressEvent(static_cast<QKeyEvent*>(event));
+  else if (event->type() == QEvent::KeyRelease)
+    keyReleaseEvent(static_cast<QKeyEvent*>(event));
+  else if (event->type() == QEvent::MouseMove ||
+	   event->type() == QEvent::MouseButtonPress ||
+	   event->type() == QEvent::MouseButtonRelease)
+    _windowUi.centralwidget->setFocus(Qt::MouseFocusReason);
+  else
+    QObject::eventFilter(obj, event);
+  return true;
+}
+
+void MainWindow::keyPressEvent(QKeyEvent* event) {
+  if (event->isAutoRepeat())
+    return ;
+  if (event->key() == Qt::Key_Space)
+    _delegate->steeringWheelAction();
+  else if (event->key() == Qt::Key_C)
+    _delegate->carambarAction();
+  else if (event->key() == Qt::Key_F)
+    _delegate->funAction();
+  else if (event->key() == Qt::Key_Up)
+    _delegate->moveChanged(Frontwards);
+  else if (event->key() == Qt::Key_Down)
+    _delegate->moveChanged(Backwards);
+  else if (event->key() == Qt::Key_Left)
+    _delegate->steeringWheelDirectionChanged(Left);
+  else if (event->key() == Qt::Key_Right)
+    _delegate->steeringWheelDirectionChanged(Right);
+}
+
+void MainWindow::keyReleaseEvent(QKeyEvent* event) {
+  if (event->isAutoRepeat())
+    return ;
+  if (event->key() == Qt::Key_Up || event->key() == Qt::Key_Down)
+    _delegate->moveChanged(Stopped);
+  else if (event->key() == Qt::Key_Left || event->key() == Qt::Key_Right)
+    _delegate->steeringWheelDirectionChanged(Front);
 }
 
 void MainWindow::chooseGamepad(void) {

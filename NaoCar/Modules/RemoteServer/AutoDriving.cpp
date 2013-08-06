@@ -363,13 +363,19 @@ void AutoDriving::loop() {
 	}
       }
     if (_mode == Safe && !canDrive) {
-      if (_driveProxy->speed() == DriveProxy::Up)
+      if (_driveProxy->speed() == DriveProxy::Up) {
+	if (_driveProxy->isGasPedalPushed())
+	  _driveProxy->releasePedal();
+      }
+    }
+    if (_mode == Auto && !canDrive) {
+      if (_driveProxy->isGasPedalPushed())
 	_driveProxy->releasePedal();
     }
-    if (_mode == Auto && !canDrive)
-      _driveProxy->releasePedal();
-    else if (_mode == Auto)
-      _driveProxy->pushPedal();
+    else if (_mode == Auto) {
+	if (!_driveProxy->isGasPedalPushed())
+	  _driveProxy->pushPedal();
+    }
     if (_ss) {
       vector<unsigned char> buf;
       imencode(".jpg", depthMat, buf);
