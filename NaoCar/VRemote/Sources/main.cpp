@@ -9,6 +9,7 @@
 #include <QLibraryInfo>
 #include "Remote.hpp"
 #include <QDebug>
+#include <OVR.h>
 
 int main(int argc, char **argv) {
   QApplication app(argc, argv);
