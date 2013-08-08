@@ -10,6 +10,7 @@
 # include <QMainWindow>
 # include <QTimer>
 # include <QPixmap>
+# include <QKeyEvent>
 
 # include <vector>
 
@@ -103,6 +104,11 @@ public slots:
   void autoDrivingClicked(void);
 
   void gamepadUpdate(void);
+
+protected:
+  bool eventFilter(QObject* obj, QEvent* event);
+  void keyPressEvent(QKeyEvent* event);
+  void keyReleaseEvent(QKeyEvent* event);
 
 private:
   MainWindowDelegate*	_delegate;
