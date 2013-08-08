@@ -26,7 +26,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>25</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>
@@ -170,8 +170,8 @@
   </widget>
   <action name="actionConnect">
    <property name="icon">
-    <iconset>
-     <normaloff>../../../../../.designer/backup</normaloff>../../../../../.designer/backup</iconset>
+    <iconset resource="../Resources/Ui.qrc">
+     <normaloff>:/connect.png</normaloff>:/connect.png</iconset>
    </property>
    <property name="text">
     <string>Connect</string>

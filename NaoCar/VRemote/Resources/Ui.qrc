@@ -1,6 +1,7 @@
 <RCC>
-  <qresource prefix="/">
-    <file>waiting-streaming.png</file>
-    <file>qt/etc/qt.conf</file>
-  </qresource>
+    <qresource prefix="/">
+        <file>waiting-streaming.png</file>
+        <file>qt/etc/qt.conf</file>
+        <file>connect.png</file>
+    </qresource>
 </RCC>

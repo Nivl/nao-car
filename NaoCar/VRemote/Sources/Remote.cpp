@@ -36,6 +36,11 @@ Remote::Remote()
   _streamImage->load(":/waiting-streaming.png");
   _mainWindow.setStreamImage(_streamImage);
   _leapController->addListener(*_leapListener);
+        
+  // Hardcode IP, until Bonjour browsing is fixed
+  _naoAvailable = true;
+  _naoUrl.setHost("192.168.1.34");
+  _naoUrl.setPort(60823);
 }
 
 Remote::~Remote(void) {
