@@ -7,6 +7,7 @@
 
 SET(OCULUS_SDK_ROOT_DIR
     "${OCULUS_SDK_ROOT_DIR}"
+    $ENV{OCULUS_SDK_ROOT_DIR}
     CACHE
     PATH
     "Root directory to search for OculusSDK")

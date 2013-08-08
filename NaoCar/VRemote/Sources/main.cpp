@@ -12,8 +12,8 @@
 #include <OVR.h>
 
 int main(int argc, char **argv) {
-  QApplication app(argc, argv);
-  Remote remote;
-
-  return (remote.exec());
+    QApplication app(argc, argv);
+    Remote remote;
+    
+    return (remote.exec());
 }
