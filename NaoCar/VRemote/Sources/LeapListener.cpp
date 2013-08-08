@@ -5,7 +5,7 @@
 // Login   <olivie_a@epitech.net>
 // 
 // Started on  Thu Aug  8 22:00:17 2013 samuel olivier
-// Last update Fri Aug  9 00:36:30 2013 samuel olivier
+// Last update Fri Aug  9 01:07:44 2013 samuel olivier
 //
 
 #include "LeapListener.hpp"
@@ -51,6 +51,14 @@ void LeapListener::onFrame(const Controller& controller) {
     } else {
       _currentHandDirection = direction;
       _lastChangedDirection.restart();
+    }
+    if (orientation == _currentHandOrientation) {
+      if (_lastChangedOrientation.elapsed() >= MINIMUM_MILLISECOND_STATE) {
+	
+      }
+    } else {
+      _currentHandOrientation = orientation;
+      _lastChangedOrientation.restart();
     }
   }
 }

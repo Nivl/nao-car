@@ -5,7 +5,7 @@
 // Login   <olivie_a@epitech.net>
 // 
 // Started on  Thu Aug  8 21:55:31 2013 samuel olivier
-// Last update Fri Aug  9 00:37:41 2013 samuel olivier
+// Last update Fri Aug  9 01:10:25 2013 samuel olivier
 //
 
 #ifndef _LEAP_LISTENER_HPP_
@@ -40,7 +40,7 @@ private:
   enum HandDirection {
     FrontWard,
     BackWard,
-    Standing,
+    Stopped,
     NoDirection
   };
 

@@ -49,16 +49,20 @@ public:
 			       unsigned short port=0);
 
 public: // Main window delegate functions
-  void connect(void);
-  void disconnect(void);
-  void viewChanged(int index);
-  void carambarAction(void);
-  void talk(std::string message);
-  void autoDriving(void);
-  void steeringWheelAction(void);
-  void funAction(void);
-  void steeringWheelDirectionChanged(MainWindow::Direction direction);
-  void moveChanged(MainWindow::Move move);
+  virtual void connect(void);
+  virtual void disconnect(void);
+  virtual void viewChanged(int index);
+  virtual void carambarAction(void);
+  virtual void talk(std::string message);
+  virtual void autoDriving(void);
+  virtual void steeringWheelAction(void);
+  virtual void funAction(void);
+  virtual void frontward(void);
+  virtual void backward(void);
+  virtual void stop(void);
+  virtual void left(void);
+  virtual void right(void);
+  virtual void front(void);
 
   void sendRequest(std::string request,
 		   std::string paramName="",

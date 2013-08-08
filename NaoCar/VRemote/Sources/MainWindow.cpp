@@ -72,22 +72,22 @@ void MainWindow::keyPressEvent(QKeyEvent* event) {
   else if (event->key() == Qt::Key_F)
     _delegate->funAction();
   else if (event->key() == Qt::Key_Up)
-    _delegate->moveChanged(Frontwards);
+    _delegate->frontward();
   else if (event->key() == Qt::Key_Down)
-    _delegate->moveChanged(Backwards);
+    _delegate->backward();
   else if (event->key() == Qt::Key_Left)
-    _delegate->steeringWheelDirectionChanged(Left);
+    _delegate->left();
   else if (event->key() == Qt::Key_Right)
-    _delegate->steeringWheelDirectionChanged(Right);
+    _delegate->right();
 }
 
 void MainWindow::keyReleaseEvent(QKeyEvent* event) {
   if (event->isAutoRepeat())
     return ;
   if (event->key() == Qt::Key_Up || event->key() == Qt::Key_Down)
-    _delegate->moveChanged(Stopped);
+    _delegate->stop();
   else if (event->key() == Qt::Key_Left || event->key() == Qt::Key_Right)
-    _delegate->steeringWheelDirectionChanged(Front);
+    _delegate->front();
 }
 
 void MainWindow::chooseGamepad(void) {
@@ -171,17 +171,17 @@ void MainWindow::gamepadUpdate(void) {
   if (directionAxis < -DirectionAxisTreshold
       && _steeringWheelDirection != Left) {
     if (_delegate)
-      _delegate->steeringWheelDirectionChanged(Left);
+      _delegate->left();
     _steeringWheelDirection = Left;
   } else if (directionAxis > DirectionAxisTreshold
       && _steeringWheelDirection != Right) {
     if (_delegate)
-      _delegate->steeringWheelDirectionChanged(Right);
+      _delegate->right();
     _steeringWheelDirection = Right;
   } else if (std::abs(directionAxis) < DirectionAxisTreshold
 	     && _steeringWheelDirection != Front) {
     if (_delegate)
-      _delegate->steeringWheelDirectionChanged(Front);
+      _delegate->front();
     _steeringWheelDirection = Front;
   }
 
@@ -194,19 +194,19 @@ void MainWindow::gamepadUpdate(void) {
       && frontValue < MoveAxisTreshold
       && _move != Backwards) {
     if (_delegate)
-      _delegate->moveChanged(Backwards);
+      _delegate->backward();
     _move = Backwards;
   } else if (frontValue > MoveAxisTreshold
 	     && backValue < MoveAxisTreshold
 	     && _move != Frontwards) {
     if (_delegate)
-      _delegate->moveChanged(Frontwards);
+      _delegate->frontward();
     _move = Frontwards;
   } else if (backValue < MoveAxisTreshold
 	     && frontValue < MoveAxisTreshold
 	     && _move != Stopped) {
     if (_delegate)
-      _delegate->moveChanged(Stopped);
+      _delegate->stop();
     _move = Stopped;
   }
 }

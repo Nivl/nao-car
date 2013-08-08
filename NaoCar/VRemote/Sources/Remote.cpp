@@ -133,27 +133,40 @@ void Remote::funAction(void) {
     sendRequest("/fun-action");
 }
 
-void Remote::steeringWheelDirectionChanged(MainWindow::Direction direction) {
+void Remote::frontward(void) {
   if (!_naoAvailable)
-    return ;
-  if (direction == MainWindow::Left) {
-    sendRequest("/turn-left");
-  } else if (direction == MainWindow::Right) {
-    sendRequest("/turn-right");
-  } else if (direction == MainWindow::Front) {
-    sendRequest("/turn-front");
-  }
+    return ;  
+  sendRequest("/go-frontwards");
 }
 
-void Remote::moveChanged(MainWindow::Move move) {
+void Remote::backward(void) {
   if (!_naoAvailable)
     return ;
-  if (move == MainWindow::Frontwards)
-    sendRequest("/go-frontwards");
-  else if (move == MainWindow::Backwards)
-    sendRequest("/go-backwards");
-  else if (move == MainWindow::Stopped)
-    sendRequest("/stop");
+  sendRequest("/go-backwards");
+}
+
+void Remote::stop(void) {
+  if (!_naoAvailable)
+    return ;
+  sendRequest("/stop");
+}
+
+void Remote::left(void) {
+  if (!_naoAvailable)
+    return ;
+  sendRequest("/turn-left");
+}
+
+void Remote::right(void) {
+  if (!_naoAvailable)
+    return ;
+   sendRequest("/turn-right");
+}
+
+void Remote::front(void) {
+  if (!_naoAvailable)
+    return ;
+  sendRequest("/turn-front");
 }
 
 void Remote::sendRequest(std::string requestStr,
