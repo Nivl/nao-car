@@ -11,6 +11,7 @@
 # include <QNetworkReply>
 # include <QUrl>
 # include <QTcpSocket>
+# include <Leap.h>
 
 # include <map>
 
@@ -20,9 +21,13 @@
 # include "BonjourDelegate.hpp"
 
 # define NAOCAR_BONJOUR_SERVICE_NAME "nao-car"
+using namespace Leap;
 
-class Remote : public QObject, public MainWindowDelegate, public BonjourDelegate  {
-Q_OBJECT
+class LeapListener;
+
+class Remote : public QObject, public MainWindowDelegate, public BonjourDelegate {
+  Q_OBJECT
+
 public:
 
   Remote();
@@ -43,7 +48,7 @@ public:
 			       std::string const& ip="",
 			       unsigned short port=0);
 
-  // Main window delegate functions
+public: // Main window delegate functions
   void connect(void);
   void disconnect(void);
   void viewChanged(int index);
@@ -76,6 +81,8 @@ private:
   qint64		_streamImageSize;
   QImage		*_streamImage;
   bool			_streamSizeRead;
+  Controller		*_leapController;
+  LeapListener		*_leapListener;
 };
 
 #endif

@@ -15,11 +15,14 @@
 #include <QImageReader>
 #include <QApplication>
 
+#include "LeapListener.hpp"
+
 Remote::Remote()
   : _mainWindow(this),
     _bonjour(this), _naoAvailable(false), _naoUrl(), _networkManager(),
     _connected(false), _streamSocket(new QTcpSocket(this)),
-    _streamImageSize(-1), _streamImage(new QImage()), _streamSizeRead(false) {
+    _streamImageSize(-1), _streamImage(new QImage()), _streamSizeRead(false),
+    _leapController(new Controller()), _leapListener(new LeapListener(this)) {
   // Launch Bonjour to automatically detect Nao on a local network
   if (!_bonjour.browseServices("_http._tcp")) {
     std::cerr << "Cannot browse Bonjour services" << std::endl;
@@ -32,9 +35,13 @@ Remote::Remote()
 		   this, SLOT(streamDataAvailable()));
   _streamImage->load(":/waiting-streaming.png");
   _mainWindow.setStreamImage(_streamImage);
+  _leapController->addListener(*_leapListener);
 }
 
 Remote::~Remote(void) {
+  _leapController->removeListener(*_leapListener);
+  delete _leapController;
+  delete _leapListener;
   delete _streamImage;
 }
 
@@ -188,3 +195,4 @@ void Remote::streamDataAvailable() {
     _streamSizeRead = false;
   }
 }
+
