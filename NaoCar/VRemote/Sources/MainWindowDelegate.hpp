@@ -22,6 +22,7 @@ public:
   virtual void funAction(void) = 0;
   virtual void steeringWheelDirectionChanged(MainWindow::Direction direction) = 0;
   virtual void moveChanged(MainWindow::Move move) = 0;
+  virtual void rift(void) = 0;
 };
 
 #endif

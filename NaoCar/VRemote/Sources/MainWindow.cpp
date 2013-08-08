@@ -20,6 +20,8 @@ MainWindow::MainWindow(MainWindowDelegate* delegate)
   _windowUi.setupUi(&_window);
   connect(_windowUi.actionConnect, SIGNAL(triggered()),
 	  this, SLOT(connectAction()));
+  connect(_windowUi.actionRift, SIGNAL(triggered()),
+      this, SLOT(riftAction()));
   connect(_windowUi.viewComboBox, SIGNAL(currentIndexChanged(int)),
 	  this, SLOT(viewChanged(int)));
   connect(_windowUi.gamepadID, SIGNAL(valueChanged(int)),
@@ -116,6 +118,11 @@ QMainWindow* MainWindow::getWindow(void) {
 void MainWindow::connectAction(void) {
   if (_delegate)
     _delegate->connect();
+}
+
+void MainWindow::riftAction(void) {
+    if (_delegate)
+      _delegate->rift();
 }
 
 void MainWindow::viewChanged(int index) {

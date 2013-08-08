@@ -193,3 +193,7 @@ void Remote::streamDataAvailable() {
     _streamSizeRead = false;
   }
 }
+
+void Remote::rift() {
+
+}

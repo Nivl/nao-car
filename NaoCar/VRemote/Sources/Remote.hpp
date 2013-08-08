@@ -54,6 +54,7 @@ public:
   void funAction(void);
   void steeringWheelDirectionChanged(MainWindow::Direction direction);
   void moveChanged(MainWindow::Move move);
+  void rift(void);
 
   void sendRequest(std::string request,
 		   std::string paramName="",
