@@ -5,7 +5,7 @@
 // Login   <olivie_a@epitech.net>
 // 
 // Started on  Thu Aug  8 22:00:17 2013 samuel olivier
-// Last update Fri Aug  9 01:07:44 2013 samuel olivier
+// Last update Fri Aug  9 01:51:17 2013 samuel olivier
 //
 
 #include "LeapListener.hpp"
@@ -43,7 +43,7 @@ void LeapListener::onFrame(const Controller& controller) {
   if (!hands.empty()) {
     HandDirection direction = _computeHandDirection(hands);
     HandOrientation orientation = _computeHandOrientation(hands);
-
+    std::cout << hands.count() << std::endl;
     if (direction == _currentHandDirection) {
       if (_lastChangedDirection.elapsed() >= MINIMUM_MILLISECOND_STATE) {
 

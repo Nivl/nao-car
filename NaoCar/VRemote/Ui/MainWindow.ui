@@ -42,6 +42,7 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionConnect"/>
+   <addaction name="actionRift"/>
   </widget>
   <widget class="QDockWidget" name="Controls">
    <property name="minimumSize">
@@ -175,6 +176,11 @@
    </property>
    <property name="text">
     <string>Connect</string>
+   </property>
+  </action>
+  <action name="actionRift">
+   <property name="text">
+    <string>actionRift</string>
    </property>
   </action>
  </widget>
