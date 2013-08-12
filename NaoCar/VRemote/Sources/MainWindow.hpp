@@ -98,6 +98,7 @@ public:
     public slots:
     void connectAction(void);
     void hostInputEntered(void);
+    void riftAction(void);
     void viewChanged(int index);
     void gamepadIDChanged(int id);
     void carambarClicked(void);

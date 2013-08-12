@@ -26,7 +26,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>22</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>
@@ -42,6 +42,7 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionConnect"/>
+   <addaction name="actionRift"/>
   </widget>
   <widget class="QDockWidget" name="Controls">
    <property name="minimumSize">
@@ -185,6 +186,11 @@
    </property>
    <property name="text">
     <string>Connect</string>
+   </property>
+  </action>
+  <action name="actionRift">
+   <property name="text">
+    <string>actionRift</string>
    </property>
   </action>
  </widget>
