@@ -20,6 +20,8 @@ _steeringWheelDirection(Front), _move(Stopped) {
     _windowUi.setupUi(&_window);
     connect(_windowUi.actionConnect, SIGNAL(triggered()),
             this, SLOT(connectAction()));
+    connect(_windowUi.hostInput, SIGNAL(returnPressed()),
+            this, SLOT(hostInputEntered()));
     connect(_windowUi.viewComboBox, SIGNAL(currentIndexChanged(int)),
             this, SLOT(viewChanged(int)));
     connect(_windowUi.gamepadID, SIGNAL(valueChanged(int)),
@@ -116,6 +118,12 @@ QMainWindow* MainWindow::getWindow(void) {
 void MainWindow::connectAction(void) {
     if (_delegate)
         _delegate->connect();
+}
+
+void MainWindow::hostInputEntered(void) {
+    if (_delegate) {
+        _delegate->hostEntered(_windowUi.hostInput->text().toStdString());
+    }
 }
 
 void MainWindow::viewChanged(int index) {

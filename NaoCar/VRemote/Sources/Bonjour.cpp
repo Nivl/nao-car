@@ -50,6 +50,7 @@ bool Bonjour::resolveService(std::string const& name,
         DNSServiceRefDeallocate(dnssref);
         return false;
     }
+    DNSServiceProcessResult(dnssref);
     int sockfd = DNSServiceRefSockFD(dnssref);
     if (sockfd == -1) {
         DNSServiceRefDeallocate(dnssref);

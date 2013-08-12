@@ -45,6 +45,7 @@ public:
     
     // Main window delegate functions
     void connect(void);
+    void hostEntered(std::string host);
     void disconnect(void);
     void viewChanged(int index);
     void carambarAction(void);
