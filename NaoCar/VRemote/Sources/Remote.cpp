@@ -15,6 +15,7 @@
 #include <QImageReader>
 #include <QApplication>
 
+
 Remote::Remote()
 : _mainWindow(this),
 _bonjour(this), _naoAvailable(false), _naoUrl(), _networkManager(),
@@ -195,5 +196,5 @@ void Remote::streamDataAvailable() {
 }
 
 void Remote::rift() {
-
+    _rift = new Rift();
 }

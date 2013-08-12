@@ -179,6 +179,10 @@
    </property>
   </action>
   <action name="actionRift">
+   <property name="icon">
+    <iconset resource="../Resources/Ui.qrc">
+     <normaloff>:/oculus.png</normaloff>:/oculus.png</iconset>
+   </property>
    <property name="text">
     <string>actionRift</string>
    </property>

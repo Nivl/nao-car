@@ -18,6 +18,7 @@
 # include "MainWindowDelegate.hpp"
 # include "Bonjour.hpp"
 # include "BonjourDelegate.hpp"
+# include "Rift.hpp"
 
 # define NAOCAR_BONJOUR_SERVICE_NAME "nao-car"
 
@@ -77,6 +78,7 @@ private:
     qint64		_streamImageSize;
     QImage		*_streamImage;
     bool			_streamSizeRead;
+    Rift        *_rift;
 };
 
 #endif
