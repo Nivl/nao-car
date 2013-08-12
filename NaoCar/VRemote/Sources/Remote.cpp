@@ -20,7 +20,8 @@ Remote::Remote()
 : _mainWindow(this),
 _bonjour(this), _naoAvailable(false), _naoUrl(), _networkManager(),
 _connected(false), _streamSocket(new QTcpSocket(this)),
-_streamImageSize(-1), _streamImage(new QImage()), _streamSizeRead(false) {
+_streamImageSize(-1), _streamImage(new QImage()), _streamSizeRead(false),
+_rift(NULL), _riftTimer() {
     // Launch Bonjour to automatically detect Nao on a local network
     if (!_bonjour.browseServices("_http._tcp")) {
         std::cerr << "Cannot browse Bonjour services" << std::endl;
@@ -33,6 +34,10 @@ _streamImageSize(-1), _streamImage(new QImage()), _streamSizeRead(false) {
                      this, SLOT(streamDataAvailable()));
     _streamImage->load(":/waiting-streaming.png");
     _mainWindow.setStreamImage(_streamImage);
+    
+    // Configure Rift
+    _riftTimer.setInterval(50);
+    QObject::connect(&_riftTimer, SIGNAL(timeout()), this, SLOT(updateRift()));
 }
 
 Remote::~Remote(void) {
@@ -107,9 +112,8 @@ void Remote::disconnect(void) {
 
 void Remote::viewChanged(int index) {
     if (_naoAvailable) {
-        std::stringstream str;
-        str << index;
-        sendRequest("/change-view", "view", str.str());
+        sendRequest("/change-view",
+                    ParamsList() << QPair<QString, QString>("view", QString::number(index)));
     }
 }
 
@@ -120,7 +124,7 @@ void Remote::carambarAction(void) {
 
 void Remote::talk(std::string message) {
     if (_naoAvailable)
-        sendRequest("/talk", "message", message);
+        sendRequest("/talk", ParamsList() << QPair<QString, QString>("message", message.c_str()));
 }
 
 void Remote::autoDriving(void) {
@@ -162,16 +166,11 @@ void Remote::moveChanged(MainWindow::Move move) {
 }
 
 void Remote::sendRequest(std::string requestStr,
-                         std::string paramName,
-                         std::string paramValue) {
+                         ParamsList const & params) {
     QNetworkRequest request;
     QUrl newUrl = _naoUrl;
     newUrl.setPath(requestStr.c_str());
-    if (!paramName.empty() && !paramValue.empty()) {
-        QList<QPair<QString, QString> >
-        params;
-        params.append(QPair<QString, QString>(paramName.c_str(),
-                                              paramValue.c_str()));
+    if (!params.empty()) {
         newUrl.setQueryItems(params);
     }
     request.setUrl(newUrl);
@@ -191,7 +190,7 @@ void Remote::networkRequestFinished(QNetworkReply* reply) {
     }
 }
 
-void Remote::streamDataAvailable() {
+void Remote::streamDataAvailable(void) {
     if (_streamSizeRead == false &&
         (quint64)_streamSocket->bytesAvailable() >= sizeof(_streamImageSize)) {
         _streamSocket->read((char*)&_streamImageSize, sizeof(_streamImageSize));
@@ -206,6 +205,22 @@ void Remote::streamDataAvailable() {
     }
 }
 
-void Remote::rift() {
-    _rift = new Rift();
+void Remote::rift(void) {
+    if (_rift) {
+        _riftTimer.stop();
+        delete _rift;
+        _rift = NULL;
+    } else {
+        _rift = new Rift();
+        _riftTimer.start();
+    }
+}
+
+void Remote::updateRift(void) {
+    OVR::Vector3f orientation = _rift->getOrientation();
+    ParamsList params;
+    params << QPair<QString, QString>("headYaw", QString::number(orientation.x))
+    << QPair<QString, QString>("headPitch", QString::number(-orientation.y))
+    << QPair<QString, QString>("maxSpeed", QString::number(0.5));
+    sendRequest("/setHead", params);
 }

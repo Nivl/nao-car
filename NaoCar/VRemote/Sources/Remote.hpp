@@ -11,6 +11,10 @@
 # include <QNetworkReply>
 # include <QUrl>
 # include <QTcpSocket>
+# include <QTimer>
+# include <QList>
+# include <QPair>
+# include <QString>
 
 # include <map>
 
@@ -58,28 +62,31 @@ public:
     void moveChanged(MainWindow::Move move);
     void rift(void);
     
+    typedef QList<QPair<QString, QString> > ParamsList;
+    
     void sendRequest(std::string request,
-                     std::string paramName="",
-                     std::string paramValue="");
+                     ParamsList const & params=ParamsList());
     
     public slots:
     void networkRequestFinished(QNetworkReply* reply);
     
     private slots:
-    void streamDataAvailable();
+    void streamDataAvailable(void);
+    void updateRift(void);
     
 private:
-    MainWindow		_mainWindow;
-    Bonjour		_bonjour;
-    bool			_naoAvailable;
-    QUrl			_naoUrl;
+    MainWindow              _mainWindow;
+    Bonjour                 _bonjour;
+    bool                    _naoAvailable;
+    QUrl                    _naoUrl;
     QNetworkAccessManager	_networkManager;
-    bool			_connected;
-    QTcpSocket		*_streamSocket;
-    qint64		_streamImageSize;
-    QImage		*_streamImage;
-    bool			_streamSizeRead;
-    Rift        *_rift;
+    bool                    _connected;
+    QTcpSocket*             _streamSocket;
+    qint64                  _streamImageSize;
+    QImage*                 _streamImage;
+    bool                    _streamSizeRead;
+    Rift*                   _rift;
+    QTimer                  _riftTimer;
 };
 
 #endif

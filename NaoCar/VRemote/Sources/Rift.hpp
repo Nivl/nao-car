@@ -1,18 +1,28 @@
+//
+// Rift.hpp
+// NaoCar Remote
+//
+
+#ifndef _RIFT_HPP_
+#define _RIFT_HPP_
+
 #include "OVR.h"
+
 using namespace OVR;
 
-#ifndef RIFT_HPP
-#define RIFT_HPP
-
 class Rift {
-    public:
-        Rift();
-        ~Rift();
-
-    private:
-        Ptr<DeviceManager> _pManager;
-        Ptr<HMDDevice> _pHMD;
-        Ptr<SensorDevice> _pSensor;
+public:
+    Rift(void);
+    ~Rift(void);
+    
+    Vector3f getOrientation(void);
+    
+private:
+    System              _system;
+    Ptr<DeviceManager>  _manager;
+    Ptr<HMDDevice>      _HMD;
+    Ptr<SensorDevice>   _sensor;
+    SensorFusion        _sensorFusion;
 };
 
-#endif // RIFT_HPP
+#endif
