@@ -20,6 +20,8 @@ _steeringWheelDirection(Front), _move(Stopped) {
     _windowUi.setupUi(&_window);
     connect(_windowUi.actionConnect, SIGNAL(triggered()),
             this, SLOT(connectAction()));
+    connect(_windowUi.hostInput, SIGNAL(returnPressed()),
+            this, SLOT(hostInputEntered()));
     connect(_windowUi.actionRift, SIGNAL(triggered()),
             this, SLOT(riftAction()));
     connect(_windowUi.viewComboBox, SIGNAL(currentIndexChanged(int)),
@@ -120,9 +122,15 @@ void MainWindow::connectAction(void) {
         _delegate->connect();
 }
 
+void MainWindow::hostInputEntered(void) {
+    if (_delegate) {
+        _delegate->hostEntered(_windowUi.hostInput->text().toStdString());
+    }
+}
+    
 void MainWindow::riftAction(void) {
     if (_delegate)
-      _delegate->rift();
+        _delegate->rift();
 }
 
 void MainWindow::viewChanged(int index) {

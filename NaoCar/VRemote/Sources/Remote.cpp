@@ -33,11 +33,6 @@ _streamImageSize(-1), _streamImage(new QImage()), _streamSizeRead(false) {
                      this, SLOT(streamDataAvailable()));
     _streamImage->load(":/waiting-streaming.png");
     _mainWindow.setStreamImage(_streamImage);
-    
-    // Hardcode IP, until Bonjour browsing is fixed
-    _naoAvailable = true;
-    _naoUrl.setHost("192.168.1.34");
-    _naoUrl.setPort(60823);
 }
 
 Remote::~Remote(void) {
@@ -87,6 +82,22 @@ void Remote::connect(void) {
         QMessageBox::critical(_mainWindow.getWindow(), "Connect error",
                               "No available NaoCar server found");
     }
+}
+
+void Remote::hostEntered(std::string host) {
+    size_t colonPos = host.find(':');
+    if (colonPos == std::string::npos) {
+        std::cout << "Using host ip: " << host << std::endl;
+        _naoUrl.setHost(host.c_str());
+    } else {
+        std::string ip = host.substr(0, colonPos);
+        std::string portStr = host.substr(colonPos + 1);
+        uint port = std::atoi(portStr.c_str());
+        std::cout << "Using host ip: " << ip << " and port " << port << std::endl;
+        _naoUrl.setHost(ip.c_str());
+        _naoUrl.setPort(port);
+    }
+    _naoAvailable = true;
 }
 
 void Remote::disconnect(void) {

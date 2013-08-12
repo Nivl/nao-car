@@ -48,7 +48,7 @@
    <property name="minimumSize">
     <size>
      <width>215</width>
-     <height>362</height>
+     <height>414</height>
     </size>
    </property>
    <property name="allowedAreas">
@@ -62,6 +62,16 @@
    </attribute>
    <widget class="QWidget" name="dockWidgetContents">
     <layout class="QVBoxLayout" name="verticalLayout_2">
+     <item>
+      <widget class="QLabel" name="label_6">
+       <property name="text">
+        <string>Host</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="hostInput"/>
+     </item>
      <item>
       <widget class="QLabel" name="label_5">
        <property name="text">
