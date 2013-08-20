@@ -179,7 +179,7 @@ void	Window::exec()
 	{
 	  _streamImageMutex.lock();
 	  tmp.loadFromImage(_streamImage);
-	  tmp.bind();
+	  sf::Texture::bind(&tmp);
 	  w = _streamImage.getSize().x;
 	  h = _streamImage.getSize().y;
 	  _streamSprite.setTexture(tmp);
