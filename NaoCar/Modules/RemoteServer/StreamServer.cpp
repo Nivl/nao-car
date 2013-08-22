@@ -214,9 +214,10 @@ void	StreamServer::setImageData(char *data, size_t size) {
   delete _imageData;
   _imageChanged = true;
   _imageData = new char[size + 8];
-  memcpy(_imageData, &size, 8);
-  memcpy(_imageData + 8, data, size);
-  _imageSize = size + 8;
+  uint64_t size64 = size;
+  memcpy(_imageData, &size64, 8);
+  memcpy(_imageData + 8, data, size64);
+  _imageSize = size64 + 8;
   _imageMutex.unlock();
 }
 

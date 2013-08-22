@@ -13,6 +13,7 @@ public:
     virtual ~MainWindowDelegate(void) {}
     
     virtual void connect(void) = 0;
+    virtual void hostEntered(std::string host) = 0;
     virtual void disconnect(void) = 0;
     virtual void viewChanged(int index) = 0;
     virtual void carambarAction(void) = 0;

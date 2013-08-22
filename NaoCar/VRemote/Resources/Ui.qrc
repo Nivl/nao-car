@@ -9,5 +9,6 @@
         <file>Front.xml</file>
         <file>Left.xml</file>
         <file>Right.xml</file>
+        <file>oculus.png</file>
     </qresource>
 </RCC>
