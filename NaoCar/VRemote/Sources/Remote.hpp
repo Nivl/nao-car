@@ -12,9 +12,6 @@
 # include <QUrl>
 # include <QTcpSocket>
 # include <QTimer>
-# include <QList>
-# include <QPair>
-# include <QString>
 
 # include <map>
 
@@ -26,7 +23,7 @@
 
 # define NAOCAR_BONJOUR_SERVICE_NAME "nao-car"
 
-class Remote : public QObject, public MainWindowDelegate, public BonjourDelegate  {
+class Remote : public QObject, public MainWindowDelegate, public BonjourDelegate, public RiftDelegate  {
     Q_OBJECT
 public:
     
@@ -62,6 +59,9 @@ public:
     void moveChanged(MainWindow::Move move);
     void rift(void);
     
+    // Rift delegate functions
+    virtual void riftOrientationUpdate(OVR::Vector3f orientation);
+    
     typedef QList<QPair<QString, QString> > ParamsList;
     
     void sendRequest(std::string request,
@@ -72,7 +72,6 @@ public:
     
     private slots:
     void streamDataAvailable(void);
-    void updateRift(void);
     
 private:
     MainWindow              _mainWindow;
@@ -86,7 +85,6 @@ private:
     QImage*                 _streamImage;
     bool                    _streamSizeRead;
     Rift*                   _rift;
-    QTimer                  _riftTimer;
 };
 
 #endif

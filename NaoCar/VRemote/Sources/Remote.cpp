@@ -15,13 +15,12 @@
 #include <QImageReader>
 #include <QApplication>
 
-
 Remote::Remote()
 : _mainWindow(this),
 _bonjour(this), _naoAvailable(false), _naoUrl(), _networkManager(),
 _connected(false), _streamSocket(new QTcpSocket(this)),
 _streamImageSize(-1), _streamImage(new QImage()), _streamSizeRead(false),
-_rift(NULL), _riftTimer() {
+_rift(NULL) {
     // Launch Bonjour to automatically detect Nao on a local network
     if (!_bonjour.browseServices("_http._tcp")) {
         std::cerr << "Cannot browse Bonjour services" << std::endl;
@@ -35,9 +34,14 @@ _rift(NULL), _riftTimer() {
     _streamImage->load(":/waiting-streaming.png");
     _mainWindow.setStreamImage(_streamImage);
     
-    // Configure Rift
-    _riftTimer.setInterval(50);
-    QObject::connect(&_riftTimer, SIGNAL(timeout()), this, SLOT(updateRift()));
+    //return;
+    _rift = new Rift();
+    
+    // Load debug image for the Rift
+    // For debug purpose: load texture image
+    QImage img("/Users/gael/Desktop/42.jpg");
+    img = img.convertToFormat(QImage::Format_RGB32);
+    _rift->setViewImage(img);
 }
 
 Remote::~Remote(void) {
@@ -201,23 +205,24 @@ void Remote::streamDataAvailable(void) {
         QByteArray data = _streamSocket->read(_streamImageSize);
         _streamImage->loadFromData(data);
         _mainWindow.setStreamImage(_streamImage);
+        if (_rift) {
+            _rift->setViewImage(*_streamImage);
+        }
         _streamSizeRead = false;
     }
 }
 
 void Remote::rift(void) {
     if (_rift) {
-        _riftTimer.stop();
         delete _rift;
         _rift = NULL;
     } else {
         _rift = new Rift();
-        _riftTimer.start();
+        _rift->setDelegate(this);
     }
 }
 
-void Remote::updateRift(void) {
-    OVR::Vector3f orientation = _rift->getOrientation();
+void Remote::riftOrientationUpdate(OVR::Vector3f orientation) {
     ParamsList params;
     params << QPair<QString, QString>("headYaw", QString::number(orientation.x))
     << QPair<QString, QString>("headPitch", QString::number(-orientation.y))

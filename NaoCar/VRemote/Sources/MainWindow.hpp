@@ -86,7 +86,7 @@ public:
     MainWindow(MainWindowDelegate* delegate);
     ~MainWindow(void);
     
-    //! Automatically search for a xbox gamepad
+    //! Automatically search for an xbox gamepad
     void chooseGamepad(void);
     void setGamepadId(int id);
     void gamepadButtonPressed(unsigned int button);
