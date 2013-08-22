@@ -3,5 +3,11 @@
         <file>waiting-streaming.png</file>
         <file>qt/etc/qt.conf</file>
         <file>connect.png</file>
+        <file>Frontward.xml</file>
+        <file>Backward.xml</file>
+        <file>Stopped.xml</file>
+        <file>Front.xml</file>
+        <file>Left.xml</file>
+        <file>Right.xml</file>
     </qresource>
 </RCC>

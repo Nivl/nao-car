@@ -40,7 +40,12 @@ Remote::Remote()
   // Hardcode IP, until Bonjour browsing is fixed
   _naoAvailable = true;
   _naoUrl.setHost("192.168.1.34");
-  _naoUrl.setPort(60823);
+  _naoUrl.setPort(54767);
+  _flushRequestTimer = new QTimer(this);
+  _flushRequestTimer->setInterval(5);
+  _flushRequestTimer->start();
+  QObject::connect(_flushRequestTimer, SIGNAL(timeout()),
+                   this, SLOT(_flushPendingRequest()));
 }
 
 Remote::~Remote(void) {
@@ -172,7 +177,6 @@ void Remote::front(void) {
 void Remote::sendRequest(std::string requestStr,
                          std::string paramName,
                          std::string paramValue) {
-    QNetworkRequest request;
     QUrl newUrl = _naoUrl;
     newUrl.setPath(requestStr.c_str());
     if (!paramName.empty() && !paramValue.empty()) {
@@ -182,9 +186,17 @@ void Remote::sendRequest(std::string requestStr,
                                               paramValue.c_str()));
         newUrl.setQueryItems(params);
     }
-    request.setUrl(newUrl);
-    std::cout << "Sending request " << newUrl.toString().toStdString() << std::endl;
-    _networkManager.get(request);
+    _pendingRequest << newUrl;
+}
+
+void Remote::_flushPendingRequest() {
+    while (!_pendingRequest.empty()) {
+        QUrl url = _pendingRequest.first();
+        QNetworkRequest request;
+        request.setUrl(url);
+        _networkManager.get(request);
+        _pendingRequest.removeFirst();
+    }
 }
 
 void Remote::networkRequestFinished(QNetworkReply* reply) {

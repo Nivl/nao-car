@@ -11,6 +11,7 @@
 # include <QNetworkReply>
 # include <QUrl>
 # include <QTcpSocket>
+# include <QTimer>
 # include <Leap.h>
 
 # include <map>
@@ -67,14 +68,16 @@ public:
     void sendRequest(std::string request,
                      std::string paramName="",
                      std::string paramValue="");
-    
+                                               
     public slots:
     void networkRequestFinished(QNetworkReply* reply);
     
     private slots:
     void streamDataAvailable();
+    void _flushPendingRequest();
     
 private:
+
     MainWindow		_mainWindow;
     Bonjour		_bonjour;
     bool			_naoAvailable;
@@ -87,6 +90,8 @@ private:
     bool			_streamSizeRead;
     Controller		*_leapController;
     LeapListener		*_leapListener;
+    QList<QUrl>   _pendingRequest;
+    QTimer        *_flushRequestTimer;
 };
 
 #endif
