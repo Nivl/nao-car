@@ -54,12 +54,16 @@ Vector3f Rift::getOrientation(void) {
 }
 
 void Rift::setViewImage(const QImage& image) {
-    _view->setViewImage(image);
+    if (_view) {
+        _view->setViewImage(image);  
+    }
 }
 
 void Rift::_update(void) {
     if (_delegate) {
         _delegate->riftOrientationUpdate(getOrientation());
     }
-    _view->repaint();
+    if (_view) {
+        _view->repaint();
+    }
 }

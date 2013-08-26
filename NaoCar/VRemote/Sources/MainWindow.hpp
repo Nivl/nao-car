@@ -97,6 +97,7 @@ public:
     
     public slots:
     void connectAction(void);
+    void disconnectAction(void);
     void hostInputEntered(void);
     void riftAction(void);
     void viewChanged(int index);

@@ -97,7 +97,7 @@ private:
     Controller*             _leapController;
     LeapListener*           _leapListener;
     QList<QUrl>             _pendingRequest;
-    QTimer*                 _flushRequestTimer;
+    QTimer                  _flushRequestTimer;
 };
 
 #endif
