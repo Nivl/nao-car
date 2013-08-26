@@ -10,7 +10,6 @@
 
 class MainWindowDelegate {
 public:
-
     virtual ~MainWindowDelegate(void) {}
     
     virtual void connect(void) = 0;
@@ -22,8 +21,12 @@ public:
     virtual void autoDriving(void) = 0;
     virtual void steeringWheelAction(void) = 0;
     virtual void funAction(void) = 0;
-    virtual void steeringWheelDirectionChanged(MainWindow::Direction direction) = 0;
-    virtual void moveChanged(MainWindow::Move move) = 0;
+    virtual void frontward(void) = 0;
+    virtual void backward(void) = 0;
+    virtual void stop(void) = 0;
+    virtual void left(void) = 0;
+    virtual void right(void) = 0;
+    virtual void front(void) = 0;
     virtual void rift(void) = 0;
 };
 

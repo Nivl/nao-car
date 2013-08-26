@@ -3,6 +3,7 @@
 //  NaoCar VRemote
 //
 
+#define GL_GLEXT_PROTOTYPES
 #include "VRView.hpp"
 
 #include <iostream>

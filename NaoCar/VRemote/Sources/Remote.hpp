@@ -12,6 +12,7 @@
 # include <QUrl>
 # include <QTcpSocket>
 # include <QTimer>
+# include <Leap.h>
 
 # include <map>
 
@@ -22,6 +23,9 @@
 # include "Rift.hpp"
 
 # define NAOCAR_BONJOUR_SERVICE_NAME "nao-car"
+using namespace Leap;
+
+class LeapListener;
 
 class Remote : public QObject, public MainWindowDelegate, public BonjourDelegate, public RiftDelegate  {
     Q_OBJECT
@@ -46,33 +50,38 @@ public:
                                  unsigned short port=0);
     
     // Main window delegate functions
-    void connect(void);
-    void hostEntered(std::string host);
-    void disconnect(void);
-    void viewChanged(int index);
-    void carambarAction(void);
-    void talk(std::string message);
-    void autoDriving(void);
-    void steeringWheelAction(void);
-    void funAction(void);
-    void steeringWheelDirectionChanged(MainWindow::Direction direction);
-    void moveChanged(MainWindow::Move move);
-    void rift(void);
-    
+    virtual void connect(void);
+    virtual void hostEntered(std::string host);
+    virtual void disconnect(void);
+    virtual void viewChanged(int index);
+    virtual void carambarAction(void);
+    virtual void talk(std::string message);
+    virtual void autoDriving(void);
+    virtual void steeringWheelAction(void);
+    virtual void funAction(void);
+    virtual void frontward(void);
+    virtual void backward(void);
+    virtual void stop(void);
+    virtual void left(void);
+    virtual void right(void);
+    virtual void front(void);
+    virtual void rift(void);
+
     // Rift delegate functions
     virtual void riftOrientationUpdate(OVR::Vector3f orientation);
-    
+
     typedef QList<QPair<QString, QString> > ParamsList;
-    
+
     void sendRequest(std::string request,
                      ParamsList const & params=ParamsList());
-    
+
     public slots:
     void networkRequestFinished(QNetworkReply* reply);
     
     private slots:
-    void streamDataAvailable(void);
-    
+    void streamDataAvailable();
+    void _flushPendingRequest();
+
 private:
     MainWindow              _mainWindow;
     Bonjour                 _bonjour;
@@ -85,6 +94,10 @@ private:
     QImage*                 _streamImage;
     bool                    _streamSizeRead;
     Rift*                   _rift;
+    Controller*             _leapController;
+    LeapListener*           _leapListener;
+    QList<QUrl>             _pendingRequest;
+    QTimer*                 _flushRequestTimer;
 };
 
 #endif
