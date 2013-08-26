@@ -78,52 +78,50 @@ void LeapListener::onExit(const Controller&) {
 void LeapListener::onFrame(const Controller& controller) {
     const Frame frame = controller.frame();
     HandList hands = frame.hands();
-    if (!hands.isEmpty()) {
-        HandDirection direction = _computeHandDirection(hands);
-        HandOrientation orientation = _computeHandOrientation(hands);
+    HandDirection direction = _computeHandDirection(hands);
+    HandOrientation orientation = _computeHandOrientation(hands);
 
-        qDebug() << "Direction" << metaObject()->enumerator(metaObject()->indexOfEnumerator("HandDirection")).valueToKey(direction);
-        qDebug() << "Orientation" << metaObject()->enumerator(metaObject()->indexOfEnumerator("HandOrientation")).valueToKey(orientation);
+    //        qDebug() << "Direction" << metaObject()->enumerator(metaObject()->indexOfEnumerator("HandDirection")).valueToKey(direction);
+    //        qDebug() << "Orientation" << metaObject()->enumerator(metaObject()->indexOfEnumerator("HandOrientation")).valueToKey(orientation);
 
-        for (int i = 0; i < hands.count(); ++i) {
-            Hand hand = hands[i];
-            const Vector palmPosition = hand.palmPosition();
-            const Vector normal = hand.palmNormal();
-            const Vector direction = hand.direction();
-            float x = palmPosition.x,
-                    y = palmPosition.y,
-                    z = palmPosition.z,
-                    pitch = direction.pitch() * RAD_TO_DEG,
-                    roll = normal.roll() * RAD_TO_DEG,
-                    yaw = direction.yaw() * RAD_TO_DEG;
-            qDebug() << i << ":" << z;
+    //        for (int i = 0; i < hands.count(); ++i) {
+    //            Hand hand = hands[i];
+    //            const Vector palmPosition = hand.palmPosition();
+    //            const Vector normal = hand.palmNormal();
+    //            const Vector direction = hand.direction();
+    //            float x = palmPosition.x,
+    //                    y = palmPosition.y,
+    //                    z = palmPosition.z,
+    //                    pitch = direction.pitch() * RAD_TO_DEG,
+    //                    roll = normal.roll() * RAD_TO_DEG,
+    //                    yaw = direction.yaw() * RAD_TO_DEG;
+    //            qDebug() << "pitch" << pitch << "roll" << roll << "yaw" << yaw;
+    //        }
+
+    if (direction == _currentHandDirection) {
+        if (_lastLaunchedDirection != _currentHandDirection &&
+                _lastChangedDirection.elapsed() >= MINIMUM_MILLISECOND_STATE &&
+                _directionMap.contains(_currentHandDirection)) {
+            (_delegate->*_directionMap[_currentHandDirection])();
+            qDebug() << "Direction" << metaObject()->enumerator(metaObject()->indexOfEnumerator("HandDirection")).valueToKey(direction);
+            _lastLaunchedDirection = _currentHandDirection;
         }
+    } else {
+        _currentHandDirection = direction;
+        _lastChangedDirection.restart();
+    }
 
-//        if (direction == _currentHandDirection) {
-//            if (_lastLaunchedDirection != _currentHandDirection &&
-//                    _lastChangedDirection.elapsed() >= MINIMUM_MILLISECOND_STATE &&
-//                    _directionMap.contains(_currentHandDirection)) {
-//                (_delegate->*_directionMap[_currentHandDirection])();
-//                qDebug() << "Direction" << metaObject()->enumerator(metaObject()->indexOfEnumerator("HandDirection")).valueToKey(direction);
-//                _lastLaunchedDirection = _currentHandDirection;
-//            }
-//        } else {
-//            _currentHandDirection = direction;
-//            _lastChangedDirection.restart();
-//        }
-
-//        if (orientation == _currentHandOrientation) {
-//            if (_lastLaunchedOrientation != _currentHandOrientation &&
-//                    _lastChangedOrientation.elapsed() >= MINIMUM_MILLISECOND_STATE &&
-//                    _orientationMap.contains(_currentHandOrientation)) {
-//                (_delegate->*_orientationMap[_currentHandOrientation])();
-//                qDebug() << "Orientation" << metaObject()->enumerator(metaObject()->indexOfEnumerator("HandOrientation")).valueToKey(orientation);
-//                _lastLaunchedOrientation = _currentHandOrientation;
-//            }
-//        } else {
-//            _currentHandOrientation = orientation;
-//            _lastChangedOrientation.restart();
-//        }
+    if (orientation == _currentHandOrientation) {
+        if (_lastLaunchedOrientation != _currentHandOrientation &&
+                _lastChangedOrientation.elapsed() >= MINIMUM_MILLISECOND_STATE &&
+                _orientationMap.contains(_currentHandOrientation)) {
+            (_delegate->*_orientationMap[_currentHandOrientation])();
+            qDebug() << "Orientation" << metaObject()->enumerator(metaObject()->indexOfEnumerator("HandOrientation")).valueToKey(orientation);
+            _lastLaunchedOrientation = _currentHandOrientation;
+        }
+    } else {
+        _currentHandOrientation = orientation;
+        _lastChangedOrientation.restart();
     }
 }
 
@@ -150,5 +148,5 @@ LeapListener::_computeHandOrientation(HandList const& hands) const {
         if (current.first.matchConfiguration(hands))
             return current.second;
     }
-    return NoOrientation;
+    return Front;
 }
