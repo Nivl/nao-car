@@ -12,7 +12,7 @@
 # include <QUrl>
 # include <QTcpSocket>
 # include <QTimer>
-# include <leap/Leap.h>
+# include <Leap/Leap.h>
 
 # include <map>
 

@@ -84,6 +84,7 @@ FILE (
 SET (
     REMOTE_APP_RESOURCES
     ${CMAKE_SOURCE_DIR}/Resources/Ui.qrc
+    ${CMAKE_SOURCE_DIR}/Resources/Qt.qrc
 )
 
 QT4_WRAP_UI (
