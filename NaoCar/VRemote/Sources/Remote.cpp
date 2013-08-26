@@ -45,14 +45,6 @@ Remote::Remote()
     _flushRequestTimer->start();
     QObject::connect(_flushRequestTimer, SIGNAL(timeout()),
                      this, SLOT(_flushPendingRequest()));
-
-    _rift = new Rift();
-    
-    // Load debug image for the Rift
-    // For debug purpose: load texture image
-    QImage img("/Users/gael/Desktop/42.jpg");
-    img = img.convertToFormat(QImage::Format_RGB32);
-    _rift->setViewImage(img);
 }
 
 Remote::~Remote(void) {

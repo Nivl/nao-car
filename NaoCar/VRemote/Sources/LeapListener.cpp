@@ -78,7 +78,7 @@ void LeapListener::onExit(const Controller&) {
 void LeapListener::onFrame(const Controller& controller) {
     const Frame frame = controller.frame();
     HandList hands = frame.hands();
-    if (!hands.empty()) {
+    if (!hands.isEmpty()) {
         HandDirection direction = _computeHandDirection(hands);
         HandOrientation orientation = _computeHandOrientation(hands);
 

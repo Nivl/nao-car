@@ -15,7 +15,7 @@
 # include <QTime>
 # include <QHash>
 # include <QList>
-# include <Leap.h>
+# include <Leap/Leap.h>
 # include <QMetaEnum>
 
 # include "PositionConfiguration.hpp"

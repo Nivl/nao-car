@@ -21,8 +21,12 @@ ENDIF ()
 
 SET (CMAKE_CXX_FLAGS "-std=c++0x -Wall -Wextra -Wno-ignored-qualifiers")
 
-
 SET (CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/../CMakeModules ${CMAKE_MODULE_PATH})
+
+# Add /usr/local/include to search paths (XCode 4.3 doesn't include it by default)
+IF (APPLE)
+    INCLUDE_DIRECTORIES (/usr/local/include)
+ENDIF (APPLE)
 
 ###############################################################################
 # Dependencies
