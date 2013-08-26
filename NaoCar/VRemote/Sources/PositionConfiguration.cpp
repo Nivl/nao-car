@@ -128,6 +128,5 @@ bool PositionConfiguration::_matchConfiguration(Hand const& hand,
         RETURN_IF_FALSE((this->*f)(roll, d.roll()), "Roll");
     if (d.isYawRequested())
         RETURN_IF_FALSE((this->*f)(yaw, d.yaw()), "Yaw");
-    // qDebug() << type << x << d.x() << "" << z << d.z();
     return true;
 }
