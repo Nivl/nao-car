@@ -27,69 +27,69 @@
 
 namespace AL
 {
-  class ALBroker;
+class ALBroker;
 }
 
 class StreamServer : public Network::ITcpServerDelegate,
-		     public Network::ITcpSocketDelegate
+        public Network::ITcpSocketDelegate
 {
 public:
-  enum Camera {
-    Front,
-    Bottom,
-    Opencv
-  };
+    enum Camera {
+        Front,
+        Bottom,
+        Opencv
+    };
 
-  StreamServer(boost::asio::io_service* ioService);
-  virtual ~StreamServer();
+    StreamServer(boost::asio::io_service* ioService);
+    virtual ~StreamServer();
 
-  int	run();
-  void	stop();
+    int	run();
+    void	stop();
 
-  virtual void	newConnection(Network::ATcpServer* sender,
-			     Network::ATcpSocket* socket);
-  virtual void	connected(Network::ASocket* sender,
-			    Network::ASocket::Error error);
-  virtual void	readFinished(Network::ASocket* sender,
-			       Network::ASocket::Error error,
-			       size_t bytesRead);
-  virtual void	readFinished(Network::ASocket* sender,
-			       Network::ASocket::Error error,
-			       std::string const& buffer);
-  virtual void	writeFinished(Network::ASocket* sender,
-				Network::ASocket::Error error,
-				size_t bytesWritten);
-  void	setImageData(char *data, size_t size);
-  void	setOpencvData(char *data, size_t size);
-  void	setCamera(Camera type);
+    virtual void	newConnection(Network::ATcpServer* sender,
+                                  Network::ATcpSocket* socket);
+    virtual void	connected(Network::ASocket* sender,
+                              Network::ASocket::Error error);
+    virtual void	readFinished(Network::ASocket* sender,
+                                 Network::ASocket::Error error,
+                                 size_t bytesRead);
+    virtual void	readFinished(Network::ASocket* sender,
+                                 Network::ASocket::Error error,
+                                 std::string const& buffer);
+    virtual void	writeFinished(Network::ASocket* sender,
+                                  Network::ASocket::Error error,
+                                  size_t bytesWritten);
+    void	setImageData(char *data, size_t size);
+    void	setOpencvData(char *data, size_t size);
+    void	setCamera(Camera type);
 
 private:
-  struct Packet {
-    char	*data;
-    size_t	size;
-  };
+    struct Packet {
+        char	*data;
+        size_t	size;
+    };
 
-  void	_writeData(Network::ATcpSocket* target,
-		   char* data, size_t size);
-  void	_setPipeline(std::string const& pipeline);
-  void	_startPipeline();
-  void	_stopPipeline();
-  void	mainThread();
+    void	_writeData(Network::ATcpSocket* target,
+                       char* data, size_t size);
+    void	_setPipeline(std::string const& pipeline);
+    void	_startPipeline();
+    void	_stopPipeline();
+    void	mainThread();
 
-  boost::asio::io_service	*_ioService;
-  boost::thread			*_mainThread;
-  Network::BoostTcpServer	*_tcpServer;
-  std::list<Network::ATcpSocket*>	_clients;
-  std::mutex				_clientsMutex;
-  std::list<std::pair<Network::ATcpSocket*, Packet*> > _toWrite;
-  std::atomic<bool>		_stop;
-  GstElement			*_pipeline;
-  char				*_imageData;
-  uint64_t			_imageSize;
-  std::atomic<bool>		_imageChanged;
-  std::mutex			_imageMutex;
-  std::atomic<char>		_currentCamera;
-  GstElement			*_gstAppsink;
+    boost::asio::io_service	*_ioService;
+    boost::thread			*_mainThread;
+    Network::BoostTcpServer	*_tcpServer;
+    std::list<Network::ATcpSocket*>	_clients;
+    std::mutex				_clientsMutex;
+    std::list<std::pair<Network::ATcpSocket*, Packet*> > _toWrite;
+    std::atomic<bool>		_stop;
+    GstElement			*_pipeline;
+    char				*_imageData;
+    uint64_t			_imageSize;
+    std::atomic<bool>		_imageChanged;
+    std::mutex			_imageMutex;
+    std::atomic<char>		_currentCamera;
+    GstElement			*_gstAppsink;
 };
 
 #endif

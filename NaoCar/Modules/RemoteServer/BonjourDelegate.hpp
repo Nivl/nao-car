@@ -8,11 +8,11 @@
 
 class BonjourDelegate {
 public:
-  virtual ~BonjourDelegate(void) {}
+    virtual ~BonjourDelegate(void) {}
 
-  virtual void serviceRegistered(bool error,
-				 std::string const& name="")
-  { (void)error; (void)name; }
+    virtual void serviceRegistered(bool error,
+                                   std::string const& name="")
+    { (void)error; (void)name; }
 };
 
 #endif

@@ -1,3 +1,7 @@
+//
+// VoiceSpearker.hpp
+// NaoCar
+//
 
 #ifndef _VOICE_SPEAKER_
 # define _VOICE_SPEAKER_
@@ -11,17 +15,17 @@
 
 class VoiceSpeaker {
 public:
-  VoiceSpeaker(boost::shared_ptr<AL::ALBroker>& broker);
-  ~VoiceSpeaker();
+    VoiceSpeaker(boost::shared_ptr<AL::ALBroker>& broker);
+    ~VoiceSpeaker();
 
-  void loop();
-  void say(const std::string& message, const std::string& language="French");
+    void loop();
+    void say(const std::string& message, const std::string& language="French");
 private:
-  AL::ALTextToSpeechProxy       _t2p;
-  std::list<std::pair<std::string, std::string> >	_messages;
-  std::mutex			_mutex;
-  std::thread*			_thread;
-  bool				_stop;
+    AL::ALTextToSpeechProxy       _t2p;
+    std::list<std::pair<std::string, std::string> >	_messages;
+    std::mutex			_mutex;
+    std::thread*			_thread;
+    bool				_stop;
 };
 
 #endif
