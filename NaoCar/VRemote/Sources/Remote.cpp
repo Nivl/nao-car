@@ -15,12 +15,14 @@
 #include <QImageReader>
 #include <QApplication>
 
+#include "LeapListener.hpp"
+
 Remote::Remote()
-: _mainWindow(this),
-_bonjour(this), _naoAvailable(false), _naoUrl(), _networkManager(),
-_connected(false), _streamSocket(new QTcpSocket(this)),
-_streamImageSize(-1), _streamImage(new QImage()), _streamSizeRead(false),
-_rift(NULL) {
+    : _mainWindow(this),
+      _bonjour(this), _naoAvailable(false), _naoUrl(), _networkManager(),
+      _connected(false), _streamSocket(new QTcpSocket(this)),
+      _streamImageSize(-1), _streamImage(new QImage()), _streamSizeRead(false),
+      _rift(NULL), _leapController(new Controller()), _leapListener(new LeapListener(this)) {
     // Launch Bonjour to automatically detect Nao on a local network
     if (!_bonjour.browseServices("_http._tcp")) {
         std::cerr << "Cannot browse Bonjour services" << std::endl;
@@ -33,18 +35,22 @@ _rift(NULL) {
                      this, SLOT(streamDataAvailable()));
     _streamImage->load(":/waiting-streaming.png");
     _mainWindow.setStreamImage(_streamImage);
-    
-    //return;
-    _rift = new Rift();
-    
-    // Load debug image for the Rift
-    // For debug purpose: load texture image
-    QImage img("/Users/gael/Desktop/42.jpg");
-    img = img.convertToFormat(QImage::Format_RGB32);
-    _rift->setViewImage(img);
+
+    // Init Leap
+    _leapController->addListener(*_leapListener);
+
+    // Timer for multithread request
+    _flushRequestTimer = new QTimer(this);
+    _flushRequestTimer->setInterval(5);
+    _flushRequestTimer->start();
+    QObject::connect(_flushRequestTimer, SIGNAL(timeout()),
+                     this, SLOT(_flushPendingRequest()));
 }
 
 Remote::~Remote(void) {
+    _leapController->removeListener(*_leapListener);
+    delete _leapController;
+    delete _leapListener;
     delete _streamImage;
 }
 
@@ -146,27 +152,40 @@ void Remote::funAction(void) {
         sendRequest("/fun-action");
 }
 
-void Remote::steeringWheelDirectionChanged(MainWindow::Direction direction) {
+void Remote::frontward(void) {
     if (!_naoAvailable)
         return ;
-    if (direction == MainWindow::Left) {
-        sendRequest("/turn-left");
-    } else if (direction == MainWindow::Right) {
-        sendRequest("/turn-right");
-    } else if (direction == MainWindow::Front) {
-        sendRequest("/turn-front");
-    }
+    sendRequest("/go-frontwards");
 }
 
-void Remote::moveChanged(MainWindow::Move move) {
+void Remote::backward(void) {
     if (!_naoAvailable)
         return ;
-    if (move == MainWindow::Frontwards)
-        sendRequest("/go-frontwards");
-    else if (move == MainWindow::Backwards)
-        sendRequest("/go-backwards");
-    else if (move == MainWindow::Stopped)
-        sendRequest("/stop");
+    sendRequest("/go-backwards");
+}
+
+void Remote::stop(void) {
+    if (!_naoAvailable)
+        return ;
+    sendRequest("/stop");
+}
+
+void Remote::left(void) {
+    if (!_naoAvailable)
+        return ;
+    sendRequest("/turn-left");
+}
+
+void Remote::right(void) {
+    if (!_naoAvailable)
+        return ;
+    sendRequest("/turn-right");
+}
+
+void Remote::front(void) {
+    if (!_naoAvailable)
+        return ;
+    sendRequest("/turn-front");
 }
 
 void Remote::sendRequest(std::string requestStr,
@@ -177,9 +196,17 @@ void Remote::sendRequest(std::string requestStr,
     if (!params.empty()) {
         newUrl.setQueryItems(params);
     }
-    request.setUrl(newUrl);
-    std::cout << "Sending request " << newUrl.toString().toStdString() << std::endl;
-    _networkManager.get(request);
+    _pendingRequest << newUrl;
+}
+
+void Remote::_flushPendingRequest() {
+    while (!_pendingRequest.empty()) {
+        QUrl url = _pendingRequest.first();
+        QNetworkRequest request;
+        request.setUrl(url);
+        _networkManager.get(request);
+        _pendingRequest.removeFirst();
+    }
 }
 
 void Remote::networkRequestFinished(QNetworkReply* reply) {
@@ -187,7 +214,7 @@ void Remote::networkRequestFinished(QNetworkReply* reply) {
         qDebug() << reply->errorString();
     } else {
         QByteArray data = reply->readAll();
-        
+
         if (data.startsWith("stream-port:")) {
             _streamSocket->connectToHost(_naoUrl.host(), data.mid(12).toInt());
         }
@@ -196,12 +223,12 @@ void Remote::networkRequestFinished(QNetworkReply* reply) {
 
 void Remote::streamDataAvailable(void) {
     if (_streamSizeRead == false &&
-        (quint64)_streamSocket->bytesAvailable() >= sizeof(_streamImageSize)) {
+            (quint64)_streamSocket->bytesAvailable() >= sizeof(_streamImageSize)) {
         _streamSocket->read((char*)&_streamImageSize, sizeof(_streamImageSize));
         _streamSizeRead = true;
     }
     if (_streamSizeRead == true &&
-        _streamSocket->bytesAvailable() >= _streamImageSize) {
+            _streamSocket->bytesAvailable() >= _streamImageSize) {
         QByteArray data = _streamSocket->read(_streamImageSize);
         _streamImage->loadFromData(data);
         _mainWindow.setStreamImage(_streamImage);
@@ -225,7 +252,7 @@ void Remote::rift(void) {
 void Remote::riftOrientationUpdate(OVR::Vector3f orientation) {
     ParamsList params;
     params << QPair<QString, QString>("headYaw", QString::number(orientation.x))
-    << QPair<QString, QString>("headPitch", QString::number(-orientation.y))
-    << QPair<QString, QString>("maxSpeed", QString::number(0.5));
+            << QPair<QString, QString>("headPitch", QString::number(-orientation.y))
+            << QPair<QString, QString>("maxSpeed", QString::number(0.5));
     sendRequest("/setHead", params);
 }

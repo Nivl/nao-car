@@ -21,8 +21,12 @@ ENDIF ()
 
 SET (CMAKE_CXX_FLAGS "-std=c++0x -Wall -Wextra -Wno-ignored-qualifiers")
 
-
 SET (CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/../CMakeModules ${CMAKE_MODULE_PATH})
+
+# Add /usr/local/include to search paths (XCode 4.3 doesn't include it by default)
+IF (APPLE)
+    INCLUDE_DIRECTORIES (/usr/local/include)
+ENDIF (APPLE)
 
 ###############################################################################
 # Dependencies
@@ -33,7 +37,7 @@ FIND_PACKAGE (SFML 2 REQUIRED system window graphics audio network)
 
 # Find and configure Qt
 FIND_PACKAGE (OpenGL REQUIRED)
-FIND_PACKAGE (Qt4 COMPONENTS QtCore QtGui QtNetwork QtOpenGL REQUIRED)
+FIND_PACKAGE (Qt4 COMPONENTS QtCore QtGui QtNetwork QtOpenGL QtXml REQUIRED)
 INCLUDE (${QT_USE_FILE})
 ADD_DEFINITIONS (${QT_DEFINITIONS})
 
@@ -43,8 +47,8 @@ INCLUDE_DIRECTORIES (${OCULUS_SDK_INCLUDE_DIRS})
 
 # Oculus SDK dependencies for Linux:
 IF (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-    FIND_PACKAGE (Xinerama REQUIRED)
-    FIND_PACKAGE (UDev REQUIRED)
+    # FIND_PACKAGE (Xinerama REQUIRED)
+    # FIND_PACKAGE (UDev REQUIRED)
 ENDIF (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 
 # Oculus SDK dependencies for Mac OSX:
@@ -57,6 +61,9 @@ ENDIF (APPLE)
 INCLUDE_DIRECTORIES (${CMAKE_CURRENT_BINARY_DIR} Sources)
 
 FIND_LIBRARY (DNS_SD_LIBRARIES dns_sd)
+FIND_LIBRARY (LEAP_LIBRARIES Leap)
+FIND_LIBRARY (PTHREAD_LIBRARIES pthread)
+FIND_LIBRARY (UDEV_LIBRARIES udev)
 
 
 FILE (
@@ -105,11 +112,13 @@ ADD_EXECUTABLE (
 TARGET_LINK_LIBRARIES (
 	Remote
 	${SFML_LIBRARIES}
-    ${OPENGL_LIBRARIES}
+        ${OPENGL_LIBRARIES}
 	${QT_QTCORE_LIBRARIES}
 	${QT_QTGUI_LIBRARIES}
 	${QT_QTNETWORK_LIBRARIES}
-    ${QT_QTOPENGL_LIBRARIES}
+	${QT_QTXML_LIBRARIES}
+        ${QT_QTOPENGL_LIBRARIES}
+	${LEAP_LIBRARIES}
 	${DNS_SD_LIBRARIES}
 	${OCULUS_SDK_LIBRARIES}
 )
@@ -120,6 +129,7 @@ IF (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
         Remote
         ${XINERAMA_LIBRARIES}
         ${UDEV_LIBRARIES}
+        ${PTHREAD_LIBRARIES}
     )
 ENDIF (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 
