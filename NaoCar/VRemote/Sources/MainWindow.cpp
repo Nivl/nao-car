@@ -20,6 +20,8 @@ _steeringWheelDirection(Front), _move(Stopped) {
     _windowUi.setupUi(&_window);
     connect(_windowUi.actionConnect, SIGNAL(triggered()),
             this, SLOT(connectAction()));
+    connect(_windowUi.actionDisconnect, SIGNAL(triggered()),
+            this, SLOT(disconnectAction()));
     connect(_windowUi.hostInput, SIGNAL(returnPressed()),
             this, SLOT(hostInputEntered()));
     connect(_windowUi.actionRift, SIGNAL(triggered()),
@@ -120,6 +122,11 @@ QMainWindow* MainWindow::getWindow(void) {
 void MainWindow::connectAction(void) {
     if (_delegate)
         _delegate->connect();
+}
+
+void MainWindow::disconnectAction(void) {
+    if (_delegate)
+        _delegate->disconnect();
 }
 
 void MainWindow::hostInputEntered(void) {

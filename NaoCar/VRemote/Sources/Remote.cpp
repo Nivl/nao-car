@@ -40,10 +40,9 @@ Remote::Remote()
     _leapController->addListener(*_leapListener);
 
     // Timer for multithread request
-    _flushRequestTimer = new QTimer(this);
-    _flushRequestTimer->setInterval(5);
-    _flushRequestTimer->start();
-    QObject::connect(_flushRequestTimer, SIGNAL(timeout()),
+    _flushRequestTimer.setInterval(5);
+    _flushRequestTimer.start();
+    QObject::connect(&_flushRequestTimer, SIGNAL(timeout()),
                      this, SLOT(_flushPendingRequest()));
 }
 
