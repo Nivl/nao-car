@@ -29,11 +29,11 @@ static bool urlDecode(const std::string& in, std::string& out);
 
 RemoteServer::RemoteServer(boost::shared_ptr<AL::ALBroker> broker,
                            const std::string &name) :
-    AL::ALModule(broker, name), _ioService(new boost::asio::io_service()),
+    AL::ALModule(broker, name), _broker(broker), _ioService(new boost::asio::io_service()),
     _bonjour(*_ioService, this), _networkThread(NULL), _tcpServer(NULL),
     _clients(), _toWrite(),
     _streamServer(), _streamPort(), _isListening(false),
-    _drive(broker), _autoDriving(NULL), _voiceSpeaker(broker),
+    _drive(NULL), _autoDriving(NULL), _voiceSpeaker(broker),
     _leds(getParentBroker()), _memProxy(getParentBroker()),
     _speechRecognition(getParentBroker()), _dcm(getParentBroker()),
     _lastEventTime(), _isEventOn()
@@ -192,6 +192,10 @@ void RemoteServer::sensorEvent(const std::string& eventName,
             _doubleClickEvent(eventName, now);
         }
         _lastEventTime[eventName] = now;
+        if (eventName == "MiddleTactilTouched") {
+            std::map<std::string, std::string> params;
+            autoDriving(NULL, params);
+        }
     }
 }
 
@@ -211,9 +215,6 @@ void RemoteServer::_doubleClickEvent(const std::string& event, int now) {
             && _autoDriving) {
         _voiceSpeaker.say("Calibration", "English");
         _autoDriving->calibration();
-    } else if (event == "MiddleTactilTouched") {
-        std::map<std::string, std::string> params;
-        autoDriving(NULL, params);
     }
 }
 
@@ -337,6 +338,19 @@ void	RemoteServer::_writeData(Network::ATcpSocket* target,
         target->write(buffer->str().c_str(), buffer->str().size());
 }
 
+bool    RemoteServer::_initDriveProxy() {
+    if (_drive)
+        return true;
+    try {
+        _drive = new DriveProxy(_broker);
+    } catch (...) {
+        _voiceSpeaker.say("Could not launch drive module", "English");
+        return false;
+    }
+    return true;
+}
+
+
 void	RemoteServer::defaultParams(Network::ATcpSocket* sender,
                                     std::map<std::string, std::string> & params) {
     for (auto it = params.begin(); it != params.end(); ++it)
@@ -368,70 +382,92 @@ void	RemoteServer::getStreamPort(Network::ATcpSocket* sender,
 
 void	RemoteServer::begin(Network::ATcpSocket* sender,
                             std::map<std::string,std::string>&) {
-    _drive.begin();
+    if (!_initDriveProxy())
+        return ;
+    _drive->begin();
     _writeHttpResponse(sender, boost::asio::const_buffer("", 0));
 }
 
 void	RemoteServer::end(Network::ATcpSocket* sender,
                           std::map<std::string,std::string>&) {
+    if (!_drive)
+        return ;
     _stopAutoDriving();
-    _drive.end();
+    _drive->end();
     _writeHttpResponse(sender, boost::asio::const_buffer("", 0));
 }
 
 void	RemoteServer::goFrontwards(Network::ATcpSocket* sender,
                                    std::map<std::string,std::string>&) {
-    _drive.goFrontwards();
+    if (!_drive)
+        return ;
+    _drive->goFrontwards();
     _writeHttpResponse(sender, boost::asio::const_buffer("", 0));
 }
 
 void	RemoteServer::goBackwards(Network::ATcpSocket* sender,
                                   std::map<std::string,std::string>&) {
-    _drive.goBackwards();
+    if (!_drive)
+        return ;
+    _drive->goBackwards();
     _writeHttpResponse(sender, boost::asio::const_buffer("", 0));
 }
 
 void	RemoteServer::turnLeft(Network::ATcpSocket* sender,
                                std::map<std::string,std::string>&) {
-    _drive.turnLeft();
+    if (!_drive)
+        return ;
+    _drive->turnLeft();
     _writeHttpResponse(sender, boost::asio::const_buffer("", 0));
 }
 
 void	RemoteServer::turnRight(Network::ATcpSocket* sender,
                                 std::map<std::string,std::string>&) {
-    _drive.turnRight();
+    if (!_drive)
+        return ;
+    _drive->turnRight();
     _writeHttpResponse(sender, boost::asio::const_buffer("", 0));
 }
 
 void	RemoteServer::turnFront(Network::ATcpSocket* sender,
                                 std::map<std::string,std::string>&) {
-    _drive.turnFront();
+    if (!_drive)
+        return ;
+    _drive->turnFront();
     _writeHttpResponse(sender, boost::asio::const_buffer("", 0));
 }
 
 void	RemoteServer::stop(Network::ATcpSocket* sender,
                            std::map<std::string,std::string>&) {
-    _drive.stop();
+    if (!_drive)
+        return ;
+    _drive->stop();
     _writeHttpResponse(sender, boost::asio::const_buffer("", 0));
 }
 
 void	RemoteServer::steeringWheelAction(Network::ATcpSocket* sender,
                                           std::map<std::string,std::string>&) {
-    _drive.steeringWheelAction();
+    if (!_drive)
+        return ;
+    _drive->steeringWheelAction();
     _writeHttpResponse(sender, boost::asio::const_buffer("", 0));
 }
 
 void	RemoteServer::funAction(Network::ATcpSocket* sender,
                                 std::map<std::string,
                                 std::string>&) {
-    _drive.funAction();
+    if (!_drive)
+        return ;
+    _drive->funAction();
     _writeHttpResponse(sender, boost::asio::const_buffer("", 0));
 }
 
 void	RemoteServer::carambarAction(Network::ATcpSocket* sender,
                                      std::map<std::string,
                                      std::string>&) {
-    _drive.carambarAction();
+    if (!_drive)
+        return ;
+    _drive->carambarAction();
     _writeHttpResponse(sender, boost::asio::const_buffer("", 0));
 }
 
@@ -448,7 +484,9 @@ void	RemoteServer::setHead(Network::ATcpSocket* sender,
         pitch = atof(params["headPitch"].c_str());
     if (params["maxSpeed"] != "")
         speed = atof(params["maxSpeed"].c_str());
-    _drive.setHead(yaw, pitch, speed);
+    if (!_drive)
+        return ;
+    _drive->setHead(yaw, pitch, speed);
     _writeHttpResponse(sender, boost::asio::const_buffer("", 0));
 }
 
@@ -477,10 +515,12 @@ void	RemoteServer::changeView(Network::ATcpSocket* sender,
 
 void	RemoteServer::autoDriving(Network::ATcpSocket* sender,
                                   std::map<std::string, std::string>& params) {
+    if (!_initDriveProxy())
+        return ;
     if (!_autoDriving) {
         std::cout << std::endl << "Launching Auto-driving... ";
         try {
-            _autoDriving = new AutoDriving(_streamServer, &_drive);
+            _autoDriving = new AutoDriving(_streamServer, _drive);
         } catch(...) {
             _voiceSpeaker.say("I cannot drive by myself !", "English");
             _autoDriving = NULL;
@@ -492,8 +532,8 @@ void	RemoteServer::autoDriving(Network::ATcpSocket* sender,
         if (params["mode"] == "safe")
             _autoDriving->start(AutoDriving::Safe);
         else {
-            _drive.begin();
-            _drive.turnFront();
+            _drive->begin();
+            _drive->turnFront();
             _voiceSpeaker.say("auto driving", "English");
             _autoDriving->start(AutoDriving::Auto);
         }
@@ -511,8 +551,8 @@ void RemoteServer::_stopAutoDriving(void) {
         std::cout << "stopping auto driving" << std::endl;
         _autoDriving->stop();
         std::cout << "Auto-driving stopped" << std::endl;
-        _drive.releasePedal();
-        _drive.turnFront();
+        _drive->releasePedal();
+        _drive->turnFront();
         _voiceSpeaker.say("auto driving stopped", "English");
     }
 }
@@ -520,28 +560,28 @@ void RemoteServer::_stopAutoDriving(void) {
 void	RemoteServer::upShift(Network::ATcpSocket* sender,
                               std::map<std::string,
                               std::string>&) {
-    _drive.upShift();
+    _drive->upShift();
     _writeHttpResponse(sender, boost::asio::const_buffer("", 0));
 }
 
 void	RemoteServer::downShift(Network::ATcpSocket* sender,
                                 std::map<std::string,
                                 std::string>&) {
-    _drive.downShift();
+    _drive->downShift();
     _writeHttpResponse(sender, boost::asio::const_buffer("", 0));
 }
 
 void	RemoteServer::pushPedal(Network::ATcpSocket* sender,
                                 std::map<std::string,
                                 std::string>&) {
-    _drive.pushPedal();
+    _drive->pushPedal();
     _writeHttpResponse(sender, boost::asio::const_buffer("", 0));
 }
 
 void	RemoteServer::releasePedal(Network::ATcpSocket* sender,
                                    std::map<std::string,
                                    std::string>&) {
-    _drive.releasePedal();
+    _drive->releasePedal();
     _writeHttpResponse(sender, boost::asio::const_buffer("", 0));
 }
 

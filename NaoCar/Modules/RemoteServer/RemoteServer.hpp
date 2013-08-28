@@ -75,6 +75,8 @@ private:
     void    _startListening(const std::vector<std::string>& words);
     void    _stopListening(void);
 
+    bool    _initDriveProxy();
+
     void	_writeHttpResponse(Network::ATcpSocket* target,
                                boost::asio::const_buffer const& buffer,
                                std::string const& code = "200 OK", const std::string& contentType = "text/plain");
@@ -131,6 +133,7 @@ private:
     (Network::ATcpSocket* socket,
      std::map<std::string, std::string>&);
 
+    boost::shared_ptr<AL::ALBroker> _broker;
     boost::asio::io_service*    _ioService;
     Bonjour                     _bonjour;
     boost::thread*              _networkThread;
@@ -142,7 +145,7 @@ private:
     int             _streamPort;
     bool            _isListening;
 
-    DriveProxy      _drive;
+    DriveProxy      *_drive;
     AutoDriving*    _autoDriving;
     VoiceSpeaker    _voiceSpeaker;
 
