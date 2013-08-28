@@ -13,7 +13,7 @@
 
 # include <QList>
 # include <QPair>
-# include <leap/Leap.h>
+# include <Leap/Leap.h>
 # include <QDomElement>
 
 # include "HandDescription.hpp"

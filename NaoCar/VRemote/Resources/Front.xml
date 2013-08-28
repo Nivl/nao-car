@@ -1,22 +1,10 @@
 <configuration>
-  <hand> <!--- Left Hand -->
+  <hand> <!--- Hand -->
     <minimum>
-      <x>-500</x>
-      <y>180</y>
+      <roll>-15</roll>
     </minimum>
     <maximum>
-      <x>-50</x>
-      <y>270</y>
-    </maximum>
-    </hand>
-  <hand> <!--- Right Hand -->
-    <minimum>
-      <x>50</x>
-      <y>180</y>
-    </minimum>
-    <maximum>
-      <x>500</x>
-      <y>270</y>
+      <roll>15</roll>
     </maximum>
   </hand>
 </configuration>

@@ -30,7 +30,8 @@ void	StreamDisplay::paintEvent(QPaintEvent *event) {
     
     painter.setPen(Qt::blue);
     painter.setFont(QFont("Arial", 30));
-    if (_image)
+    if (_image) {
         painter.drawImage(rect(), *_image);
+    }
 }
 

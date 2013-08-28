@@ -12,7 +12,7 @@
 # include <QUrl>
 # include <QTcpSocket>
 # include <QTimer>
-# include <leap/Leap.h>
+# include <Leap/Leap.h>
 
 # include <map>
 
@@ -97,7 +97,7 @@ private:
     Controller*             _leapController;
     LeapListener*           _leapListener;
     QList<QUrl>             _pendingRequest;
-    QTimer*                 _flushRequestTimer;
+    QTimer                  _flushRequestTimer;
 };
 
 #endif
