@@ -203,6 +203,7 @@ void Remote::_flushPendingRequest() {
         QUrl url = _pendingRequest.first();
         QNetworkRequest request;
         request.setUrl(url);
+        qDebug() << url;
         _networkManager.get(request);
         _pendingRequest.removeFirst();
     }
