@@ -17,7 +17,7 @@ OPTION (
 OPTION (
 	NAO_LOCAL_COMPILATION
 	"module is compiled as a local module for the nao (ON or OFF)"
-	OFF
+        ON
 )
 
 OPTION (
@@ -43,7 +43,7 @@ IF (EXISTS ${GCC46_PATH})
    SET (CMAKE_CXX_COMPILER ${GCC46_PATH})
 ENDIF ()
 
-SET (CMAKE_CXX_FLAGS "-std=c++0x -Wall -Wextra -Wno-ignored-qualifiers")
+SET (CMAKE_CXX_FLAGS "-std=c++0x -Wall -Wextra -Wno-ignored-qualifiers -O -O3")
 
 
 

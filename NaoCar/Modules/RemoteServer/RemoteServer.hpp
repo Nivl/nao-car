@@ -7,6 +7,10 @@
 # define __REMOTE_SERVER_HPP__
 
 # include <alcommon/almodule.h>
+# include <alproxies/alledsproxy.h>
+# include <alproxies/almemoryproxy.h>
+# include <alproxies/alspeechrecognitionproxy.h>
+# include <alproxies/dcmproxy.h>
 # include <boost/asio.hpp>
 # include <boost/thread/thread.hpp>
 
@@ -58,7 +62,19 @@ public:
                                   Network::ASocket::Error error,
                                   size_t bytesWritten);
 
+    // Events
+    void sensorEvent(const std::string& eventName,
+                     const float& val,
+                     const std::string& subscriberIdentifier);
+    void speechRecognized(const std::string& eventName,
+                          const AL::ALValue& value,
+                          const std::string& subscriberIdentifier);
+
 private:
+    void    _doubleClickEvent(const std::string& event, int now);
+    void    _startListening(const std::vector<std::string>& words);
+    void    _stopListening(void);
+
     void	_writeHttpResponse(Network::ATcpSocket* target,
                                boost::asio::const_buffer const& buffer,
                                std::string const& code = "200 OK", const std::string& contentType = "text/plain");
@@ -101,8 +117,7 @@ private:
                        std::map<std::string, std::string>& params);
     void	autoDriving(Network::ATcpSocket* socket,
                         std::map<std::string,std::string>& params);
-    void	stopAutoDriving(Network::ATcpSocket* socket,
-                            std::map<std::string,std::string>& params);
+    void	_stopAutoDriving(void);
     void	upShift(Network::ATcpSocket* socket,
                     std::map<std::string,std::string>& params);
     void	downShift(Network::ATcpSocket* socket,
@@ -116,19 +131,28 @@ private:
     (Network::ATcpSocket* socket,
      std::map<std::string, std::string>&);
 
-    boost::asio::io_service		*_ioService;
-    Bonjour				_bonjour;
-    boost::thread				*_networkThread;
-    Network::BoostTcpServer		*_tcpServer;
-    std::list<Network::ATcpSocket*>	_clients;
-    static std::map<std::string, GetFunction>			  _getFunctions;
+    boost::asio::io_service*    _ioService;
+    Bonjour                     _bonjour;
+    boost::thread*              _networkThread;
+    Network::BoostTcpServer*    _tcpServer;
+    std::list<Network::ATcpSocket*>             _clients;
+    static std::map<std::string, GetFunction>   _getFunctions;
     std::list<std::pair<Network::ATcpSocket*, std::stringstream*> > _toWrite;
-    DriveProxy	_drive;
-    StreamServer	*_streamServer;
-    int		_streamPort;
-    AutoDriving*	_autoDriving;
+    StreamServer*   _streamServer;
+    int             _streamPort;
+    bool            _isListening;
 
-    VoiceSpeaker	_voiceSpeaker;
+    DriveProxy      _drive;
+    AutoDriving*    _autoDriving;
+    VoiceSpeaker    _voiceSpeaker;
+
+    AL::ALLedsProxy                 _leds;
+    AL::ALMemoryProxy               _memProxy;
+    AL::ALSpeechRecognitionProxy    _speechRecognition;
+    AL::DCMProxy                    _dcm;
+
+    std::map<std::string, int>      _lastEventTime;
+    std::map<std::string, bool>     _isEventOn;
 };
 
 #endif

@@ -31,7 +31,12 @@ RemoteServer::RemoteServer(boost::shared_ptr<AL::ALBroker> broker,
                            const std::string &name) :
     AL::ALModule(broker, name), _ioService(new boost::asio::io_service()),
     _bonjour(*_ioService, this), _networkThread(NULL), _tcpServer(NULL),
-    _drive(broker), _voiceSpeaker(broker)
+    _clients(), _toWrite(),
+    _streamServer(), _streamPort(), _isListening(false),
+    _drive(broker), _autoDriving(NULL), _voiceSpeaker(broker),
+    _leds(getParentBroker()), _memProxy(getParentBroker()),
+    _speechRecognition(getParentBroker()), _dcm(getParentBroker()),
+    _lastEventTime(), _isEventOn()
 {
     if (_getFunctions.size() == 0) {
         _getFunctions["/"] = &RemoteServer::defaultParams;
@@ -63,6 +68,18 @@ RemoteServer::RemoteServer(boost::shared_ptr<AL::ALBroker> broker,
     setModuleDescription("NaoCar Remote server");
 
     _autoDriving = NULL;
+
+    //_leds.fadeRGB("FaceLeds", 0x00FF00, 0.1);
+
+    functionName("sensorEvent", getName(), "A sensor has raised an event");
+    BIND_METHOD(RemoteServer::sensorEvent);
+
+    _memProxy.subscribeToEvent("RearTactilTouched",
+                               getName(), "sensorEvent");
+    _memProxy.subscribeToEvent("MiddleTactilTouched",
+                               getName(), "sensorEvent");
+    _memProxy.subscribeToEvent("FrontTactilTouched",
+                               getName(), "sensorEvent");
 }
 
 RemoteServer::~RemoteServer()
@@ -111,7 +128,7 @@ void	RemoteServer::newConnection(Network::ATcpServer* sender,
         return ;
     socket->setDelegate(this);
     _clients.push_back(socket);
-    std::cout << "Connection" << _clients.size() << std::endl;
+    std::cout << "Connection " << _clients.size() << std::endl;
     socket->readUntil("\r\n");
 }
 
@@ -130,7 +147,7 @@ void    RemoteServer::readFinished(Network::ASocket* sender,
     if (error) {
         _clients.remove(socket);
         delete socket;
-        std::cout << "Deconnection" << _clients.size() << std::endl;
+        std::cout << "Deconnection " << _clients.size() << std::endl;
     }
 }
 
@@ -144,7 +161,7 @@ void    RemoteServer::readFinished(Network::ASocket* sender,
     if (error) {
         _clients.remove(socket);
         delete socket;
-        std::cout << "Deconnection" << _clients.size() << std::endl;
+        std::cout << "Deconnection " << _clients.size() << std::endl;
     } else {
         _parseReceivedData(socket, buffer);
         socket->readUntil("\r\n");
@@ -154,12 +171,79 @@ void    RemoteServer::readFinished(Network::ASocket* sender,
 void    RemoteServer::writeFinished(Network::ASocket*,
                                     Network::ASocket::Error error,
                                     size_t len) {
-    std::cout << error << " " << len << std::endl;
     delete _toWrite.front().second;
     _toWrite.pop_front();
     if (_toWrite.size() >= 1)
         _toWrite.front().first->write(_toWrite.front().second->str().c_str(),
                                       _toWrite.front().second->str().size());
+}
+
+void RemoteServer::sensorEvent(const std::string& eventName,
+                               const float& val,
+                               const std::string& subscriberIdentifier) {
+    int now = _dcm.getTime(0);
+
+    _isEventOn[eventName] = val;
+    if (_lastEventTime[eventName] == 0) {
+        _lastEventTime[eventName] = now - 10000;
+    }
+    if (val) {
+        if (now - _lastEventTime[eventName] < 500) {
+            _doubleClickEvent(eventName, now);
+        }
+        _lastEventTime[eventName] = now;
+    }
+}
+
+void RemoteServer::speechRecognized(const std::string& eventName,
+                                    const AL::ALValue& value,
+                                    const std::string& subscriberIdentifier) {
+    for (unsigned int i = 0; i < value.getSize()/2 ; ++i) {
+        std::cout << "word recognized: " << value[i*2].toString()
+                  << " with confidence: " << (float)value[i*2+1] << std::endl;
+    }
+}
+
+void RemoteServer::_doubleClickEvent(const std::string& event, int now) {
+    if (event == "RearTactilTouched"
+            && _isEventOn["FrontTactilTouched"]
+            && !_isEventOn["MiddleTactilTouched"]
+            && _autoDriving) {
+        _voiceSpeaker.say("Calibration", "English");
+        _autoDriving->calibration();
+    } else if (event == "MiddleTactilTouched") {
+        std::map<std::string, std::string> params;
+        autoDriving(NULL, params);
+    }
+}
+
+void RemoteServer::_startListening(const std::vector<std::string>& words) {
+    if (_isListening) {
+        _stopListening();
+    }
+    std::cout << "Start listening..." << std::endl;
+    try {
+        _speechRecognition.setLanguage("French");
+        _speechRecognition.setWordListAsVocabulary(words);
+        _memProxy.subscribeToEvent("WordRecognized", getName(), "speechRecognized");
+    } catch(const std::exception& e) {
+        std::cout << "An error ocured: " << e.what() << std::endl;
+    } catch(...) {
+        std::cout << "An error ocured" << std::endl;
+    }
+    _isListening = true;
+}
+
+void RemoteServer::_stopListening(void) {
+    std::cout << "Stop listening" << std::endl;
+    try {
+        _memProxy.unsubscribeToEvent("WordRecognized", getName());
+    } catch(const std::exception& e) {
+        std::cout << "An error ocured: " << e.what() << std::endl;
+    } catch(...) {
+        std::cout << "An error ocured" << std::endl;
+    }
+    _isListening = false;
 }
 
 void	RemoteServer::_parseReceivedData(Network::ATcpSocket* sender,
@@ -202,10 +286,10 @@ void	RemoteServer::_parseReceivedData(Network::ATcpSocket* sender,
             std::cout << " => OK" << std::endl;
         } catch (std::exception e) {
             std::cout << " => " << e.what() << std::endl;
-            _writeHttpResponse(sender, boost::asio::const_buffer("An error occured", 15), "404 Not Found");
+            _writeHttpResponse(sender, boost::asio::const_buffer("An error occured", 16), "404 Not Found");
         } catch (...) {
             std::cout << " => An error occured" << std::endl;
-            _writeHttpResponse(sender, boost::asio::const_buffer("An error occured", 15), "404 Not Found");
+            _writeHttpResponse(sender, boost::asio::const_buffer("An error occured", 16), "404 Not Found");
         }
         else {
             std::cout << " => Unknown command" << std::endl;
@@ -290,6 +374,7 @@ void	RemoteServer::begin(Network::ATcpSocket* sender,
 
 void	RemoteServer::end(Network::ATcpSocket* sender,
                           std::map<std::string,std::string>&) {
+    _stopAutoDriving();
     _drive.end();
     _writeHttpResponse(sender, boost::asio::const_buffer("", 0));
 }
@@ -391,26 +476,45 @@ void	RemoteServer::changeView(Network::ATcpSocket* sender,
 }
 
 void	RemoteServer::autoDriving(Network::ATcpSocket* sender,
-                                  std::map<std::string,
-                                  std::string>& params) {
+                                  std::map<std::string, std::string>& params) {
     if (!_autoDriving) {
+        std::cout << std::endl << "Launching Auto-driving... ";
         try {
             _autoDriving = new AutoDriving(_streamServer, &_drive);
         } catch(...) {
+            _voiceSpeaker.say("I cannot drive by myself !", "English");
             _autoDriving = NULL;
+            std::cout << "Fail";
         }
+        std::cout << std::endl;
     }
     if (_autoDriving && !_autoDriving->isStart()) {
         if (params["mode"] == "safe")
             _autoDriving->start(AutoDriving::Safe);
         else {
+            _drive.begin();
+            _drive.turnFront();
             _voiceSpeaker.say("auto driving", "English");
             _autoDriving->start(AutoDriving::Auto);
         }
     }
-    else if (_autoDriving)
+    else if (_autoDriving) {        
+        _stopAutoDriving();
+    }
+    if (sender) {
+        _writeHttpResponse(sender, boost::asio::const_buffer("", 0));
+    }
+}
+
+void RemoteServer::_stopAutoDriving(void) {
+    if (_autoDriving && _autoDriving->isStart()) {
+        std::cout << "stopping auto driving" << std::endl;
         _autoDriving->stop();
-    _writeHttpResponse(sender, boost::asio::const_buffer("", 0));
+        std::cout << "Auto-driving stopped" << std::endl;
+        _drive.releasePedal();
+        _drive.turnFront();
+        _voiceSpeaker.say("auto driving stopped", "English");
+    }
 }
 
 void	RemoteServer::upShift(Network::ATcpSocket* sender,

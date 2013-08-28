@@ -32,47 +32,57 @@ pair<T1,T2> make_pair (T1 x, T2 y) {
 
 using namespace cv;
 
-class MyFreenectDevice : public Freenect::FreenectDevice {
+class KinectDevice : public Freenect::FreenectDevice {
 public:
-    MyFreenectDevice(freenect_context *_ctx, int _index);
 
-    void	VideoCallback(void* _rgb, uint32_t timestamp);
-    void	DepthCallback(void* _depth, uint32_t timestamp);
+    // Treshold for object detection
+    // Higher value means less objects detected
+    static const double ObjectTreshold;
+    static const double DivisionWeightTreshold;
+    static const double DirectionWeightTreshold;
+
+    enum Direction {
+        Left = -1,
+        Front = 0,
+        Right = 1
+    };
+
+    KinectDevice(freenect_context* ctx, int index);
+
+    void	VideoCallback(void* rgb, uint32_t timestamp);
+    void	DepthCallback(void* depth, uint32_t timestamp);
+
     bool	getVideo(Mat& output);
     bool	getDepth(Mat& output);
-    void	initializeFloor();
-    void	getObjects(std::vector<std::pair<std::pair<Point, Point>, double> > &to);
-    int getWayToGo();
-    int getDepthToGo();
 
-private:
-    void  _checkObject(uint16_t* depth, int x, int y, int &minx, int &maxx,
-                       int &miny, int &maxy, int d, std::vector<double>&, double prev=-1);
+    void    calibrateFloor(void);
 
-    std::vector<uint8_t> _buffer_depth;
-    std::vector<uint8_t> _buffer_rgb;
+    Direction   getBestDirection(void);
+    bool        getPushGazPedal(void);
+
+private:    
+    void _floorCalibration(uint16_t* depth);
+    bool _isValidDepth(uint16_t value);
+
     std::vector<uint16_t> _gamma;
 
-    std::mutex _rgb_mutex;
-    std::mutex _depth_mutex;
-    bool _new_rgb_frame;
-    bool _new_depth_frame;
-    bool  _initialize;
+    std::mutex _rgbMutex;
+    std::mutex _depthMutex;
+    bool _newRgbFrame;
+    bool _newDepthFrame;
+    bool _calibrateFloor;
 
-    Mat depthMat;
-    Mat rgbMat;
-    Mat ownMat;
-
+    Mat _depthMat;
+    Mat _rgbMat;
 
     double _averages[480];
-    double _ecarts[480];
+    double _deviations[480];
 
     std::mutex _objectsMutex;
     std::vector<std::pair<std::pair<Point, Point>, double> > _objects;
 
-    char _dones[307200];
-    int _wayToGo;
-    int _depthToGo;
+    Direction   _bestDirection;
+    bool        _pushGazPedal;
 };
 
 class AutoDriving {
@@ -83,23 +93,24 @@ public:
     };
 
     AutoDriving(StreamServer* ss, DriveProxy* driveProxy);
-    ~AutoDriving();
+    ~AutoDriving(void);
 
     void start(Mode mode);
-    void stop();
-    void loop();
+    void stop(void);
+    void loop(void);
+    void calibration(void);
 
-    bool isStart();
+    bool isStart(void);
 
 private:
 
-    bool			_stop;
+    std::atomic<bool>	_stop;
     std::thread*		_thread;
     Freenect::Freenect	_freenect;
-    MyFreenectDevice&	_device;
-    StreamServer		*_ss;
-    DriveProxy		*_driveProxy;
-    Mode			_mode;
+    KinectDevice&       _device;
+    StreamServer*       _ss;
+    DriveProxy*         _driveProxy;
+    Mode                _mode;
 };
 
 #endif
