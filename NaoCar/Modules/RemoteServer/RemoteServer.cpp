@@ -35,7 +35,7 @@ RemoteServer::RemoteServer(boost::shared_ptr<AL::ALBroker> broker,
     _streamServer(), _streamPort(), _isListening(false),
     _drive(NULL), _autoDriving(NULL), _voiceSpeaker(broker),
     _leds(getParentBroker()), _memProxy(getParentBroker()),
-    _speechRecognition(getParentBroker()), _dcm(getParentBroker()),
+    _speechRecognition(NULL), _dcm(NULL),
     _lastEventTime(), _isEventOn()
 {
     if (_getFunctions.size() == 0) {
@@ -91,6 +91,12 @@ RemoteServer::~RemoteServer()
         delete _networkThread;
     }
     delete _tcpServer;
+    if (_speechRecognition) {
+        delete _speechRecognition;
+    }
+    if (_dcm) {
+        delete _dcm;
+    }
 }
 
 void	RemoteServer::init()
@@ -181,7 +187,10 @@ void    RemoteServer::writeFinished(Network::ASocket*,
 void RemoteServer::sensorEvent(const std::string& eventName,
                                const float& val,
                                const std::string& subscriberIdentifier) {
-    int now = _dcm.getTime(0);
+    if (!_dcm) {
+        _dcm = new AL::DCMProxy(_broker);
+    }
+    int now = _dcm->getTime(0);
 
     _isEventOn[eventName] = val;
     if (_lastEventTime[eventName] == 0) {
@@ -192,10 +201,6 @@ void RemoteServer::sensorEvent(const std::string& eventName,
             _doubleClickEvent(eventName, now);
         }
         _lastEventTime[eventName] = now;
-        if (eventName == "MiddleTactilTouched") {
-            std::map<std::string, std::string> params;
-            autoDriving(NULL, params);
-        }
     }
 }
 
@@ -215,17 +220,23 @@ void RemoteServer::_doubleClickEvent(const std::string& event, int now) {
             && _autoDriving) {
         _voiceSpeaker.say("Calibration", "English");
         _autoDriving->calibration();
+    } else if (event == "MiddleTactilTouched") {
+        std::map<std::string, std::string> params;
+        autoDriving(NULL, params);
     }
 }
 
 void RemoteServer::_startListening(const std::vector<std::string>& words) {
+    if (!_speechRecognition) {
+        _speechRecognition = new AL::ALSpeechRecognitionProxy(_broker);
+    }
     if (_isListening) {
         _stopListening();
     }
     std::cout << "Start listening..." << std::endl;
     try {
-        _speechRecognition.setLanguage("French");
-        _speechRecognition.setWordListAsVocabulary(words);
+        _speechRecognition->setLanguage("French");
+        _speechRecognition->setWordListAsVocabulary(words);
         _memProxy.subscribeToEvent("WordRecognized", getName(), "speechRecognized");
     } catch(const std::exception& e) {
         std::cout << "An error ocured: " << e.what() << std::endl;
@@ -529,9 +540,10 @@ void	RemoteServer::autoDriving(Network::ATcpSocket* sender,
         std::cout << std::endl;
     }
     if (_autoDriving && !_autoDriving->isStart()) {
-        if (params["mode"] == "safe")
+        if (params["mode"] == "safe") {
+            _voiceSpeaker.say("safe driving enabled", "English");
             _autoDriving->start(AutoDriving::Safe);
-        else {
+        } else {
             _drive->begin();
             _drive->turnFront();
             _voiceSpeaker.say("auto driving", "English");

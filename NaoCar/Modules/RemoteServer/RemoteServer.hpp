@@ -149,10 +149,10 @@ private:
     AutoDriving*    _autoDriving;
     VoiceSpeaker    _voiceSpeaker;
 
-    AL::ALLedsProxy                 _leds;
-    AL::ALMemoryProxy               _memProxy;
-    AL::ALSpeechRecognitionProxy    _speechRecognition;
-    AL::DCMProxy                    _dcm;
+    AL::ALLedsProxy                  _leds;
+    AL::ALMemoryProxy                _memProxy;
+    AL::ALSpeechRecognitionProxy*    _speechRecognition;
+    AL::DCMProxy*                    _dcm;
 
     std::map<std::string, int>      _lastEventTime;
     std::map<std::string, bool>     _isEventOn;

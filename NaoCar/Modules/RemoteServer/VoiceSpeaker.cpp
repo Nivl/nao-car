@@ -6,7 +6,8 @@
 #include "VoiceSpeaker.hpp"
 
 VoiceSpeaker::VoiceSpeaker(boost::shared_ptr<AL::ALBroker>& broker) : 
-    _t2p(broker), _stop(false) {
+    _broker(broker), _t2p(NULL),
+    _mutex(), _thread(NULL), _stop(false) {
     _thread = new std::thread(&VoiceSpeaker::loop, this);
 }
 
@@ -15,17 +16,23 @@ VoiceSpeaker::~VoiceSpeaker() {
         _stop = true;
         _thread->join();
     }
+    if (_t2p) {
+        delete _t2p;
+    }
 }
 
 void VoiceSpeaker::loop() {
     while (!_stop) {
         _mutex.lock();
         if (_messages.size() > 0) {
+            if (!_t2p) {
+                _t2p = new AL::ALTextToSpeechProxy(_broker);
+            }
             std::pair<std::string, std::string> message = _messages.front();
             _messages.pop_front();
             _mutex.unlock();
-            _t2p.setLanguage(message.second);
-            _t2p.say(message.first);
+            _t2p->setLanguage(message.second);
+            _t2p->say(message.first);
         }
         else {
             _mutex.unlock();

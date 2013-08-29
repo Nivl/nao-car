@@ -21,11 +21,13 @@ public:
     void loop();
     void say(const std::string& message, const std::string& language="French");
 private:
-    AL::ALTextToSpeechProxy       _t2p;
+    boost::shared_ptr<AL::ALBroker>     _broker;
+    AL::ALTextToSpeechProxy*            _t2p;
+    std::mutex                          _mutex;
+    std::thread*                        _thread;
+    bool                                _stop;
+
     std::list<std::pair<std::string, std::string> >	_messages;
-    std::mutex			_mutex;
-    std::thread*			_thread;
-    bool				_stop;
 };
 
 #endif

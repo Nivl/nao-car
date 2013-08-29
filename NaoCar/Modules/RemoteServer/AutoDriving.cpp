@@ -273,7 +273,6 @@ AutoDriving::AutoDriving(StreamServer* ss, DriveProxy* driveProxy) :
     _stop(true), _thread(NULL), _freenect(),
     _device(_freenect.createDevice<KinectDevice>(0)),
     _ss(ss), _driveProxy(driveProxy), _mode() {
-    std::cout << "AUTO DRIVING CONSTRUCTOR\n";
 }
 
 AutoDriving::~AutoDriving(void) {
@@ -293,9 +292,7 @@ void AutoDriving::loop(void) {
     Mat depthMat(Size(640,480), CV_8UC3);
     Mat rgbMat(Size(640,480), CV_8UC3, Scalar(0));
 
-    int tilt = -20;
-
-    //_device.setTiltDegrees(tilt);
+    _device.setTiltDegrees(-15);
     _device.startVideo();
     _device.startDepth();
 
@@ -314,15 +311,19 @@ void AutoDriving::loop(void) {
             bool pushPedal = _device.getPushGazPedal();
 
             if (pushPedal) {
-                if (!_driveProxy->isGasPedalPushed()) {
+                if (_mode == Auto && !_driveProxy->isGasPedalPushed()) {
                     _driveProxy->pushPedal();
                 }
             } else {
                 if (_driveProxy->isGasPedalPushed()) {
-                    _driveProxy->releasePedal();
+                    // In Safe mode, release gaz pedal only if we try to go
+                    // forward
+                    if (_driveProxy->speed() == DriveProxy::Up) {
+                        _driveProxy->releasePedal();
+                    }
                 }
             }
-            if (dir != currentDirection) {
+            if (_mode == Auto && dir != currentDirection) {
                 if (dir == KinectDevice::Left) {
                     _driveProxy->turnLeft();
                 } else if (dir == KinectDevice::Front) {
