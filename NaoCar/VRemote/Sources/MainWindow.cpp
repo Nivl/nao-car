@@ -36,6 +36,8 @@ _steeringWheelDirection(Front), _move(Stopped) {
             this, SLOT(talkInputEntered()));
     connect(_windowUi.autoDrivingButton, SIGNAL(clicked()),
             this, SLOT(autoDrivingClicked()));
+    connect(_windowUi.safeModeButton, SIGNAL(clicked()),
+            this, SLOT(safeModeClicked()));
     
     // Search for an Xbox gamepad
     chooseGamepad();
@@ -64,7 +66,7 @@ bool MainWindow::eventFilter(QObject* obj, QEvent* event) {
              event->type() == QEvent::MouseButtonRelease)
         _windowUi.centralwidget->setFocus(Qt::MouseFocusReason);
     else
-        QObject::eventFilter(obj, event);
+        return QObject::eventFilter(obj, event);
     return true;
 }
 
@@ -166,6 +168,11 @@ void MainWindow::talkInputEntered(void) {
 void MainWindow::autoDrivingClicked(void) {
     if (_delegate)
         _delegate->autoDriving();
+}
+
+void MainWindow::safeModeClicked(void) {
+    if (_delegate)
+        _delegate->safeMode();
 }
 
 void MainWindow::gamepadUpdate(void) {

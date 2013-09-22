@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="2.0" toolsVersion="3084" systemVersion="12D78" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" useAutolayout="YES" initialViewController="2">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="2.0" toolsVersion="3084" systemVersion="12E55" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" useAutolayout="YES" initialViewController="2">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="2083"/>
     </dependencies>
@@ -185,6 +185,19 @@
                                     <action selector="launchAutoDriving:" destination="sPP-65-yvt" eventType="touchUpInside" id="mXs-Bn-eUL"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4RE-V4-uCY">
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                <state key="normal" title="Safe mode">
+                                    <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <state key="highlighted">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="launchSafeMode:" destination="sPP-65-yvt" eventType="touchUpInside" id="SU4-qA-GeN"/>
+                                </connections>
+                            </button>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Actions" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aDI-vy-oZR">
                                 <constraints>
                                     <constraint firstAttribute="height" constant="39" id="wS9-td-pEh"/>
@@ -226,6 +239,16 @@
                                     <action selector="disabledNao:" destination="sPP-65-yvt" eventType="touchUpInside" id="PDV-Vf-tGg"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wva-xw-1fx">
+                                <fontDescription key="fontDescription" name="Helvetica-Bold" family="Helvetica" pointSize="15"/>
+                                <state key="normal" title="Réactiver Nao">
+                                    <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="enableNao:" destination="sPP-65-yvt" eventType="touchUpInside" id="flc-Uh-9t1"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
@@ -243,14 +266,18 @@
                             <constraint firstItem="Tkx-3S-4T1" firstAttribute="top" secondItem="a5z-qo-Kok" secondAttribute="bottom" constant="8" symbolic="YES" type="default" id="MPc-to-bHO"/>
                             <constraint firstItem="y3c-at-FGn" firstAttribute="leading" secondItem="QTi-jm-hBc" secondAttribute="leading" type="default" id="Ov0-LU-EnG"/>
                             <constraint firstItem="QTi-jm-hBc" firstAttribute="top" secondItem="Hco-6z-kNc" secondAttribute="bottom" constant="8" symbolic="YES" type="default" id="QtW-aE-QwE"/>
+                            <constraint firstItem="4RE-V4-uCY" firstAttribute="baseline" secondItem="Tkx-3S-4T1" secondAttribute="baseline" type="default" id="RPd-hj-JFt"/>
                             <constraint firstItem="jTt-rP-S6R" firstAttribute="leading" secondItem="zgr-tC-jg6" secondAttribute="trailing" constant="8" symbolic="YES" type="default" id="SMi-8X-aMr"/>
                             <constraint firstItem="y3c-at-FGn" firstAttribute="trailing" secondItem="Hco-6z-kNc" secondAttribute="trailing" type="default" id="Uya-Jp-d2k"/>
                             <constraint firstItem="Hco-6z-kNc" firstAttribute="top" secondItem="e8N-Zf-zsa" secondAttribute="top" constant="20" symbolic="YES" type="default" id="WNP-GY-uA9"/>
                             <constraint firstItem="zgr-tC-jg6" firstAttribute="leading" secondItem="aDI-vy-oZR" secondAttribute="leading" type="default" id="XYV-ra-SWF"/>
                             <constraint firstItem="MTb-oa-cQA" firstAttribute="top" secondItem="e8N-Zf-zsa" secondAttribute="top" constant="134" id="aug-mg-I9g"/>
                             <constraint firstItem="a5z-qo-Kok" firstAttribute="top" secondItem="lck-UW-iVC" secondAttribute="bottom" constant="8" symbolic="YES" type="default" id="cNL-5r-aVL"/>
+                            <constraint firstItem="wva-xw-1fx" firstAttribute="leading" secondItem="e8N-Zf-zsa" secondAttribute="leading" constant="20" symbolic="YES" type="default" id="cRj-A0-okC"/>
+                            <constraint firstItem="wva-xw-1fx" firstAttribute="baseline" secondItem="aDI-vy-oZR" secondAttribute="baseline" type="default" id="crs-tm-Ysl"/>
                             <constraint firstItem="e2K-bG-yyD" firstAttribute="baseline" secondItem="Tkx-3S-4T1" secondAttribute="baseline" type="default" id="csK-S6-HPg"/>
                             <constraint firstItem="MTb-oa-cQA" firstAttribute="leading" secondItem="e8N-Zf-zsa" secondAttribute="leading" constant="20" symbolic="YES" type="default" id="cyc-5s-mOi"/>
+                            <constraint firstItem="4RE-V4-uCY" firstAttribute="leading" secondItem="Tkx-3S-4T1" secondAttribute="trailing" constant="8" symbolic="YES" type="default" id="dz6-k6-4Lp"/>
                             <constraint firstItem="zgr-tC-jg6" firstAttribute="top" secondItem="e8N-Zf-zsa" secondAttribute="top" constant="349" id="iUi-TT-VGc"/>
                             <constraint firstItem="Tkx-3S-4T1" firstAttribute="leading" secondItem="a5z-qo-Kok" secondAttribute="leading" type="default" id="ibW-XY-Uqp"/>
                             <constraint firstItem="a5z-qo-Kok" firstAttribute="trailing" secondItem="y3c-at-FGn" secondAttribute="trailing" type="default" id="lcD-pS-4m1"/>
@@ -281,36 +308,6 @@
         <image name="pedal.png" width="258" height="358"/>
         <image name="shift-frontwards.png" width="265" height="575"/>
     </resources>
-    <classes>
-        <class className="ActionsViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ActionsViewController.h"/>
-            <relationships>
-                <relationship kind="action" name="carambarAction:"/>
-                <relationship kind="action" name="changedControl:"/>
-                <relationship kind="action" name="changedView:"/>
-                <relationship kind="action" name="disabledNao:"/>
-                <relationship kind="action" name="funAction:"/>
-                <relationship kind="action" name="launchAutoDriving:"/>
-                <relationship kind="outlet" name="controlsSelector" candidateClass="UISegmentedControl"/>
-                <relationship kind="outlet" name="viewSelector" candidateClass="UISegmentedControl"/>
-            </relationships>
-        </class>
-        <class className="NSLayoutConstraint" superclassName="NSObject">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/NSLayoutConstraint.h"/>
-        </class>
-        <class className="ViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ViewController.h"/>
-            <relationships>
-                <relationship kind="action" name="pushPedal:"/>
-                <relationship kind="action" name="releasePedal:"/>
-                <relationship kind="action" name="toggleShift:"/>
-                <relationship kind="outlet" name="pedalButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="shiftButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="streamImageView" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="waitingLabel" candidateClass="UILabel"/>
-            </relationships>
-        </class>
-    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar" statusBarStyle="blackTranslucent"/>
         <simulatedOrientationMetrics key="orientation"/>

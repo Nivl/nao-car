@@ -49,14 +49,14 @@
 
 - (IBAction)changedView:(id)sender {
     UISegmentedControl* control = sender;
-    [self.mainController sendCommand:[NSString stringWithFormat:@"change-view?view=%d", control.selectedSegmentIndex]];
+    [self.mainController sendCommand:[NSString stringWithFormat:@"/change-view?view=%d", control.selectedSegmentIndex]];
     self.mainController.viewMode = (ViewMode)control.selectedSegmentIndex;
 }
 
 -(BOOL)textFieldShouldReturn:(UITextField *)textField {
     NSString* message = textField.text;
     if (message.length != 0) {
-        NSString* command = [NSString stringWithFormat:@"talk?message=%@", [message urlEncodeUsingEncoding:NSASCIIStringEncoding]];
+        NSString* command = [NSString stringWithFormat:@"/talk?message=%@", [message urlEncodeUsingEncoding:NSASCIIStringEncoding]];
         [self.mainController sendCommand:command];
         textField.text = @"";
     }
@@ -64,15 +64,19 @@
 }
 
 - (IBAction)launchAutoDriving:(id)sender {
-    [self.mainController sendCommand:@"auto-driving"];
+    [self.mainController sendCommand:@"/auto-driving"];
+}
+
+- (IBAction)launchSafeMode:(id)sender {
+    [self.mainController sendCommand:@"/auto-driving?mode=safe"];
 }
 
 - (IBAction)funAction:(id)sender {
-    [self.mainController sendCommand:@"fun-action"];
+    [self.mainController sendCommand:@"/fun-action"];
 }
 
 - (IBAction)carambarAction:(id)sender {
-    [self.mainController sendCommand:@"carambar-action"];
+    [self.mainController sendCommand:@"/carambar-action"];
 }
 
 - (IBAction)changedControl:(id)sender {
@@ -81,7 +85,11 @@
 }
 
 - (IBAction)disabledNao:(id)sender {
-    [self.mainController sendCommand:@"end"];
+    [self.mainController sendCommand:@"/end"];
+}
+
+- (IBAction)enableNao:(id)sender {
+    [self.mainController sendCommand:@"/begin"];
 }
 
 @end

@@ -105,6 +105,7 @@ public:
     void carambarClicked(void);
     void talkInputEntered(void);
     void autoDrivingClicked(void);
+    void safeModeClicked(void);
     
     void gamepadUpdate(void);
     

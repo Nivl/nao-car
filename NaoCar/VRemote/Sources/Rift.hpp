@@ -26,6 +26,8 @@ public:
     
     void setViewImage(const QImage& image);
     
+    QWidget* getView(void);
+    
     private slots:
     void _update(void);
     

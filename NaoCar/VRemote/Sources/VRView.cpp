@@ -85,7 +85,7 @@ _planeTexture(0), _renderTargetTexture(0), _renderTargetDepth(0), _renderFramebu
     QDesktopWidget* desktop = qApp->desktop();
     
     // Display on secondary screen (hopefully the rift !) if possible
-    if (desktop->screenCount() == 1) {
+    if (desktop->screenCount() == 1 || 1) {
         showFullScreen();
     } else {
         setWindowState(Qt::WindowFullScreen);
@@ -324,7 +324,7 @@ void VRView::_renderScene(Util::Render::StereoEyeParams const& eyeParams) {
     //    
     Matrix4f
     projMatrix = eyeParams.Projection,
-    viewMatrix = Matrix4f::LookAtRH(Vector3f(0.0, 0.0, 1.0), Vector3f(0.0, 0.0, 0.0),
+    viewMatrix = Matrix4f::LookAtRH(Vector3f(0.0, 0.0, 1.5), Vector3f(0.0, 0.0, 0.0),
                                     Vector3f(0.0, 1.0, 0.0));
     
     viewMatrix = eyeParams.ViewAdjust * viewMatrix;

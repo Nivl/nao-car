@@ -59,6 +59,10 @@ void Rift::setViewImage(const QImage& image) {
     }
 }
 
+QWidget* Rift::getView(void) {
+    return _view;
+}
+
 void Rift::_update(void) {
     if (_delegate) {
         _delegate->riftOrientationUpdate(getOrientation());

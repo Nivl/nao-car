@@ -64,7 +64,7 @@ void Remote::serviceBrowsed(bool error,
                             std::string const& domain) {
     if (error) {
         std::cerr << "Error browsing Bonjour services" << std::endl;
-    }
+    }	
     else if (name == NAOCAR_BONJOUR_SERVICE_NAME) {
         if (browsingType == Bonjour::BrowsingAdd) {
             _naoAvailable = true;
@@ -139,6 +139,12 @@ void Remote::talk(std::string message) {
 void Remote::autoDriving(void) {
     if (_naoAvailable)
         sendRequest("/auto-driving");
+}
+
+void Remote::safeMode(void) {
+    if (_naoAvailable) {
+        sendRequest("/auto-driving", ParamsList() << QPair<QString, QString>("mode", "safe"));
+    }
 }
 
 void Remote::steeringWheelAction(void) {
@@ -246,6 +252,7 @@ void Remote::rift(void) {
     } else {
         _rift = new Rift();
         _rift->setDelegate(this);
+        _rift->getView()->installEventFilter(&_mainWindow);
     }
 }
 

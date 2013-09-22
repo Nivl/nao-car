@@ -55,7 +55,7 @@
    <property name="minimumSize">
     <size>
      <width>215</width>
-     <height>414</height>
+     <height>437</height>
     </size>
    </property>
    <property name="allowedAreas">
@@ -167,6 +167,13 @@
       <widget class="QPushButton" name="autoDrivingButton">
        <property name="text">
         <string>Launch auto driving</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="safeModeButton">
+       <property name="text">
+        <string>Safe Mode</string>
        </property>
       </widget>
      </item>

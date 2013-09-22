@@ -14,10 +14,12 @@
 
 - (IBAction)changedView:(id)sender;
 - (IBAction)launchAutoDriving:(id)sender;
+- (IBAction)launchSafeMode:(id)sender;
 - (IBAction)funAction:(id)sender;
 - (IBAction)carambarAction:(id)sender;
 - (IBAction)changedControl:(id)sender;
 - (IBAction)disabledNao:(id)sender;
+- (IBAction)enableNao:(id)sender;
 
 @property (nonatomic, weak) ViewController* mainController;
 

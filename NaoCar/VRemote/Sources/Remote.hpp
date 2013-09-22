@@ -57,6 +57,7 @@ public:
     virtual void carambarAction(void);
     virtual void talk(std::string message);
     virtual void autoDriving(void);
+    virtual void safeMode(void);
     virtual void steeringWheelAction(void);
     virtual void funAction(void);
     virtual void frontward(void);
