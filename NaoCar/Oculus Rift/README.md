@@ -25,6 +25,9 @@ Build instructions
 To generate the project build files, go to your project directory and type the following commands:
 
     > mkdir build-xcode
+    > cd build-xcode
     > cmake -g Xcode ..
 
+Or use CMake gui to generate build files.
 If you have OpenGL and Qt libraries installed on your system and you are a little bit lucky, you should have no errors with these libraries. An error may occur because of Oculus SDK. Simply open build-xcode/CMakeCache.txt and specify "OCULUS\_SDK\_ROOT\_DIR" (to your OculusSDK directory).
+When you're done with CMake dependencies handling, you will have Nao Rift "Sample.xcodeproject" file in your build directory.
