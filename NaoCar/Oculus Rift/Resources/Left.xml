@@ -1,0 +1,10 @@
+<configuration>
+  <hand> <!--- Hand -->
+    <minimum>
+      <roll>20</roll>
+    </minimum>
+    <maximum>
+      <roll>90</roll>
+    </maximum>
+  </hand>
+</configuration>

@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/">
+        <file>waiting-streaming.png</file>
+        <file>connect.png</file>
+        <file>Frontward.xml</file>
+        <file>Backward.xml</file>
+        <file>Stopped.xml</file>
+        <file>Front.xml</file>
+        <file>Left.xml</file>
+        <file>Right.xml</file>
+        <file>oculus.png</file>
+    </qresource>
+</RCC>

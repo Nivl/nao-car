@@ -1,0 +1,10 @@
+<configuration>
+  <hand> <!--- Hand -->
+    <minimum>
+      <pitch>-10</pitch>
+    </minimum>
+    <maximum>
+      <pitch>10</pitch>
+    </maximum>
+  </hand>
+</configuration>
