@@ -1,6 +1,6 @@
 # nao-car
 
-Make NAO drive a (fake) Fiat 500 !
+Make NAO drive a (fake) Fiat 500! [Check our Youtube channel](https://www.youtube.com/channel/UCPHPaudSvHCB7Z3kKAwMcqQ)
 
 ## Authors
 
