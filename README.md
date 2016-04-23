@@ -7,7 +7,7 @@ Make NAO drive a (fake) Fiat 500! [Check our Youtube channel](https://www.youtub
 * [Loïck Michard](http://www.loick-michard.com)
 * [Gaël Du plessix](http://gael.name)
 * [Samuel Olivier](http://samuelolivier.com)
-* [Melvin Laplanche](http://www.laplanche-melv.in)
+* [Melvin Laplanche](http://www.melvin.la)
 
 ## Licence
 
